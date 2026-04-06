@@ -25,3 +25,6 @@ dist-ssr
 
 # Large source photos (copied to src/assets already)
 Tezza-0019.JPG
+
+# Local env with Supabase keys — never commit this
+.env.local

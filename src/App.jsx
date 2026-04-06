@@ -1,28 +1,55 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import sabinaPhoto from "./assets/sabina.jpg";
+import { createClient } from "@supabase/supabase-js";
 
 // ── Change this to your own password ──
 const APP_PASSWORD = "paris2024";
 
-function useLS(key, def) {
+// ── Supabase client (gracefully disabled if env vars not set) ──
+const _url  = import.meta.env.VITE_SUPABASE_URL;
+const _key  = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = _url && _key ? createClient(_url, _key) : null;
+
+// ── useDB: localStorage cache + Supabase sync ──
+// Falls back to localStorage-only when Supabase is not configured.
+function useDB(key, def) {
   const [val, setVal] = useState(() => {
     try { const s = localStorage.getItem(key); return s !== null ? JSON.parse(s) : def; }
     catch { return def; }
   });
+
+  // Pull latest value from Supabase on mount
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.from("user_data").select("value").eq("key", key).maybeSingle()
+      .then(({ data, error }) => {
+        if (!error && data?.value !== undefined && data.value !== null) {
+          setVal(data.value);
+          try { localStorage.setItem(key, JSON.stringify(data.value)); } catch {}
+        }
+      });
+  }, [key]);
+
   const set = useCallback(fn => {
     setVal(prev => {
       const next = typeof fn === "function" ? fn(prev) : fn;
       try { localStorage.setItem(key, JSON.stringify(next)); } catch {}
+      if (supabase) {
+        supabase.from("user_data")
+          .upsert({ key, value: next, updated_at: new Date().toISOString() }, { onConflict: "key" })
+          .then(({ error }) => { if (error) console.error("[Supabase]", error.message); });
+      }
       return next;
     });
   }, [key]);
+
   return [val, set];
 }
 
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const HCOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#a89080","#c8887a","#8cb87a","#c8b87a","#a0b0c8","#c8a0b0"];
-const HICONS=["📖","🏃","🧘","💧","✍️","🌿","🎨","🎵","💪","🍎","😴","🌅","📝","🧹","🛁","🍵","🏋️","🚴","🧠","💌","🌸","⭐","🎯","🌙","☀️","○","□","△","◇","◎","◈","⊙","⊛","⊡","⊟"];
+const HICONS=["○","□","△","▽","◇","☆","♡","♢","◎","⊙","⊕","◈","⊞","⊟","◉","✦","✧","✤","✱","✳","✎","☼","☽","♪","✐","∞","⊗","◁","▷","⊣","⊢","⋄","◊","❖","✦"];
 const ECOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#c8887a","#8cb87a","#a89080","#c8b87a"];
 const QUOTES=[
   {text:"She is clothed in strength and dignity.",attr:"Proverbs 31:25"},
@@ -40,7 +67,7 @@ const QUOTES=[
 ];
 const PRAISE=["Magnifique, Sabina! ✨","Ooh la la — done!","You're on fire! 🔥","That's our girl! 💫","One step closer to greatness! 🏆","Chef's kiss! 👌","Absolutely radiant work! ✦","Sabina strikes again! ⚡","Pure elegance under pressure! 🥂","The universe approves! 🌙"];
 const DEF_CLEAN_TASKS={Mon:["Vacuum living room","Wipe kitchen surfaces","Clean bathroom sink"],Tue:["Mop floors","Clean mirrors","Tidy bedroom"],Wed:["Deep clean oven","Wipe appliances","Change hand towels"],Thu:["Clean toilets","Dust shelves","Wipe skirting boards"],Fri:["Wash bedding","Clean fridge","Take out bins"],Sat:["Deep clean bathroom","Organise pantry","Wipe windows"],Sun:["Rest and reset","Light tidy","Prep for the week ahead"]};
-const DEF_HABITS=[{id:1,name:"Morning pages",icon:"✍️",color:"#c9a87c",days:Array(7).fill(false)},{id:2,name:"Walk 30 min",icon:"🏃",color:"#a89080",days:Array(7).fill(false)},{id:3,name:"Read",icon:"📖",color:"#7a9070",days:Array(7).fill(false)},{id:4,name:"Meditate",icon:"🧘",color:"#b098c0",days:Array(7).fill(false)},{id:5,name:"Drink 2L water",icon:"💧",color:"#7090a8",days:Array(7).fill(false)}];
+const DEF_HABITS=[{id:1,name:"Morning pages",icon:"✎",color:"#c9a87c",days:Array(7).fill(false)},{id:2,name:"Walk 30 min",icon:"◎",color:"#a89080",days:Array(7).fill(false)},{id:3,name:"Read",icon:"□",color:"#7a9070",days:Array(7).fill(false)},{id:4,name:"Meditate",icon:"○",color:"#b098c0",days:Array(7).fill(false)},{id:5,name:"Drink 2L water",icon:"◇",color:"#7090a8",days:Array(7).fill(false)}];
 const DEF_TAGS=["Personal","Work","Fitness","Health","Creative"];
 const DEF_CLEANING=Object.fromEntries(DAYS.map(d=>[d,DEF_CLEAN_TASKS[d].map(t=>({text:t,done:false}))]));
 
@@ -74,17 +101,18 @@ const CSS=`
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
 
 /* ── TOP NAV ── */
-.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gradient(90deg,#a8865a 0%,#c9a87c 40%,#d4b080 55%,#a8865a 100%);border-bottom:2px solid #9e7a44;box-shadow:0 4px 24px rgba(140,100,50,.22);display:flex;align-items:center;padding:0 36px;gap:28px;z-index:200;}
+.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gradient(90deg,#352e28 0%,#433830 50%,#352e28 100%);border-bottom:2px solid var(--gold);box-shadow:0 4px 28px rgba(20,16,12,.22);display:flex;align-items:center;padding:0 36px;gap:28px;z-index:200;}
 .tn-brand{display:flex;flex-direction:column;gap:2px;flex-shrink:0;margin-right:10px;}
-.tn-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:rgba(38,29,18,.6);letter-spacing:.18em;}
-.tn-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);font-weight:600;letter-spacing:.02em;}
-.tn-divider{width:1px;height:28px;background:rgba(38,29,18,.18);flex-shrink:0;}
+.tn-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--gold);letter-spacing:.18em;opacity:.85;}
+.tn-name{font-family:'Playfair Display',serif;font-size:17px;color:#f0e8dc;font-weight:600;letter-spacing:.02em;}
+.tn-divider{width:1px;height:28px;background:rgba(201,168,124,.18);flex-shrink:0;}
 .tn-links{display:flex;align-items:center;gap:2px;flex:1;}
-.ni{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:all .18s;color:rgba(38,29,18,.65);font-size:12.5px;border:1px solid transparent;white-space:nowrap;}
-.ni:hover{background:rgba(38,29,18,.1);color:var(--ink);}
-.ni.on{background:rgba(38,29,18,.15);color:var(--ink);border-color:rgba(38,29,18,.14);}
+.ni{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:8px;cursor:pointer;transition:all .18s;color:rgba(240,232,220,.45);font-size:12.5px;border:1px solid transparent;white-space:nowrap;}
+.ni:hover{background:rgba(201,168,124,.1);color:#f0e8dc;}
+.ni.on{background:rgba(201,168,124,.18);color:var(--gold);border-color:rgba(201,168,124,.22);}
+.ni svg{flex-shrink:0;}
 .ni-label{display:inline;}
-.tn-dt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(38,29,18,.5);flex-shrink:0;white-space:nowrap;}
+.tn-dt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.4);flex-shrink:0;white-space:nowrap;}
 
 /* ── MAIN ── */
 .main{padding:calc(var(--nav-h) + 36px) 32px 64px;min-height:100vh;position:relative;z-index:1;}
@@ -345,12 +373,12 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 
 export default function App() {
   const [page,setPage]=useState("dashboard");
-  const [habits,setHabits]=useLS("sab_habits",DEF_HABITS);
-  const [tags,setTags]=useLS("sab_tags",DEF_TAGS);
-  const [todos,setTodos]=useLS("sab_todos",[]);
-  const [goals,setGoals]=useLS("sab_goals",{});
-  const [cleaning,setCleaning]=useLS("sab_clean",DEF_CLEANING);
-  const [events,setEvents]=useLS("sab_events",[]);
+  const [habits,setHabits]=useDB("sab_habits",DEF_HABITS);
+  const [tags,setTags]=useDB("sab_tags",DEF_TAGS);
+  const [todos,setTodos]=useDB("sab_todos",[]);
+  const [goals,setGoals]=useDB("sab_goals",{});
+  const [cleaning,setCleaning]=useDB("sab_clean",DEF_CLEANING);
+  const [events,setEvents]=useDB("sab_events",[]);
   const [newHabit,setNewHabit]=useState("");
   const [editHabit,setEditHabit]=useState(null);
   const [editHName,setEditHName]=useState("");
@@ -475,13 +503,14 @@ export default function App() {
   const dayDone=habitsDoneToday+todosDoneToday+cleaningDoneToday;
   const dayPct=dayTotal>0?Math.round((dayDone/dayTotal)*100):0;
 
+  const NI=({d,s=15,w=1.75})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
   const NAV=[
-    {id:"dashboard",icon:"🏠",label:"Dashboard"},
-    {id:"habits",icon:"🌿",label:"Habits"},
-    {id:"todos",icon:"✏️",label:"To-Do"},
-    {id:"goals",icon:"🎯",label:"Goals"},
-    {id:"calendar",icon:"📅",label:"Calendar"},
-    {id:"cleaning",icon:"🧹",label:"Cleaning"},
+    {id:"dashboard",label:"Dashboard",icon:<><NI d="M3 3h7v7H3z"/><NI d="M14 3h7v7h-7z"/><NI d="M3 14h7v7H3z"/><NI d="M14 14h7v7h-7z"/></>},
+    {id:"habits",label:"Habits",icon:<NI d="M12 20c-4-3-8-6.5-8-11a8 8 0 0 1 16 0c0 4.5-4 8-8 11z"/>},
+    {id:"todos",label:"To-Do",icon:<><NI d="M9 11l3 3L22 4"/><NI d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></>},
+    {id:"goals",label:"Goals",icon:<><NI d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 0 0-2 0"/><NI d="M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 0 0-10 0"/><NI d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 0 0-18 0"/></>},
+    {id:"calendar",label:"Calendar",icon:<><NI d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><NI d="M16 3v4M8 3v4M3 11h18"/></>},
+    {id:"cleaning",label:"Cleaning",icon:<><NI d="M3 21l7-7"/><NI d="M12.5 7.5l4 4"/><NI d="M10 14l2.5-2.5 5-8 2.5 2.5-5 8L10 14z"/></>},
   ];
 
   // ── PASSWORD GATE ──
@@ -575,7 +604,7 @@ export default function App() {
         <div className="tn-links">
           {NAV.map(n=>(
             <div key={n.id} className={`ni ${page===n.id?"on":""}`} onClick={()=>setPage(n.id)}>
-              <span style={{fontSize:15,flexShrink:0}}>{n.icon}</span>
+              {n.icon}
               <span className="ni-label">{n.label}</span>
             </div>
           ))}
