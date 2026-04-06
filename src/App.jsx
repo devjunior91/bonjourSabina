@@ -1,0 +1,903 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+import sabinaPhoto from "./assets/sabina.jpg";
+
+// ── Change this to your own password ──
+const APP_PASSWORD = "paris2024";
+
+function useLS(key, def) {
+  const [val, setVal] = useState(() => {
+    try { const s = localStorage.getItem(key); return s !== null ? JSON.parse(s) : def; }
+    catch { return def; }
+  });
+  const set = useCallback(fn => {
+    setVal(prev => {
+      const next = typeof fn === "function" ? fn(prev) : fn;
+      try { localStorage.setItem(key, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, [key]);
+  return [val, set];
+}
+
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const HCOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#a89080","#c8887a","#8cb87a","#c8b87a","#a0b0c8","#c8a0b0"];
+const HICONS=["📖","🏃","🧘","💧","✍️","🌿","🎨","🎵","💪","🍎","😴","🌅","📝","🧹","🛁","🍵","🏋️","🚴","🧠","💌","🌸","⭐","🎯","🌙","☀️","○","□","△","◇","◎","◈","⊙","⊛","⊡","⊟"];
+const ECOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#c8887a","#8cb87a","#a89080","#c8b87a"];
+const QUOTES=[
+  {text:"She is clothed in strength and dignity.",attr:"Proverbs 31:25"},
+  {text:"Paris is always a good idea.",attr:"Audrey Hepburn"},
+  {text:"You are enough, just as you are.",attr:"Meghan Markle"},
+  {text:"The secret of getting ahead is getting started.",attr:"Mark Twain"},
+  {text:"Do something today your future self will thank you for.",attr:"Unknown"},
+  {text:"She remembered who she was and the game changed.",attr:"Lalah Delia"},
+  {text:"Elegance is not about being noticed, it is about being remembered.",attr:"Giorgio Armani"},
+  {text:"A little progress each day adds up to big results.",attr:"Unknown"},
+  {text:"You did not come this far to only come this far.",attr:"Unknown"},
+  {text:"Bloom where you are planted.",attr:"Unknown"},
+  {text:"Be yourself; everyone else is already taken.",attr:"Oscar Wilde"},
+  {text:"In the middle of every difficulty lies opportunity.",attr:"Albert Einstein"},
+];
+const PRAISE=["Magnifique, Sabina! ✨","Ooh la la — done!","You're on fire! 🔥","That's our girl! 💫","One step closer to greatness! 🏆","Chef's kiss! 👌","Absolutely radiant work! ✦","Sabina strikes again! ⚡","Pure elegance under pressure! 🥂","The universe approves! 🌙"];
+const DEF_CLEAN_TASKS={Mon:["Vacuum living room","Wipe kitchen surfaces","Clean bathroom sink"],Tue:["Mop floors","Clean mirrors","Tidy bedroom"],Wed:["Deep clean oven","Wipe appliances","Change hand towels"],Thu:["Clean toilets","Dust shelves","Wipe skirting boards"],Fri:["Wash bedding","Clean fridge","Take out bins"],Sat:["Deep clean bathroom","Organise pantry","Wipe windows"],Sun:["Rest and reset","Light tidy","Prep for the week ahead"]};
+const DEF_HABITS=[{id:1,name:"Morning pages",icon:"✍️",color:"#c9a87c",days:Array(7).fill(false)},{id:2,name:"Walk 30 min",icon:"🏃",color:"#a89080",days:Array(7).fill(false)},{id:3,name:"Read",icon:"📖",color:"#7a9070",days:Array(7).fill(false)},{id:4,name:"Meditate",icon:"🧘",color:"#b098c0",days:Array(7).fill(false)},{id:5,name:"Drink 2L water",icon:"💧",color:"#7090a8",days:Array(7).fill(false)}];
+const DEF_TAGS=["Personal","Work","Fitness","Health","Creative"];
+const DEF_CLEANING=Object.fromEntries(DAYS.map(d=>[d,DEF_CLEAN_TASKS[d].map(t=>({text:t,done:false}))]));
+
+const NOW=new Date();
+const TODAY=NOW.toISOString().split("T")[0];
+const TODAY_DAY=DAYS[NOW.getDay()===0?6:NOW.getDay()-1];
+const QUOTE=QUOTES[NOW.getDate()%QUOTES.length];
+const MK=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;
+const fd=s=>{const d=new Date(s+"T00:00:00");return `${DAYS[d.getDay()===0?6:d.getDay()-1]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;};
+const dim=(y,m)=>new Date(y,m+1,0).getDate();
+const fdm=(y,m)=>{const d=new Date(y,m,1).getDay();return d===0?6:d-1;};
+
+const POMO_PRESETS=[{label:"15 min",s:900},{label:"20 min",s:1200},{label:"30 min",s:1800},{label:"1 hr",s:3600}];
+const fmtPomo=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+const POMO_R=42;
+const POMO_CIRC=2*Math.PI*POMO_R;
+
+const CSS=`
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#f4ede3;--parchment:#ebe1d4;--ivory:#faf6f0;
+  --ink:#261d12;--ink-light:#7a6252;
+  --gold:#c9a87c;--gold-deep:#a8865a;--gold-pale:#f0e4cf;
+  --sage:#7a9070;
+  --border:rgba(38,29,18,0.09);
+  --shadow:0 2px 16px rgba(38,29,18,0.07);
+  --shadow-lg:0 8px 40px rgba(38,29,18,0.13);
+  --nav-h:66px;
+}
+body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
+
+/* ── TOP NAV ── */
+.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gradient(90deg,#a8865a 0%,#c9a87c 40%,#d4b080 55%,#a8865a 100%);border-bottom:2px solid #9e7a44;box-shadow:0 4px 24px rgba(140,100,50,.22);display:flex;align-items:center;padding:0 36px;gap:28px;z-index:200;}
+.tn-brand{display:flex;flex-direction:column;gap:2px;flex-shrink:0;margin-right:10px;}
+.tn-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:rgba(38,29,18,.6);letter-spacing:.18em;}
+.tn-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);font-weight:600;letter-spacing:.02em;}
+.tn-divider{width:1px;height:28px;background:rgba(38,29,18,.18);flex-shrink:0;}
+.tn-links{display:flex;align-items:center;gap:2px;flex:1;}
+.ni{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:all .18s;color:rgba(38,29,18,.65);font-size:12.5px;border:1px solid transparent;white-space:nowrap;}
+.ni:hover{background:rgba(38,29,18,.1);color:var(--ink);}
+.ni.on{background:rgba(38,29,18,.15);color:var(--ink);border-color:rgba(38,29,18,.14);}
+.ni-label{display:inline;}
+.tn-dt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(38,29,18,.5);flex-shrink:0;white-space:nowrap;}
+
+/* ── MAIN ── */
+.main{padding:calc(var(--nav-h) + 36px) 32px 64px;min-height:100vh;position:relative;z-index:1;}
+
+/* ── DASHBOARD 3-COLUMN GRID ── */
+.dash-grid{display:grid;grid-template-columns:260px 1fr 260px;gap:18px;align-items:start;}
+.dash-col{display:flex;flex-direction:column;gap:18px;}
+
+/* ── CARDS ── */
+.card{background:var(--ivory);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow);}
+.card-titled{background:var(--ivory);border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow);}
+.ct{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;color:var(--ink);margin-bottom:4px;}
+.cs{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);margin-bottom:16px;}
+
+/* ── PROFILE CARD (left col) ── */
+.profile-card{background:var(--ivory);border:1px solid var(--gold);border-radius:16px;padding:24px;box-shadow:var(--shadow);text-align:left;}
+.ph-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--gold);letter-spacing:.14em;opacity:.9;margin-bottom:1px;line-height:1.2;}
+.ph-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--ink);line-height:1.2;margin-bottom:10px;margin-top:0;}
+.ph-title em{font-style:italic;color:var(--gold-deep);}
+.ph-sub{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--ink-light);margin-top:10px;}
+.profile-ring{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid var(--gold);box-shadow:0 4px 20px rgba(38,29,18,.14),0 0 0 5px rgba(201,168,124,.1);max-width:140px;margin:0 auto;display:block;}
+.profile-ring img{width:100%;height:100%;object-fit:cover;display:block;}
+
+/* ── STAT CARDS (right col) ── */
+.sc{background:var(--ivory);border:1px solid var(--border);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);position:relative;overflow:hidden;text-align:left;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--c1),var(--c2));}
+.sc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.sl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);margin-bottom:6px;}
+.sn{font-family:'Playfair Display',serif;font-size:30px;font-weight:600;line-height:1;}
+.ss{font-size:10px;color:var(--ink-light);margin-top:4px;}
+
+/* ── QUOTE CARD ── */
+.qc{background:var(--ink);border-radius:16px;padding:24px 28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+.qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(201,168,124,.08);line-height:1;pointer-events:none;}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#f0e8dc;line-height:1.7;margin-bottom:8px;}
+.qa{font-size:10px;color:rgba(201,168,124,.45);letter-spacing:.08em;}
+
+/* ── UPCOMING EVENTS ── */
+.ue{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--parchment);margin-bottom:6px;transition:all .18s;cursor:pointer;border-left-width:3px;}
+.ue:hover{opacity:.85;}
+.ue-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ue-name{font-size:12.5px;color:var(--ink);text-align:left;}
+.ue-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:1px;text-align:left;}
+.ue-away{font-size:9px;color:var(--ink-light);background:var(--gold-pale);padding:2px 7px;border-radius:10px;white-space:nowrap;}
+
+/* ── POMODORO TIMER ── */
+.pomo-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.pomo-presets{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.pomo-preset{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
+.pomo-preset:hover,.pomo-preset.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.pomo-svg{filter:drop-shadow(0 2px 8px rgba(201,168,124,.18));}
+.pomo-btns{display:flex;gap:8px;}
+.pomo-btn{padding:8px 16px;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;}
+.pomo-btn.start{background:var(--ink);color:#f4ede3;}
+.pomo-btn.start:hover{background:var(--gold-deep);}
+.pomo-btn.pause{background:var(--parchment);color:var(--ink);border:1px solid var(--border);}
+.pomo-btn.pause:hover{background:var(--gold-pale);}
+.pomo-btn.stop{background:transparent;color:var(--ink-light);border:1px solid var(--border);}
+.pomo-btn.stop:hover{background:#fde8e8;color:#c05050;border-color:#fde8e8;}
+
+/* ── HABITS ── */
+.hr{display:flex;align-items:center;padding:4px 6px;border-radius:10px;transition:background .15s;gap:4px;}
+.hr:hover{background:rgba(201,168,124,.06);}
+.hi{display:flex;align-items:center;gap:9px;width:165px;flex-shrink:0;}
+.hib{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;cursor:pointer;transition:transform .15s;}
+.hib:hover{transform:scale(1.15);}
+.hn{font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;cursor:pointer;}
+.hd{display:flex;gap:5px;flex:1;}
+.hday{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.hday:hover{border-color:var(--gold);}
+.hday.ck{border-color:transparent;color:white;}
+.hday.ck::after{content:"✓";font-size:12px;}
+.hst{width:36px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--ink-light);font-style:italic;flex-shrink:0;}
+.ha{display:flex;gap:2px;opacity:0;transition:opacity .15s;}
+.hr:hover .ha{opacity:1;}
+.dh{display:flex;align-items:center;margin-bottom:6px;}
+.dsp{width:165px;flex-shrink:0;}
+.dls{display:flex;gap:5px;}
+.dl{width:32px;text-align:center;font-size:9px;color:var(--ink-light);}
+.ip-wrap{position:relative;display:inline-block;}
+.ip{position:absolute;top:calc(100% + 8px);left:0;z-index:600;background:var(--ivory);border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:repeat(6,1fr);gap:5px;width:228px;}
+.io{width:32px;height:32px;border-radius:7px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.io:hover{background:var(--gold-pale);border-color:var(--gold);}
+.io.sel{background:var(--gold-pale);border-color:var(--gold-deep);}
+.ii{font-size:12.5px;border:none;border-bottom:1.5px solid var(--gold);background:transparent;color:var(--ink);outline:none;width:110px;font-family:'DM Sans',sans-serif;padding:1px 2px;}
+.gs{margin-top:28px;padding-top:22px;border-top:1px solid var(--border);}
+.gt{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);margin-bottom:16px;}
+.bc{display:flex;align-items:flex-end;gap:8px;height:110px;padding:0 4px;}
+.bcol{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:height .45s ease;min-height:3px;}
+.bl{font-size:9px;color:var(--ink-light);}
+.bv{font-family:'Playfair Display',serif;font-size:11px;color:var(--ink-light);}
+.ar{margin-top:18px;padding-top:18px;border-top:1px solid var(--border);}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.inp{flex:1;min-width:120px;padding:10px 14px;border:1px solid var(--border);border-radius:9px;background:var(--parchment);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .2s;}
+.inp:focus{border-color:var(--gold);}
+.inp::placeholder{color:rgba(122,98,82,.4);}
+.sel{padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--parchment);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;cursor:pointer;}
+.bp{padding:10px 18px;background:var(--ink);color:#f4ede3;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.bp:hover{background:var(--gold-deep);}
+.sb2{background:none;border:none;cursor:pointer;padding:3px 7px;border-radius:6px;font-size:12px;transition:all .15s;color:var(--ink-light);line-height:1;}
+.sb2:hover{background:var(--gold-pale);color:var(--gold-deep);}
+.sb2.d:hover{background:#fde8e8;color:#c05050;}
+.tb{display:flex;align-items:center;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
+.pb{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--ink-light);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.pb:hover,.pb.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.pb.ton{background:var(--gold-pale);color:var(--gold-deep);border-color:var(--gold);}
+.tl{display:flex;flex-direction:column;gap:7px;}
+.ti{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:11px;border:1px solid var(--border);background:var(--parchment);transition:all .18s;}
+.ti:hover{border-color:var(--gold);}
+.ti.dn{opacity:.4;}
+.tc{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(122,98,82,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;}
+.ti.dn .tc{background:var(--sage);border-color:var(--sage);}
+.ti.dn .tc::after{content:"✓";font-size:11px;color:white;}
+.tb2{flex:1;min-width:0;}
+.tt{font-size:13.5px;color:var(--ink);font-weight:300;cursor:pointer;text-align:left;}
+.ti.dn .tt{text-decoration:line-through;}
+.tm{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;}
+.tdl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
+.tg{padding:1px 8px;border-radius:10px;font-size:10px;font-weight:500;background:var(--gold-pale);color:var(--gold-deep);border:1px solid rgba(201,168,124,.3);}
+.tg.Work{background:#dde8f0;color:#3a6080;}
+.tg.Fitness{background:#ddf0e4;color:#3a6a4a;}
+.tg.Health{background:#f0dde8;color:#804060;}
+.tg.Creative{background:#f0ead8;color:#806030;}
+.td{opacity:0;background:none;border:none;color:var(--ink-light);cursor:pointer;font-size:17px;padding:0 3px;transition:all .15s;flex-shrink:0;}
+.ti:hover .td{opacity:1;}
+.td:hover{color:#c05050;}
+.hg{margin-bottom:10px;}
+.ht{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--parchment);border:1px solid var(--border);border-radius:10px;cursor:pointer;}
+.ht:hover{background:var(--gold-pale);}
+.hl{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);}
+.hc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);}
+.hav{font-size:10px;color:var(--ink-light);transition:transform .2s;}
+.hav.op{transform:rotate(180deg);}
+.his{padding:8px 0 0;display:flex;flex-direction:column;gap:6px;}
+.tr{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+.tch{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:15px;font-size:11px;font-weight:500;background:var(--gold-pale);color:var(--gold-deep);border:1px solid rgba(201,168,124,.3);}
+.tcd{background:none;border:none;cursor:pointer;color:var(--ink-light);font-size:13px;line-height:1;padding:0;}
+.tcd:hover{color:#c05050;}
+.gmh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.gml{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);}
+.mnb{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
+.mnb:hover{background:var(--gold-pale);border-color:var(--gold);}
+.mnb:disabled{opacity:.3;cursor:not-allowed;}
+.gg{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.gc{background:var(--ivory);border:1px solid var(--border);border-radius:14px;padding:22px;position:relative;overflow:hidden;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;}
+.gc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.gac{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.gct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.gcat{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
+.gca{display:flex;gap:2px;opacity:0;transition:opacity .15s;}
+.gc:hover .gca{opacity:1;}
+.gtit{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);margin-bottom:14px;line-height:1.35;}
+.pb2{height:5px;background:var(--parchment);border-radius:10px;margin-bottom:7px;overflow:hidden;}
+.pf{height:100%;border-radius:10px;transition:width .5s ease;}
+.pr{display:flex;justify-content:space-between;margin-bottom:14px;}
+.pp{font-family:'Playfair Display',serif;font-size:12px;color:var(--ink-light);}
+.gd{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
+.ms{display:flex;flex-direction:column;gap:5px;}
+.mi{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-light);cursor:pointer;padding:2px 0;}
+.md2{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .2s;}
+.mi.dm .md2{background:var(--sage);}
+.mi.dm span{text-decoration:line-through;opacity:.5;}
+.gadd{background:transparent;border:1.5px dashed rgba(38,29,18,.12);border-radius:14px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--ink-light);gap:6px;min-height:180px;}
+.gadd:hover{border-color:var(--gold);color:var(--gold-deep);background:rgba(201,168,124,.04);}
+.gf{background:var(--ivory);border:1.5px solid var(--gold);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:11px;box-shadow:var(--shadow-lg);}
+.gft{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);}
+.fr{display:flex;gap:9px;}
+.fg{display:flex;flex-direction:column;flex:1;gap:4px;}
+.fl{font-size:11px;color:var(--ink-light);}
+.ri{width:100%;accent-color:var(--gold-deep);cursor:pointer;}
+.fbr{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+.bc2{padding:8px 15px;background:transparent;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;}
+.bs{padding:8px 18px;background:var(--ink);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:#f4ede3;cursor:pointer;}
+.bs:hover{background:var(--gold-deep);}
+.cg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.cd{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);}
+.cd.td2{border-color:var(--gold);background:var(--gold-pale);}
+.cdn{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:6px;text-align:left;}
+.tdb{font-size:9px;padding:2px 7px;background:var(--gold);color:white;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:500;}
+.ctk{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.cck{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;cursor:pointer;}
+.ctk.dc .cck{background:var(--sage);border-color:var(--sage);}
+.ctk.dc .cck::after{content:"✓";font-size:9px;color:white;}
+.ctxt{font-size:12px;color:var(--ink-light);flex:1;text-align:left;}
+.ctk.dc .ctxt{text-decoration:line-through;opacity:.5;}
+.cdel{opacity:0;background:none;border:none;cursor:pointer;color:var(--ink-light);font-size:13px;padding:0 2px;}
+.ctk:hover .cdel{opacity:1;}
+.cdel:hover{color:#c05050;}
+.car{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.cai{flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:7px;background:var(--parchment);font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink);outline:none;}
+.cai:focus{border-color:var(--gold);}
+.cab{padding:6px 10px;background:var(--ink);color:#f4ede3;border:none;border-radius:7px;font-size:11px;cursor:pointer;}
+.cab:hover{background:var(--gold-deep);}
+.cah{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.caml{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);}
+.cnb{padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
+.cnb:hover{background:var(--gold-pale);border-color:var(--gold);}
+.cagd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--border);border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.cadh{background:var(--parchment);padding:10px 0;text-align:center;font-size:10px;letter-spacing:.1em;color:var(--ink-light);font-weight:500;text-transform:uppercase;}
+.cac{background:var(--ivory);height:95px;padding:8px;cursor:pointer;transition:background .15s;overflow:hidden;}
+.cac:hover{background:var(--gold-pale);}
+.cac.om{background:#f7f2ec;opacity:.5;}
+.cac.tc2{background:var(--gold-pale);}
+.dn2{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink-light);margin-bottom:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.cac.tc2 .dn2{background:var(--gold);color:white;border-radius:50%;}
+.cep{font-size:10px;padding:2px 6px;border-radius:5px;color:white;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;text-align:left;}
+.cep:hover{opacity:.8;}
+.cm{font-size:10px;color:var(--ink-light);font-family:'Cormorant Garamond',serif;font-style:italic;}
+.mo{position:fixed;inset:0;background:rgba(38,29,18,.45);z-index:800;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mod{background:var(--ivory);border-radius:18px;padding:32px;width:100%;max-width:460px;box-shadow:var(--shadow-lg);position:relative;}
+.mdt{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:20px;}
+.mcl{position:absolute;top:18px;right:20px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-light);line-height:1;}
+.mcl:hover{color:#c05050;}
+.mf{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.mlb{font-size:11px;color:var(--ink-light);letter-spacing:.05em;}
+.mi2{padding:10px 14px;border:1px solid var(--border);border-radius:9px;background:var(--parchment);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;}
+.mi2:focus{border-color:var(--gold);}
+.cr{display:flex;gap:8px;flex-wrap:wrap;}
+.cs2{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s;}
+.cs2:hover{transform:scale(1.15);}
+.cs2.sel{border-color:var(--ink);}
+.mft{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
+.pt{position:fixed;bottom:30px;right:30px;background:var(--ink);color:#f0e8dc;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;padding:14px 24px;border-radius:12px;box-shadow:var(--shadow-lg);border-left:3px solid var(--gold);z-index:999;animation:su .35s ease,fo .4s ease 2.6s forwards;pointer-events:none;}
+@keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fo{to{opacity:0;transform:translateY(-8px)}}
+.emp{text-align:center;padding:24px 0;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-light);font-size:13px;}
+.adrow{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.adrow input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold-deep);cursor:pointer;}
+.adrow label{font-size:11px;color:var(--ink-light);letter-spacing:.05em;cursor:pointer;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,124,.3);border-radius:10px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){.dash-grid{grid-template-columns:210px 1fr 210px;}}
+@media(max-width:960px){
+  .dash-grid{grid-template-columns:1fr 1fr;gap:14px;}
+  .dash-col:nth-child(2){grid-column:1/-1;}
+  .main{padding:calc(var(--nav-h) + 24px) 20px 48px;}
+  .topnav{padding:0 16px;gap:10px;}
+  .tn-dt{display:none;}
+  .gg{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:700px){
+  .dash-grid{grid-template-columns:1fr;gap:12px;}
+  .dash-col:nth-child(2){grid-column:1;}
+  .main{padding:calc(var(--nav-h) + 14px) 12px 48px;}
+  .topnav{padding:0 10px;gap:4px;}
+  .tn-brand,.tn-divider{display:none;}
+  .tn-links{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .tn-links::-webkit-scrollbar{display:none;}
+  .ni-label{display:none;}
+  .ni{padding:9px 12px;}
+  .cg{grid-template-columns:1fr 1fr;}
+  .gg{grid-template-columns:1fr;}
+}
+@media(max-width:480px){.cg{grid-template-columns:1fr;}.gg{grid-template-columns:1fr;}}
+`;
+
+export default function App() {
+  const [page,setPage]=useState("dashboard");
+  const [habits,setHabits]=useLS("sab_habits",DEF_HABITS);
+  const [tags,setTags]=useLS("sab_tags",DEF_TAGS);
+  const [todos,setTodos]=useLS("sab_todos",[]);
+  const [goals,setGoals]=useLS("sab_goals",{});
+  const [cleaning,setCleaning]=useLS("sab_clean",DEF_CLEANING);
+  const [events,setEvents]=useLS("sab_events",[]);
+  const [newHabit,setNewHabit]=useState("");
+  const [editHabit,setEditHabit]=useState(null);
+  const [editHName,setEditHName]=useState("");
+  const [iconFor,setIconFor]=useState(null);
+  const [newTodo,setNewTodo]=useState("");
+  const [newTodoTag,setNewTodoTag]=useState("Personal");
+  const [tFilter,setTFilter]=useState("all");
+  const [tagFilter,setTagFilter]=useState("all");
+  const [showHist,setShowHist]=useState({});
+  const [newTag,setNewTag]=useState("");
+  const [vMonth,setVMonth]=useState(MK);
+  const [goalForm,setGoalForm]=useState(null);
+  const [gDraft,setGDraft]=useState({title:"",category:"",deadline:"",progress:0,milestones:["","","",""]});
+  const [cInputs,setCInputs]=useState(Object.fromEntries(DAYS.map(d=>[d,""])));
+  const [editC,setEditC]=useState(null);
+  const [editCTxt,setEditCTxt]=useState("");
+  const [calYear,setCalYear]=useState(NOW.getFullYear());
+  const [calMonth,setCalMonth]=useState(NOW.getMonth());
+  const [evModal,setEvModal]=useState(null);
+  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",notes:"",color:"#c9a87c",allDay:false});
+  const [praise,setPraise]=useState(null);
+
+  // Pomodoro timer state
+  const [pomoDur,setPomoDur]=useState(1500);
+  const [pomoLeft,setPomoLeft]=useState(1500);
+  const [pomoActive,setPomoActive]=useState(false);
+  const pomoInterval=useRef(null);
+
+  const pt=useRef(null);
+  const ac=useRef(null);
+
+  useEffect(()=>{const h=()=>setIconFor(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
+  useEffect(()=>()=>clearInterval(pomoInterval.current),[]);
+
+  // Pomodoro controls
+  const pomoStart=()=>{
+    if(pomoActive||pomoLeft===0)return;
+    setPomoActive(true);
+    pomoInterval.current=setInterval(()=>{
+      setPomoLeft(l=>{
+        if(l<=1){clearInterval(pomoInterval.current);setPomoActive(false);return 0;}
+        return l-1;
+      });
+    },1000);
+  };
+  const pomoPause=()=>{clearInterval(pomoInterval.current);setPomoActive(false);};
+  const pomoStop=()=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoLeft(pomoDur);};
+  const pomoSelect=s=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoDur(s);setPomoLeft(s);};
+
+  const pomoProg=pomoDur>0?pomoLeft/pomoDur:0;
+  const pomoDash=POMO_CIRC*pomoProg;
+  const pomoColor=pomoProg>0.5?"#c9a87c":pomoProg>0.25?"#c8887a":"#c05050";
+
+  const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
+  const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
+
+  const toggleDay=(id,i)=>setHabits(h=>h.map(hab=>hab.id===id?{...hab,days:hab.days.map((d,j)=>j===i?!d:d)}:hab));
+  const delHabit=id=>setHabits(h=>h.filter(hab=>hab.id!==id));
+  const addHabit=()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HICONS[idx],color:HCOLORS[idx],days:Array(7).fill(false)}]);setNewHabit("");};
+  const startEH=h=>{setEditHabit(h.id);setEditHName(h.name);};
+  const saveEH=id=>{if(editHName.trim())setHabits(h=>h.map(hab=>hab.id===id?{...hab,name:editHName}:hab));setEditHabit(null);};
+  const setIcon=(id,icon)=>{setHabits(h=>h.map(hab=>hab.id===id?{...hab,icon}:hab));setIconFor(null);};
+  const streak=days=>days.filter(Boolean).length;
+
+  const addTodo=()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TODAY}]);setNewTodo("");};
+  const toggleTodo=id=>setTodos(t=>t.map(td=>{if(td.id!==id)return td;if(!td.done)shout();return{...td,done:!td.done};}));
+  const delTodo=id=>setTodos(t=>t.filter(td=>td.id!==id));
+  const addTag=()=>{if(!newTag.trim()||tags.includes(newTag.trim()))return;setTags(t=>[...t,newTag.trim()]);setNewTag("");};
+  const delTag=tag=>{setTags(t=>t.filter(x=>x!==tag));if(tagFilter===tag)setTagFilter("all");};
+
+  const todayTodos=todos.filter(t=>t.date===TODAY);
+  const filtTodos=todayTodos.filter(t=>{const s=tFilter==="all"||(tFilter==="active"?!t.done:t.done);const tg=tagFilter==="all"||t.tag===tagFilter;return s&&tg;});
+  const pastDates=[...new Set(todos.filter(t=>t.date!==TODAY).map(t=>t.date))].sort((a,b)=>b.localeCompare(a));
+
+  const vmDate=new Date(vMonth+"-02");
+  const vmLabel=`${MONTHS[vmDate.getMonth()]} ${vmDate.getFullYear()}`;
+  const mGoals=goals[vMonth]||[];
+  const pmG=()=>{const d=new Date(vMonth+"-02");d.setMonth(d.getMonth()-1);setVMonth(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`);};
+  const nmG=()=>{const d=new Date(vMonth+"-02");d.setMonth(d.getMonth()+1);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;if(k<=MK)setVMonth(k);};
+  const openAddG=()=>{setGDraft({title:"",category:"",deadline:"",progress:0,milestones:["","","",""]});setGoalForm({mode:"add"});};
+  const openEditG=g=>{setGDraft({title:g.title,category:g.category,deadline:g.deadline,progress:g.progress,milestones:[...g.milestones.map(m=>m.text),...Array(4)].slice(0,4).map(m=>m||"")});setGoalForm({mode:"edit",id:g.id});};
+  const saveGoal=()=>{if(!gDraft.title.trim())return;const ms=gDraft.milestones.filter(m=>m.trim()).map(m=>({text:m,done:false}));if(goalForm.mode==="add"){const ex=goals[vMonth]||[];setGoals(p=>({...p,[vMonth]:[...ex,{id:Date.now(),...gDraft,progress:Number(gDraft.progress),milestones:ms,color:HCOLORS[ex.length%HCOLORS.length]}]}));}else{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===goalForm.id?{...g,...gDraft,progress:Number(gDraft.progress),milestones:ms}:g)}));}setGoalForm(null);};
+  const delGoal=id=>setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).filter(g=>g.id!==id)}));
+  const toggleMs=(gid,mi)=>setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===gid?{...g,milestones:g.milestones.map((m,i)=>i===mi?{...m,done:!m.done}:m)}:g)}));
+
+  const toggleClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,done:!t.done}:t)}));
+  const delClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].filter((_,i)=>i!==idx)}));
+  const addClean=day=>{if(!cInputs[day].trim())return;setCleaning(c=>({...c,[day]:[...c[day],{text:cInputs[day],done:false}]}));setCInputs(ci=>({...ci,[day]:""}));};
+  const startEC=(day,idx,text)=>{setEditC({day,idx});setEditCTxt(text);};
+  const saveEC=()=>{if(!editC)return;const{day,idx}=editC;if(editCTxt.trim())setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,text:editCTxt}:t)}));setEditC(null);};
+
+  const calDays=dim(calYear,calMonth);
+  const calFirst=fdm(calYear,calMonth);
+  const calLabel=`${MONTHS[calMonth]} ${calYear}`;
+  const prevCal=()=>{if(calMonth===0){setCalMonth(11);setCalYear(y=>y-1);}else setCalMonth(m=>m-1);};
+  const nextCal=()=>{if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1);};
+  const evOn=ds=>events.filter(e=>e.date===ds);
+  const openAddEv=ds=>{setEvDraft({title:"",date:ds,time:"",notes:"",color:"#c9a87c",allDay:false});setEvModal({mode:"add"});};
+  const openEditEv=(e,ev)=>{ev.stopPropagation();setEvDraft({title:e.title,date:e.date,time:e.time||"",notes:e.notes||"",color:e.color||"#c9a87c",allDay:e.allDay||false});setEvModal({mode:"edit",id:e.id});};
+  const saveEv=()=>{if(!evDraft.title.trim())return;if(evModal.mode==="add")setEvents(ev=>[...ev,{id:Date.now(),...evDraft}]);else setEvents(ev=>ev.map(e=>e.id===evModal.id?{...e,...evDraft}:e));setEvModal(null);};
+  const delEv=id=>{setEvents(ev=>ev.filter(e=>e.id!==id));setEvModal(null);};
+
+  // Dashboard computed values
+  const habitsToday=habits.filter(h=>h.days[0]).length;
+  const todosDone=todos.filter(t=>t.done&&t.date===TODAY).length;
+  const allGoals=Object.values(goals).flat();
+  const avgProg=allGoals.length?Math.round(allGoals.reduce((a,g)=>a+g.progress,0)/allGoals.length):0;
+  const upcoming=events.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(e=>({...e,away:Math.round((new Date(e.date+"T00:00:00")-new Date(TODAY+"T00:00:00"))/864e5)}));
+  const graphData=DAYS.map((d,i)=>({day:d,count:habits.filter(h=>h.days[i]).length}));
+  const maxBar=Math.max(...graphData.map(d=>d.count),1);
+
+  // Daily progress
+  const todayDayIndex=DAYS.indexOf(TODAY_DAY);
+  const habitsDoneToday=habits.filter(h=>h.days[todayDayIndex]).length;
+  const habitsTotal=habits.length;
+  const todosDoneToday=todos.filter(t=>t.done&&t.date===TODAY).length;
+  const todosTotalToday=todos.filter(t=>t.date===TODAY).length;
+  const cleaningTodayArr=cleaning[TODAY_DAY]||[];
+  const cleaningDoneToday=cleaningTodayArr.filter(t=>t.done).length;
+  const cleaningTotalToday=cleaningTodayArr.length;
+  const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday;
+  const dayDone=habitsDoneToday+todosDoneToday+cleaningDoneToday;
+  const dayPct=dayTotal>0?Math.round((dayDone/dayTotal)*100):0;
+
+  const NAV=[
+    {id:"dashboard",icon:"🏠",label:"Dashboard"},
+    {id:"habits",icon:"🌿",label:"Habits"},
+    {id:"todos",icon:"✏️",label:"To-Do"},
+    {id:"goals",icon:"🎯",label:"Goals"},
+    {id:"calendar",icon:"📅",label:"Calendar"},
+    {id:"cleaning",icon:"🧹",label:"Cleaning"},
+  ];
+
+  // ── PASSWORD GATE ──
+  const [unlocked,setUnlocked]=useState(()=>sessionStorage.getItem("sab_auth")==="1");
+  const [pwInput,setPwInput]=useState("");
+  const [pwErr,setPwErr]=useState(false);
+  const checkPw=()=>{
+    if(pwInput===APP_PASSWORD){sessionStorage.setItem("sab_auth","1");setUnlocked(true);}
+    else{setPwErr(true);setPwInput("");setTimeout(()=>setPwErr(false),1800);}
+  };
+
+  if(!unlocked) return (
+    <>
+      <style>{CSS}</style>
+      <svg viewBox="0 0 200 380" style={{position:"fixed",bottom:0,right:"5vw",height:"72vh",pointerEvents:"none",zIndex:0,fill:"#261d12",opacity:0.045}} aria-hidden="true">
+        <polygon points="99,5 101,5 102,26 98,26"/><polygon points="86,54 114,54 102,26 98,26"/><rect x="83" y="51" width="34" height="6"/><polygon points="72,116 128,116 114,57 86,57"/><rect x="70" y="113" width="60" height="6"/><polygon points="52,174 148,174 128,119 72,119"/><rect x="49" y="171" width="102" height="7"/><polygon points="52,178 80,178 68,380 5,380"/><polygon points="120,178 148,178 195,380 132,380"/>
+      </svg>
+      <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--cream)",padding:24}}>
+        <div style={{background:"var(--ivory)",border:"1px solid var(--gold)",borderRadius:20,padding:"40px 44px",boxShadow:"0 8px 40px rgba(38,29,18,.13)",textAlign:"center",maxWidth:360,width:"100%"}}>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold)",letterSpacing:".18em",marginBottom:6}}>Welcome back</div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:28,fontWeight:400,color:"var(--ink)",marginBottom:6}}>Bonjour, <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Sabina</em></div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginBottom:28}}>Your personal space awaits</div>
+          <input
+            type="password"
+            placeholder="Enter your password"
+            value={pwInput}
+            onChange={e=>{setPwInput(e.target.value);setPwErr(false);}}
+            onKeyDown={e=>e.key==="Enter"&&checkPw()}
+            autoFocus
+            style={{width:"100%",padding:"12px 16px",border:`1.5px solid ${pwErr?"#c05050":"var(--border)"}`,borderRadius:10,background:"var(--parchment)",fontFamily:"'DM Sans',sans-serif",fontSize:14,color:"var(--ink)",outline:"none",marginBottom:12,transition:"border-color .2s",textAlign:"center",letterSpacing:".1em"}}
+          />
+          {pwErr&&<div style={{fontSize:11,color:"#c05050",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",marginBottom:10}}>Incorrect password — try again</div>}
+          <button onClick={checkPw} style={{width:"100%",padding:"12px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:10,fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",transition:"background .2s"}}>
+            Enter ✦
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      <style>{CSS}</style>
+      {praise&&<div className="pt">{praise}</div>}
+
+      {/* Eiffel Tower background */}
+      <svg viewBox="0 0 200 380" style={{position:"fixed",bottom:0,right:"5vw",height:"72vh",pointerEvents:"none",zIndex:0,fill:"#261d12",opacity:0.055}} aria-hidden="true">
+        <polygon points="99,5 101,5 102,26 98,26"/>
+        <polygon points="86,54 114,54 102,26 98,26"/>
+        <rect x="83" y="51" width="34" height="6"/>
+        <polygon points="72,116 128,116 114,57 86,57"/>
+        <rect x="70" y="113" width="60" height="6"/>
+        <polygon points="52,174 148,174 128,119 72,119"/>
+        <rect x="49" y="171" width="102" height="7"/>
+        <polygon points="52,178 80,178 68,380 5,380"/>
+        <polygon points="120,178 148,178 195,380 132,380"/>
+      </svg>
+
+      {/* Event modal */}
+      {evModal&&(
+        <div className="mo" onClick={()=>setEvModal(null)}>
+          <div className="mod" onClick={e=>e.stopPropagation()}>
+            <button className="mcl" onClick={()=>setEvModal(null)}>×</button>
+            <div className="mdt">{evModal.mode==="add"?"New Event":"Edit Event"}</div>
+            <div className="mf"><div className="mlb">TITLE</div><input className="mi2" placeholder="What's happening?" value={evDraft.title} onChange={e=>setEvDraft(d=>({...d,title:e.target.value}))}/></div>
+            <div className="fr">
+              <div className="mf" style={{flex:1}}><div className="mlb">DATE</div><input className="mi2" type="date" value={evDraft.date} onChange={e=>setEvDraft(d=>({...d,date:e.target.value}))}/></div>
+              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">TIME</div><input className="mi2" type="time" value={evDraft.time} onChange={e=>setEvDraft(d=>({...d,time:e.target.value}))}/></div>}
+            </div>
+            <div className="adrow">
+              <input type="checkbox" id="evAllDay" checked={evDraft.allDay} onChange={e=>setEvDraft(d=>({...d,allDay:e.target.checked,time:e.target.checked?"":d.time}))}/>
+              <label htmlFor="evAllDay">ALL DAY EVENT</label>
+            </div>
+            <div className="mf"><div className="mlb">NOTES</div><input className="mi2" placeholder="Details…" value={evDraft.notes} onChange={e=>setEvDraft(d=>({...d,notes:e.target.value}))}/></div>
+            <div className="mf"><div className="mlb">COLOUR</div><div className="cr">{ECOLORS.map(c=><div key={c} className={`cs2 ${evDraft.color===c?"sel":""}`} style={{background:c}} onClick={()=>setEvDraft(d=>({...d,color:c}))}/>)}</div></div>
+            <div className="mft">
+              {evModal.mode==="edit"?<button className="bc2" style={{color:"#c05050",borderColor:"#fde8e8"}} onClick={()=>delEv(evModal.id)}>Delete</button>:<div/>}
+              <div style={{display:"flex",gap:8}}><button className="bc2" onClick={()=>setEvModal(null)}>Cancel</button><button className="bs" onClick={saveEv}>Save ✦</button></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Top nav */}
+      <nav className="topnav">
+        <div className="tn-brand">
+          <span className="tn-eye">Welcome back</span>
+          <span className="tn-name">Sabina ✦</span>
+        </div>
+        <div className="tn-divider"/>
+        <div className="tn-links">
+          {NAV.map(n=>(
+            <div key={n.id} className={`ni ${page===n.id?"on":""}`} onClick={()=>setPage(n.id)}>
+              <span style={{fontSize:15,flexShrink:0}}>{n.icon}</span>
+              <span className="ni-label">{n.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="tn-dt">{NOW.getDate()} {MONTHS[NOW.getMonth()]} {NOW.getFullYear()}</div>
+      </nav>
+
+      <main className="main">
+
+        {/* ── DASHBOARD ── */}
+        {page==="dashboard"&&(
+          <div className="dash-grid">
+
+            {/* ── LEFT COLUMN ── */}
+            <div className="dash-col">
+
+              {/* Profile card */}
+              <div className="profile-card">
+                <div className="ph-eye">Your personal space</div>
+                <h1 className="ph-title">Bonjour, <em>Sabina</em></h1>
+                <div style={{display:"flex",justifyContent:"center",margin:"12px 0"}}>
+                  <div className="profile-ring">
+                    <img src={sabinaPhoto} alt="Sabina"/>
+                  </div>
+                </div>
+                <p className="ph-sub">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p>
+              </div>
+
+              {/* Pomodoro timer */}
+              <div className="card">
+                <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
+                <div className="cs" style={{textAlign:"center"}}>Pomodoro</div>
+                <div className="pomo-wrap">
+                  <div className="pomo-presets">
+                    {POMO_PRESETS.map(p=>(
+                      <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
+                    ))}
+                  </div>
+                  <svg width="140" height="140" viewBox="0 0 110 110" className="pomo-svg">
+                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
+                    <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+                    <text x="55" y="65" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="9" fontStyle="italic" fill="var(--ink-light)">{pomoActive?"focus":"ready"}</text>
+                  </svg>
+                  <div className="pomo-btns">
+                    {!pomoActive
+                      ? <button className="pomo-btn start" onClick={pomoStart}>{pomoLeft<pomoDur&&pomoLeft>0?"Resume":"Start"}</button>
+                      : <button className="pomo-btn pause" onClick={pomoPause}>Pause</button>
+                    }
+                    <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>{/* end left col */}
+
+            {/* ── MIDDLE COLUMN ── */}
+            <div className="dash-col">
+
+              {/* Progress tracker */}
+              <div className="card">
+                <div className="ct" style={{textAlign:"left"}}>Today's Progress</div>
+                <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Cleaning</div>
+                <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
+                    {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
+                  </div>
+                  <div style={{flex:1}}>
+                    <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
+                      <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:10,transition:"width .6s ease"}}/>
+                    </div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"left"}}>{dayDone} of {dayTotal} tasks completed</div>
+                  </div>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:9}}>
+                  {[
+                    {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
+                    {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+                    {label:"Cleaning",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+                  ].map(row=>(
+                    <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
+                      <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+                      <div style={{fontSize:12,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
+                      <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
+                        <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
+              </div>
+
+              {/* Today's priorities */}
+              <div className="card">
+                <div className="ct">Today's priorities</div>
+                <div className="cs">Active tasks for today</div>
+                <div className="tl">
+                  {todos.filter(t=>!t.done&&t.date===TODAY).slice(0,5).map(todo=>(
+                    <div key={todo.id} className="ti">
+                      <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                      <div className="tb2">
+                        <div className="tt">{todo.text}</div>
+                        <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                      </div>
+                    </div>
+                  ))}
+                  {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
+                </div>
+                <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid var(--border)"}}>
+                  <div className="row">
+                    <input className="inp" placeholder="Add task…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/>
+                    <select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select>
+                    <button className="bp" onClick={addTodo}>+ Add</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 stat cards in 2×2 grid */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                <div className="sc" style={{"--c1":"#c9a87c","--c2":"#a8865a"}} onClick={()=>setPage("habits")}>
+                  <div className="sl">Habits today</div>
+                  <div className="sn" style={{color:"#c9a87c",fontSize:26}}>{habitsToday}<span style={{fontSize:13,color:"var(--ink-light)"}}>/{habits.length}</span></div>
+                  <div className="ss">Habit Tracker →</div>
+                </div>
+                <div className="sc" style={{"--c1":"#7a9070","--c2":"#5a7050"}} onClick={()=>setPage("todos")}>
+                  <div className="sl">Tasks done</div>
+                  <div className="sn" style={{color:"#7a9070",fontSize:26}}>{todosDone}<span style={{fontSize:13,color:"var(--ink-light)"}}>/{todayTodos.length}</span></div>
+                  <div className="ss">To-Do Lists →</div>
+                </div>
+                <div className="sc" style={{"--c1":"#b098c0","--c2":"#907098"}} onClick={()=>setPage("goals")}>
+                  <div className="sl">Avg goal</div>
+                  <div className="sn" style={{color:"#b098c0",fontSize:26}}>{avgProg}<span style={{fontSize:13,color:"var(--ink-light)"}}>%</span></div>
+                  <div className="ss">Monthly Goals →</div>
+                </div>
+                <div className="sc" style={{"--c1":"#7090a8","--c2":"#507090"}} onClick={()=>setPage("calendar")}>
+                  <div className="sl">Events ahead</div>
+                  <div className="sn" style={{color:"#7090a8",fontSize:26}}>{upcoming.length}</div>
+                  <div className="ss">Calendar →</div>
+                </div>
+              </div>
+
+            </div>{/* end middle col */}
+
+            {/* ── RIGHT COLUMN ── */}
+            <div className="dash-col">
+
+              {/* Quote */}
+              <div className="qc">
+                <div className="qt">"{QUOTE.text}"</div>
+                <div className="qa">— {QUOTE.attr} · changes daily</div>
+              </div>
+
+              {/* Upcoming events */}
+              <div className="card">
+                <div className="ct">Upcoming Events</div>
+                <div className="cs">Next 3 dates</div>
+                {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
+                {upcoming.map(e=>(
+                  <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
+                    <div className="ue-dot" style={{background:e.color}}/>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div className="ue-name">{e.title}</div>
+                      <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
+                    </div>
+                    <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Today's cleaning */}
+              <div className="card">
+                <div className="ct">Today's Cleaning</div>
+                <div className="cs">Tasks for {TODAY_DAY}</div>
+                <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                  {cleaningTodayArr.map((task,i)=>(
+                    <div key={i} className={`ctk ${task.done?"dc":""}`}>
+                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
+                      <span className="ctxt">{task.text}</span>
+                    </div>
+                  ))}
+                  {cleaningTodayArr.length===0&&<div className="emp">No cleaning tasks today ✦</div>}
+                </div>
+              </div>
+
+            </div>{/* end right col */}
+
+          </div>
+        )}
+
+        {/* ── HABITS ── */}
+        {page==="habits"&&<>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>This week</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Habit <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Tracker</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click an icon to change it · click a name to rename · hover for actions</p></div>
+          <div className="card"><div className="ct">Weekly check-in</div><div className="cs">Tick each day you complete a habit</div>
+            <div className="dh"><div className="dsp"/><div className="dls">{DAYS.map((d,i)=><div key={i} className="dl">{d}</div>)}</div></div>
+            <div style={{display:"flex",flexDirection:"column",gap:2}}>
+              {habits.map(hab=>(
+                <div key={hab.id} className="hr">
+                  <div className="hi">
+                    <div className="ip-wrap" onClick={e=>e.stopPropagation()}>
+                      <div className="hib" style={{background:hab.color+"22"}} onClick={()=>setIconFor(iconFor===hab.id?null:hab.id)}>{hab.icon}</div>
+                      {iconFor===hab.id&&<div className="ip">{HICONS.map(ico=><div key={ico} className={`io ${hab.icon===ico?"sel":""}`} onClick={()=>setIcon(hab.id,ico)}>{ico}</div>)}</div>}
+                    </div>
+                    {editHabit===hab.id?<input className="ii" autoFocus value={editHName} onChange={e=>setEditHName(e.target.value)} onBlur={()=>saveEH(hab.id)} onKeyDown={e=>e.key==="Enter"&&saveEH(hab.id)}/>:<span className="hn" onClick={()=>startEH(hab)}>{hab.name}</span>}
+                  </div>
+                  <div className="hd">{hab.days.map((ck,i)=><div key={i} className={`hday ${ck?"ck":""}`} style={ck?{background:hab.color}:{}} onClick={()=>toggleDay(hab.id,i)}/>)}</div>
+                  <div className="hst">{streak(hab.days)}/7</div>
+                  <div className="ha"><button className="sb2" onClick={()=>startEH(hab)}>✏️</button><button className="sb2 d" onClick={()=>delHabit(hab.id)}>×</button></div>
+                </div>
+              ))}
+              {habits.length===0&&<div className="emp">No habits yet ✦</div>}
+            </div>
+            <div className="ar"><div className="row"><input className="inp" placeholder="New habit…" value={newHabit} onChange={e=>setNewHabit(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addHabit()}/><button className="bp" onClick={addHabit}>+ Add habit</button></div></div>
+            <div className="gs"><div className="gt">Habits completed per day this week</div>
+              <div className="bc">{graphData.map((d,i)=><div key={i} className="bcol"><div className="bv">{d.count>0?d.count:""}</div><div className="bar" style={{height:`${(d.count/maxBar)*90}px`,background:d.count>0?"linear-gradient(to top,#a8865a,#c9a87c)":"var(--parchment)"}}/><div className="bl">{d.day}</div></div>)}</div>
+            </div>
+          </div>
+        </>}
+
+        {/* ── TO-DO LISTS ── */}
+        {page==="todos"&&<>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Stay organised</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>To-Do <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Lists</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>A chime plays when you complete a task ✦</p></div>
+          <div className="card"><div className="ct">My Tags</div><div className="cs">Add or remove tags</div>
+            <div className="tr">{tags.map(tag=><div key={tag} className="tch">{tag}<button className="tcd" onClick={()=>delTag(tag)}>×</button></div>)}</div>
+            <div className="row"><input className="inp" placeholder="New tag…" value={newTag} onChange={e=>setNewTag(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTag()}/><button className="bp" onClick={addTag}>+ Add tag</button></div>
+          </div>
+          <div className="card"><div className="ct">Today · {NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div><div className="cs">Your tasks for today</div>
+            <div className="tb">
+              {["all","active","done"].map(f=><button key={f} className={`pb ${tFilter===f?"on":""}`} onClick={()=>setTFilter(f)}>{f==="all"?"All":f==="active"?"To Do":"Completed"}</button>)}
+              <div style={{width:1,height:18,background:"var(--border)",margin:"0 2px"}}/>
+              <button className={`pb ${tagFilter==="all"?"on":""}`} onClick={()=>setTagFilter("all")}>All tags</button>
+              {tags.map(tag=><button key={tag} className={`pb ${tagFilter===tag?"ton":""}`} onClick={()=>setTagFilter(tag)}>{tag}</button>)}
+            </div>
+            <div className="tl">
+              {filtTodos.map(todo=>(
+                <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                  <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                  <div className="tb2"><div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span><span className="tdl">{fd(todo.date)}</span></div></div>
+                  <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
+                </div>
+              ))}
+              {filtTodos.length===0&&<div className="emp">Nothing here ✦</div>}
+            </div>
+            <div className="ar"><div className="row"><input className="inp" placeholder="New task for today…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={addTodo}>+ Add</button></div></div>
+          </div>
+          {pastDates.length>0&&<div className="card"><div className="ct">Previous lists</div><div className="cs">Your to-do history</div>
+            {pastDates.map(date=>{const items=todos.filter(t=>t.date===date);const open=showHist[date];return(<div key={date} className="hg"><div className="ht" onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
+              <span className="hl">{fd(date)}</span><div style={{display:"flex",alignItems:"center",gap:10}}><span className="hc">{items.filter(t=>t.done).length}/{items.length} done</span><span className={`hav ${open?"op":""}`}>▼</span></div></div>
+              {open&&<div className="his">{items.map(todo=><div key={todo.id} className={`ti ${todo.done?"dn":""}`}><div className="tc"/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>)}</div>}
+            </div>);})}
+          </div>}
+        </>}
+
+        {/* ── GOALS ── */}
+        {page==="goals"&&<>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Vision and ambition</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Monthly <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Goals</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Set, edit and track goals month by month</p></div>
+          <div className="card">
+            <div className="gmh"><div className="gml">{vmLabel}</div><div style={{display:"flex",gap:8}}><button className="mnb" onClick={pmG}>← Prev</button><button className="mnb" onClick={()=>setVMonth(MK)}>This month</button><button className="mnb" onClick={nmG} disabled={vMonth>=MK}>Next →</button></div></div>
+            <div className="gg">
+              {mGoals.map(goal=><div key={goal.id} className="gc"><div className="gac" style={{background:goal.color}}/>
+                <div className="gct"><div className="gcat">{goal.category}</div><div className="gca"><button className="sb2" onClick={()=>openEditG(goal)}>✏️</button><button className="sb2 d" onClick={()=>delGoal(goal.id)}>×</button></div></div>
+                <div className="gtit">{goal.title}</div>
+                <div className="pb2"><div className="pf" style={{width:`${goal.progress}%`,background:goal.color}}/></div>
+                <div className="pr"><span className="pp">{goal.progress}% complete</span>{goal.deadline&&<span className="gd">→ {goal.deadline}</span>}</div>
+                <div className="ms">{goal.milestones.map((m,i)=><div key={i} className={`mi ${m.done?"dm":""}`} onClick={()=>toggleMs(goal.id,i)}><div className="md2" style={m.done?{background:goal.color}:{}}/><span>{m.text}</span></div>)}</div>
+              </div>)}
+              {goalForm?(<div className="gf"><div className="gft">{goalForm.mode==="add"?`New goal · ${vmLabel}`:`Edit goal · ${vmLabel}`}</div>
+                <div className="fg"><div className="fl">GOAL TITLE</div><input className="inp" placeholder="What do you want to achieve?" value={gDraft.title} onChange={e=>setGDraft(g=>({...g,title:e.target.value}))}/></div>
+                <div className="fr"><div className="fg"><div className="fl">CATEGORY</div><input className="inp" placeholder="e.g. Health" value={gDraft.category} onChange={e=>setGDraft(g=>({...g,category:e.target.value}))}/></div><div className="fg"><div className="fl">DEADLINE</div><input className="inp" placeholder="e.g. End of month" value={gDraft.deadline} onChange={e=>setGDraft(g=>({...g,deadline:e.target.value}))}/></div></div>
+                <div className="fg"><div className="fl">PROGRESS: {gDraft.progress}%</div><input type="range" min="0" max="100" value={gDraft.progress} className="ri" onChange={e=>setGDraft(g=>({...g,progress:e.target.value}))}/></div>
+                <div className="fl">MILESTONES</div>
+                {gDraft.milestones.map((m,i)=><input key={i} className="inp" placeholder={`Milestone ${i+1}…`} value={m} onChange={e=>setGDraft(g=>({...g,milestones:g.milestones.map((x,j)=>j===i?e.target.value:x)}))}/>)}
+                <div className="fbr"><button className="bc2" onClick={()=>setGoalForm(null)}>Cancel</button><button className="bs" onClick={saveGoal}>Save goal ✦</button></div>
+              </div>):(<div className="gadd" onClick={openAddG}><div style={{fontSize:28}}>+</div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14}}>Add a goal for {vmLabel}</div></div>)}
+            </div>
+            {mGoals.length===0&&!goalForm&&<div className="emp" style={{marginTop:12}}>No goals for {vmLabel} yet ✦</div>}
+          </div>
+        </>}
+
+        {/* ── CALENDAR ── */}
+        {page==="calendar"&&<>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>My <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Calendar</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click any day to add an event · click an event to edit or delete</p></div>
+          <div className="card">
+            <div className="cah"><div className="caml">{calLabel}</div><div style={{display:"flex",gap:8}}><button className="cnb" onClick={prevCal}>← Prev</button><button className="cnb" onClick={()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());}}>Today</button><button className="cnb" onClick={nextCal}>Next →</button></div></div>
+            <div className="cagd">
+              {DAYS.map(d=><div key={d} className="cadh">{d}</div>)}
+              {Array.from({length:calFirst}).map((_,i)=><div key={`e${i}`} className="cac om"/>)}
+              {Array.from({length:calDays}).map((_,i)=>{const day=i+1;const ds=`${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;const de=evOn(ds);const isT=ds===TODAY;return(
+                <div key={day} className={`cac ${isT?"tc2":""}`} onClick={()=>openAddEv(ds)}>
+                  <div className="dn2">{day}</div>
+                  {de.slice(0,2).map(e=><div key={e.id} className="cep" style={{background:e.color}} onClick={ev=>openEditEv(e,ev)}>{e.allDay?"All day":e.time?`${e.time} `:""}{e.title}</div>)}
+                  {de.length>2&&<div className="cm">+{de.length-2} more</div>}
+                </div>
+              );})}
+            </div>
+          </div>
+        </>}
+
+        {/* ── CLEANING SCHEDULE ── */}
+        {page==="cleaning"&&<>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>A clean home, a clear mind</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Cleaning <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Schedule</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Add, edit or remove tasks for any day · today is highlighted</p></div>
+          <div className="card"><div className="ct">Weekly schedule</div><div className="cs">Today is {TODAY_DAY} ✦</div>
+            <div className="cg">
+              {DAYS.map(day=>(
+                <div key={day} className={`cd ${day===TODAY_DAY?"td2":""}`}>
+                  <div className="cdn">{day}{day===TODAY_DAY&&<span className="tdb">TODAY</span>}</div>
+                  {(cleaning[day]||[]).map((task,ti)=>(
+                    <div key={ti} className={`ctk ${task.done?"dc":""}`}>
+                      <div className="cck" onClick={()=>toggleClean(day,ti)}/>
+                      {editC&&editC.day===day&&editC.idx===ti?<input className="inp" style={{fontSize:11,padding:"2px 6px",flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>:<span className="ctxt">{task.text}</span>}
+                      <button className="sb2" style={{fontSize:11,padding:"1px 4px",opacity:.7}} onClick={()=>startEC(day,ti,task.text)}>✏️</button>
+                      <button className="cdel" onClick={()=>delClean(day,ti)}>×</button>
+                    </div>
+                  ))}
+                  <div className="car"><input className="cai" placeholder="Add task…" value={cInputs[day]||""} onChange={e=>setCInputs(ci=>({...ci,[day]:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addClean(day)}/><button className="cab" onClick={()=>addClean(day)}>+</button></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>}
+
+      </main>
+    </>
+  );
+}
