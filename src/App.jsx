@@ -73,8 +73,11 @@ const DEF_CLEANING=Object.fromEntries(DAYS.map(d=>[d,DEF_CLEAN_TASKS[d].map(t=>(
 
 const NOW=new Date();
 const TODAY=NOW.toISOString().split("T")[0];
+const TOMORROW=new Date(NOW.getTime()+86400000).toISOString().split("T")[0];
 const TODAY_DAY=DAYS[NOW.getDay()===0?6:NOW.getDay()-1];
 const QUOTE=QUOTES[NOW.getDate()%QUOTES.length];
+const PRIORITY_ORD={high:0,medium:1,low:2};
+const PCOLS={high:"#c05050",medium:"#c9a87c",low:"#7a9070"};
 const MK=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;
 const fd=s=>{const d=new Date(s+"T00:00:00");return `${DAYS[d.getDay()===0?6:d.getDay()-1]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;};
 const dim=(y,m)=>new Date(y,m+1,0).getDate();
@@ -340,6 +343,17 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes fo{to{opacity:0;transform:translateY(-8px)}}
 .emp{text-align:center;padding:24px 0;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-light);font-size:13px;}
+.pri{display:inline-flex;align-items:center;padding:1px 7px;border-radius:10px;font-size:9.5px;font-weight:500;letter-spacing:.02em;}
+.pri.high{background:#fde8e8;color:#c05050;border:1px solid rgba(192,80,80,.2);}
+.pri.medium{background:var(--gold-pale);color:var(--gold-deep);border:1px solid rgba(201,168,124,.3);}
+.pri.low{background:#e8f0e8;color:#506840;border:1px solid rgba(80,104,64,.2);}
+.dash-toggle{display:flex;gap:4px;margin-bottom:12px;}
+.dash-tog{padding:4px 12px;border-radius:16px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
+.dash-tog.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.pri-row{display:flex;gap:5px;align-items:center;margin-bottom:8px;}
+.pri-lbl{font-size:10.5px;color:var(--ink-light);}
+.pri-btn{padding:3px 10px;border-radius:14px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:10.5px;color:var(--ink-light);cursor:pointer;transition:all .15s;}
+.pri-btn.on{color:white;border-color:transparent;}
 .adrow{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
 .adrow input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold-deep);cursor:pointer;}
 .adrow label{font-size:11px;color:var(--ink-light);letter-spacing:.05em;cursor:pointer;}
@@ -385,6 +399,8 @@ export default function App() {
   const [iconFor,setIconFor]=useState(null);
   const [newTodo,setNewTodo]=useState("");
   const [newTodoTag,setNewTodoTag]=useState("Personal");
+  const [newTodoPriority,setNewTodoPriority]=useState("medium");
+  const [dashTodoDay,setDashTodoDay]=useState("today");
   const [tFilter,setTFilter]=useState("all");
   const [tagFilter,setTagFilter]=useState("all");
   const [showHist,setShowHist]=useState({});
@@ -443,15 +459,19 @@ export default function App() {
   const setIcon=(id,icon)=>{setHabits(h=>h.map(hab=>hab.id===id?{...hab,icon}:hab));setIconFor(null);};
   const streak=days=>days.filter(Boolean).length;
 
-  const addTodo=()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TODAY}]);setNewTodo("");};
+  const byPri=arr=>[...arr].sort((a,b)=>(PRIORITY_ORD[a.priority??"medium"])-(PRIORITY_ORD[b.priority??"medium"]));
+  const addTodoFor=date=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date,priority:newTodoPriority}]);setNewTodo("");};
+  const addTodo=()=>addTodoFor(TODAY);
+  const addTodoDash=()=>addTodoFor(dashTodoDay==="today"?TODAY:TOMORROW);
   const toggleTodo=id=>setTodos(t=>t.map(td=>{if(td.id!==id)return td;if(!td.done)shout();return{...td,done:!td.done};}));
   const delTodo=id=>setTodos(t=>t.filter(td=>td.id!==id));
   const addTag=()=>{if(!newTag.trim()||tags.includes(newTag.trim()))return;setTags(t=>[...t,newTag.trim()]);setNewTag("");};
   const delTag=tag=>{setTags(t=>t.filter(x=>x!==tag));if(tagFilter===tag)setTagFilter("all");};
 
   const todayTodos=todos.filter(t=>t.date===TODAY);
-  const filtTodos=todayTodos.filter(t=>{const s=tFilter==="all"||(tFilter==="active"?!t.done:t.done);const tg=tagFilter==="all"||t.tag===tagFilter;return s&&tg;});
-  const pastDates=[...new Set(todos.filter(t=>t.date!==TODAY).map(t=>t.date))].sort((a,b)=>b.localeCompare(a));
+  const tomorrowTodos=todos.filter(t=>t.date===TOMORROW);
+  const filtTodos=byPri(todayTodos.filter(t=>{const s=tFilter==="all"||(tFilter==="active"?!t.done:t.done);const tg=tagFilter==="all"||t.tag===tagFilter;return s&&tg;}));
+  const pastDates=[...new Set(todos.filter(t=>t.date!==TODAY&&t.date!==TOMORROW).map(t=>t.date))].sort((a,b)=>b.localeCompare(a));
 
   const vmDate=new Date(vMonth+"-02");
   const vmLabel=`${MONTHS[vmDate.getMonth()]} ${vmDate.getFullYear()}`;
@@ -503,14 +523,14 @@ export default function App() {
   const dayDone=habitsDoneToday+todosDoneToday+cleaningDoneToday;
   const dayPct=dayTotal>0?Math.round((dayDone/dayTotal)*100):0;
 
-  const NI=({d,s=15,w=1.75})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
+  const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
   const NAV=[
-    {id:"dashboard",label:"Dashboard",icon:<><NI d="M3 3h7v7H3z"/><NI d="M14 3h7v7h-7z"/><NI d="M3 14h7v7H3z"/><NI d="M14 14h7v7h-7z"/></>},
-    {id:"habits",label:"Habits",icon:<NI d="M12 20c-4-3-8-6.5-8-11a8 8 0 0 1 16 0c0 4.5-4 8-8 11z"/>},
-    {id:"todos",label:"To-Do",icon:<><NI d="M9 11l3 3L22 4"/><NI d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></>},
-    {id:"goals",label:"Goals",icon:<><NI d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 0 0-2 0"/><NI d="M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 0 0-10 0"/><NI d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 0 0-18 0"/></>},
-    {id:"calendar",label:"Calendar",icon:<><NI d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><NI d="M16 3v4M8 3v4M3 11h18"/></>},
-    {id:"cleaning",label:"Cleaning",icon:<><NI d="M3 21l7-7"/><NI d="M12.5 7.5l4 4"/><NI d="M10 14l2.5-2.5 5-8 2.5 2.5-5 8L10 14z"/></>},
+    {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
+    {id:"habits",label:"Habits",icon:<S><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></S>},
+    {id:"todos",label:"To-Do",icon:<S><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/><polyline points="4 12 5 13 7 11"/><polyline points="4 18 5 19 7 17"/></S>},
+    {id:"goals",label:"Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
+    {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
+    {id:"cleaning",label:"Cleaning",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
   ];
 
   // ── PASSWORD GATE ──
@@ -698,27 +718,40 @@ export default function App() {
                 {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
               </div>
 
-              {/* Today's priorities */}
+              {/* Today's / Tomorrow's priorities */}
               <div className="card">
-                <div className="ct">Today's priorities</div>
-                <div className="cs">Active tasks for today</div>
+                <div className="ct">{dashTodoDay==="today"?"Today's":"Tomorrow's"} priorities</div>
+                <div className="cs">Active tasks for {dashTodoDay}</div>
+                <div className="dash-toggle">
+                  <button className={`dash-tog ${dashTodoDay==="today"?"on":""}`} onClick={()=>setDashTodoDay("today")}>Today</button>
+                  <button className={`dash-tog ${dashTodoDay==="tomorrow"?"on":""}`} onClick={()=>setDashTodoDay("tomorrow")}>Tomorrow</button>
+                </div>
                 <div className="tl">
-                  {todos.filter(t=>!t.done&&t.date===TODAY).slice(0,5).map(todo=>(
+                  {byPri(todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW))).slice(0,5).map(todo=>(
                     <div key={todo.id} className="ti">
                       <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
                       <div className="tb2">
                         <div className="tt">{todo.text}</div>
-                        <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                        <div className="tm">
+                          {todo.priority==="high"&&<span className="pri high">high</span>}
+                          <span className={`tg ${todo.tag}`}>{todo.tag}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
-                  {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
+                  {todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW)).length===0&&<div className="emp">All caught up ✦</div>}
                 </div>
                 <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid var(--border)"}}>
+                  <div className="pri-row">
+                    <span className="pri-lbl">Priority:</span>
+                    {["high","medium","low"].map(p=>(
+                      <button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>
+                    ))}
+                  </div>
                   <div className="row">
-                    <input className="inp" placeholder="Add task…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/>
+                    <input className="inp" placeholder={`Add ${dashTodoDay} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
                     <select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select>
-                    <button className="bp" onClick={addTodo}>+ Add</button>
+                    <button className="bp" onClick={addTodoDash}>+ Add</button>
                   </div>
                 </div>
               </div>
@@ -755,7 +788,7 @@ export default function App() {
               {/* Quote */}
               <div className="qc">
                 <div className="qt">"{QUOTE.text}"</div>
-                <div className="qa">— {QUOTE.attr} · changes daily</div>
+                <div className="qa">— {QUOTE.attr}</div>
               </div>
 
               {/* Upcoming events */}
@@ -842,13 +875,42 @@ export default function App() {
               {filtTodos.map(todo=>(
                 <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
                   <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                  <div className="tb2"><div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span><span className="tdl">{fd(todo.date)}</span></div></div>
+                  <div className="tb2"><div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div><div className="tm">{todo.priority==="high"&&!todo.done&&<span className="pri high">high</span>}{todo.priority==="low"&&<span className="pri low">low</span>}<span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>
                   <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
                 </div>
               ))}
               {filtTodos.length===0&&<div className="emp">Nothing here ✦</div>}
             </div>
-            <div className="ar"><div className="row"><input className="inp" placeholder="New task for today…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={addTodo}>+ Add</button></div></div>
+            <div className="ar">
+              <div className="pri-row">
+                <span className="pri-lbl">Priority:</span>
+                {["high","medium","low"].map(p=>(
+                  <button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>
+                ))}
+              </div>
+              <div className="row"><input className="inp" placeholder="New task for today…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={addTodo}>+ Add</button></div>
+            </div>
+          </div>
+          <div className="card"><div className="ct">Tomorrow · {new Date(TOMORROW+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div><div className="cs">Plan ahead for tomorrow</div>
+            <div className="tl">
+              {byPri(tomorrowTodos).map(todo=>(
+                <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                  <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                  <div className="tb2"><div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div><div className="tm">{todo.priority==="high"&&!todo.done&&<span className="pri high">high</span>}{todo.priority==="low"&&<span className="pri low">low</span>}<span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>
+                  <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
+                </div>
+              ))}
+              {tomorrowTodos.length===0&&<div className="emp">Nothing planned yet ✦</div>}
+            </div>
+            <div className="ar">
+              <div className="pri-row">
+                <span className="pri-lbl">Priority:</span>
+                {["high","medium","low"].map(p=>(
+                  <button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>
+                ))}
+              </div>
+              <div className="row"><input className="inp" placeholder="New task for tomorrow…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TOMORROW,priority:newTodoPriority}]);setNewTodo("")}}}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TOMORROW,priority:newTodoPriority}]);setNewTodo("");}}>+ Add</button></div>
+            </div>
           </div>
           {pastDates.length>0&&<div className="card"><div className="ct">Previous lists</div><div className="cs">Your to-do history</div>
             {pastDates.map(date=>{const items=todos.filter(t=>t.date===date);const open=showHist[date];return(<div key={date} className="hg"><div className="ht" onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
