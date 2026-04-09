@@ -82,6 +82,8 @@ const MK=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;
 const fd=s=>{const d=new Date(s+"T00:00:00");return `${DAYS[d.getDay()===0?6:d.getDay()-1]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;};
 const dim=(y,m)=>new Date(y,m+1,0).getDate();
 const fdm=(y,m)=>{const d=new Date(y,m,1).getDay();return d===0?6:d-1;};
+const isoWeekKey=d=>{const dt=new Date(d+"T12:00:00");const day=dt.getDay()||7;const thu=new Date(dt);thu.setDate(dt.getDate()+(4-day));const ys=new Date(thu.getFullYear(),0,1);return`${thu.getFullYear()}-W${String(Math.ceil(((thu-ys)/86400000+1)/7)).padStart(2,"0")}`;};
+const weekDatesOf=wk=>{const[y,w]=wk.split("-W").map(Number);const jan4=new Date(y,0,4);const j4d=jan4.getDay()||7;const mon=new Date(jan4.getTime()-(j4d-1)*86400000+(w-1)*7*86400000);return Array.from({length:7},(_,i)=>new Date(mon.getTime()+i*86400000).toISOString().split("T")[0]);};
 
 const POMO_PRESETS=[{label:"15 min",s:900},{label:"20 min",s:1200},{label:"30 min",s:1800},{label:"1 hr",s:3600}];
 const fmtPomo=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
@@ -346,6 +348,25 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes fo{to{opacity:0;transform:translateY(-8px)}}
 .emp{text-align:center;padding:24px 0;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-light);font-size:13px;}
+.bil-tabs{display:flex;gap:4px;margin-bottom:20px;}
+.bil-tab{padding:6px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
+.bil-tab.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.bil-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.bil-score{font-family:'Playfair Display',serif;font-size:68px;font-weight:600;line-height:1;}
+.bil-bar{height:7px;background:var(--parchment);border-radius:8px;overflow:hidden;margin:5px 0 2px;}
+.bil-fill{height:100%;border-radius:8px;transition:width .7s ease;}
+.bil-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.bil-lbl{font-size:12px;color:var(--ink-light);min-width:90px;flex-shrink:0;}
+.bil-pct{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);margin-left:auto;flex-shrink:0;}
+.bil-dots{display:flex;gap:4px;margin-top:6px;}
+.bil-d{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-light);flex-shrink:0;}
+.bil-d.ck{border-color:transparent;color:white;}
+.bil-chart{display:flex;align-items:flex-end;gap:5px;height:72px;margin-top:8px;}
+.bil-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
+.bil-cbar{width:100%;border-radius:4px 4px 0 0;min-height:2px;transition:height .5s ease;}
+.bil-clbl{font-size:8px;color:var(--ink-light);}
+.bil-cval{font-family:'Playfair Display',serif;font-size:9px;color:var(--ink-light);}
+@media(max-width:700px){.bil-grid{grid-template-columns:1fr;}}
 .todo-grid{display:grid;grid-template-columns:1fr 270px;gap:18px;align-items:start;}
 .todo-main{display:flex;flex-direction:column;gap:18px;}
 .todo-side{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(var(--nav-h) + 36px);}
@@ -427,6 +448,8 @@ export default function App() {
   const [evModal,setEvModal]=useState(null);
   const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",notes:"",color:"#c9a87c",allDay:false});
   const [praise,setPraise]=useState(null);
+  const [pomoCount,setPomoCount]=useDB("sab_pomo",0);
+  const [bilView,setBilView]=useState("week");
 
   // Pomodoro timer state
   const [pomoDur,setPomoDur]=useState(1500);
@@ -451,7 +474,7 @@ export default function App() {
     setPomoActive(true);
     pomoInterval.current=setInterval(()=>{
       setPomoLeft(l=>{
-        if(l<=1){clearInterval(pomoInterval.current);setPomoActive(false);return 0;}
+        if(l<=1){clearInterval(pomoInterval.current);setPomoActive(false);setPomoCount(c=>c+1);chime();return 0;}
         return l-1;
       });
     },1000);
@@ -528,6 +551,27 @@ export default function App() {
   const graphData=DAYS.map((d,i)=>({day:d,count:habits.filter(h=>h.days[i]).length}));
   const maxBar=Math.max(...graphData.map(d=>d.count),1);
 
+  // Bilan computed values
+  const bilWeekKey=isoWeekKey(TODAY);
+  const bilWeekDates=weekDatesOf(bilWeekKey);
+  const bilWeekTodos=todos.filter(t=>bilWeekDates.includes(t.date));
+  const bilWeekDone=bilWeekTodos.filter(t=>t.done).length;
+  const bilWeekTotal=bilWeekTodos.length;
+  const bilTodoPct=bilWeekTotal?Math.round(bilWeekDone/bilWeekTotal*100):0;
+  const bilHabitDone=habits.reduce((s,h)=>s+h.days.filter(Boolean).length,0);
+  const bilHabitTotal=habits.length*7;
+  const bilHabitPct=bilHabitTotal?Math.round(bilHabitDone/bilHabitTotal*100):0;
+  const bilCleanDone=DAYS.reduce((s,d)=>s+(cleaning[d]||[]).filter(t=>t.done).length,0);
+  const bilCleanTotal=DAYS.reduce((s,d)=>s+(cleaning[d]||[]).length,0);
+  const bilCleanPct=bilCleanTotal?Math.round(bilCleanDone/bilCleanTotal*100):0;
+  const bilMonthGoals=goals[MK]||[];
+  const bilGoalPct=bilMonthGoals.length?Math.round(bilMonthGoals.reduce((s,g)=>s+g.progress,0)/bilMonthGoals.length):0;
+  const bilWeekScore=Math.round([bilTodoPct,bilHabitPct,bilCleanPct,bilGoalPct].filter((_,i)=>[bilWeekTotal>0,bilHabitTotal>0,bilCleanTotal>0,bilMonthGoals.length>0][i]).reduce((s,v,_,a)=>s+v/a.length,0)||0);
+  const bilVerdict=bilWeekScore>=90?"Semaine parfaite, Sabina ✦":bilWeekScore>=70?"Belle semaine — keep going ✦":bilWeekScore>=50?"Good progress this week ✦":"Every step counts — keep going ✦";
+  const last8Weeks=Array.from({length:8},(_,i)=>{const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-7*i);return isoWeekKey(d.toISOString().split("T")[0]);}).reverse();
+  const weeklyChart=last8Weeks.map(wk=>{const dates=weekDatesOf(wk);const wt=todos.filter(t=>dates.includes(t.date));const done=wt.filter(t=>t.done).length;const total=wt.length;return{label:wk.replace(/\d{4}-/,""),done,total,pct:total?Math.round(done/total*100):0};});
+  const maxChartPct=Math.max(...weeklyChart.map(w=>w.pct),1);
+
   // Daily progress
   const todayDayIndex=DAYS.indexOf(TODAY_DAY);
   const habitsDoneToday=habits.filter(h=>h.days[todayDayIndex]).length;
@@ -549,6 +593,7 @@ export default function App() {
     {id:"goals",label:"Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
     {id:"cleaning",label:"Cleaning",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
+    {id:"bilan",label:"Bilan",icon:<S><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></S>},
   ];
 
   // ── PASSWORD GATE ──
@@ -954,6 +999,151 @@ export default function App() {
             </div>
 
           </div>
+        </>}
+
+        {/* ── BILAN ── */}
+        {page==="bilan"&&<>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your personal review</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Bilan <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>✦</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>A weekly and monthly look at your progress, habits, and achievements</p></div>
+          <div className="bil-tabs">
+            {[["week","This Week"],["month","This Month"],["trends","Trends"]].map(([v,l])=><button key={v} className={`bil-tab ${bilView===v?"on":""}`} onClick={()=>setBilView(v)}>{l}</button>)}
+          </div>
+
+          {bilView==="week"&&<>
+            {/* Week score hero */}
+            <div className="card" style={{background:"var(--ink)",borderColor:"var(--ink)",marginBottom:18}}>
+              <div style={{display:"flex",alignItems:"center",gap:28}}>
+                <div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"rgba(201,168,124,.6)",letterSpacing:".12em",marginBottom:4}}>Week {bilWeekKey.split("-W")[1]} · {bilWeekDates[0]} → {bilWeekDates[6]}</div>
+                  <div className="bil-score" style={{color:bilWeekScore>=70?"var(--gold)":bilWeekScore>=50?"#f0e8dc":"rgba(240,232,220,.5)"}}>{bilWeekScore}<span style={{fontSize:20,fontWeight:400,color:"rgba(240,232,220,.4)"}}>%</span></div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"rgba(240,232,220,.7)",marginTop:6}}>{bilVerdict}</div>
+                </div>
+                <div style={{flex:1,display:"flex",flexDirection:"column",gap:10}}>
+                  {[
+                    {label:"To-Do",pct:bilTodoPct,color:"#7a9070",sub:`${bilWeekDone}/${bilWeekTotal} tasks`},
+                    {label:"Habits",pct:bilHabitPct,color:"#c9a87c",sub:`${bilHabitDone}/${bilHabitTotal} day-checks`},
+                    {label:"Cleaning",pct:bilCleanPct,color:"#7090a8",sub:`${bilCleanDone}/${bilCleanTotal} tasks`},
+                    {label:"Goals",pct:bilGoalPct,color:"#b098c0",sub:`${bilMonthGoals.length} active this month`},
+                  ].map(r=>(
+                    <div key={r.label}>
+                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                        <span style={{fontSize:11,color:"rgba(240,232,220,.55)"}}>{r.label}</span>
+                        <span style={{fontFamily:"'Playfair Display',serif",fontSize:11,color:"rgba(240,232,220,.7)"}}>{r.pct}%</span>
+                      </div>
+                      <div className="bil-bar"><div className="bil-fill" style={{width:`${r.pct}%`,background:r.color}}/></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="bil-grid">
+              {/* Habits grid */}
+              <div className="card"><div className="ct">Habits this week</div><div className="cs">Your 7-day tracker</div>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
+                  {DAYS.map(d=><div key={d} style={{width:20,textAlign:"center",fontSize:9,color:"var(--ink-light)",flex:1}}>{d}</div>)}
+                </div>
+                {habits.length===0&&<div className="emp">No habits yet ✦</div>}
+                {habits.map(hab=>(
+                  <div key={hab.id} style={{marginBottom:8}}>
+                    <div style={{fontSize:11.5,color:"var(--ink)",marginBottom:3,display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:13}}>{hab.icon}</span>{hab.name}</div>
+                    <div className="bil-dots">{hab.days.map((ck,i)=><div key={i} className={`bil-d ${ck?"ck":""}`} style={{flex:1,background:ck?hab.color:undefined}}>{ ck ? "✓" : ""}</div>)}</div>
+                  </div>
+                ))}
+                <div style={{marginTop:14,paddingTop:12,borderTop:"1px solid var(--border)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center"}}>{bilHabitDone} checks out of {bilHabitTotal} possible this week</div>
+              </div>
+
+              {/* Right side stack */}
+              <div style={{display:"flex",flexDirection:"column",gap:18}}>
+                {/* To-Do this week */}
+                <div className="card"><div className="ct">To-Do this week</div><div className="cs">Tasks completed</div>
+                  <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"8px 0 4px"}}><span style={{fontFamily:"'Playfair Display',serif",fontSize:42,fontWeight:600,lineHeight:1,color:"var(--sage)"}}>{bilWeekDone}</span><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,color:"var(--ink-light)"}}>/ {bilWeekTotal} tasks</span></div>
+                  <div className="bil-bar"><div className="bil-fill" style={{width:`${bilTodoPct}%`,background:"#7a9070"}}/></div>
+                  {bilWeekDates.map(d=>{const dt=todos.filter(t=>t.date===d);const dn=dt.filter(t=>t.done).length;if(dt.length===0)return null;return(<div key={d} style={{display:"flex",alignItems:"center",gap:8,marginTop:6,fontSize:11}}><span style={{color:"var(--ink-light)",minWidth:32}}>{fd(d).split(",")[0]}</span><div style={{flex:1,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:dt.length?`${Math.round(dn/dt.length*100)}%`:"0%",background:"#7a9070",borderRadius:4}}/></div><span style={{color:"var(--ink-light)",minWidth:30,textAlign:"right"}}>{dn}/{dt.length}</span></div>);} )}
+                </div>
+
+                {/* Focus & Cleaning */}
+                <div className="card">
+                  <div style={{display:"flex",gap:18}}>
+                    <div style={{flex:1}}>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Focus sessions</div>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:600,color:"var(--gold)"}}>{pomoCount}</div>
+                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>total completed</div>
+                    </div>
+                    <div style={{flex:1}}>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Cleaning</div>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:600,color:"#7090a8"}}>{bilCleanPct}<span style={{fontSize:16,fontWeight:400}}>%</span></div>
+                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>{bilCleanDone}/{bilCleanTotal} tasks done</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>}
+
+          {bilView==="month"&&<>
+            <div className="bil-grid">
+              {/* Goals this month */}
+              <div className="card"><div className="ct">Goals · {MONTHS[NOW.getMonth()]} {NOW.getFullYear()}</div><div className="cs">{bilMonthGoals.length} active goals</div>
+                {bilMonthGoals.length===0&&<div className="emp">No goals set for this month ✦</div>}
+                {bilMonthGoals.map(g=>(
+                  <div key={g.id} style={{marginBottom:14}}>
+                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:13,color:"var(--ink)",fontWeight:300}}>{g.title}</span><span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:g.color}}>{g.progress}%</span></div>
+                    <div className="bil-bar"><div className="bil-fill" style={{width:`${g.progress}%`,background:g.color}}/></div>
+                    {g.category&&<div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>{g.category}{g.deadline?` · ${g.deadline}`:""}</div>}
+                  </div>
+                ))}
+                {bilMonthGoals.length>0&&<div style={{marginTop:10,paddingTop:10,borderTop:"1px solid var(--border)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Average progress</span>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--gold)"}}>{bilGoalPct}%</span>
+                </div>}
+              </div>
+
+              {/* Monthly todos */}
+              <div className="card"><div className="ct">To-Do · {MONTHS[NOW.getMonth()]}</div><div className="cs">Tasks completed this month</div>
+                {(()=>{const monthPfx=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;const mt=todos.filter(t=>t.date.startsWith(monthPfx));const md=mt.filter(t=>t.done).length;const pct=mt.length?Math.round(md/mt.length*100):0;return(<>
+                  <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"8px 0 4px"}}><span style={{fontFamily:"'Playfair Display',serif",fontSize:42,fontWeight:600,lineHeight:1,color:"var(--sage)"}}>{md}</span><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,color:"var(--ink-light)"}}>/ {mt.length} tasks</span></div>
+                  <div className="bil-bar"><div className="bil-fill" style={{width:`${pct}%`,background:"#7a9070"}}/></div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginTop:8}}>{pct}% completion rate this month</div>
+                </>);})()}
+                <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid var(--border)"}}>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:8}}>By priority</div>
+                  {["high","medium","low"].map(p=>{const monthPfx=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;const pt=todos.filter(t=>t.date.startsWith(monthPfx)&&(t.priority??"medium")===p);const pd=pt.filter(t=>t.done).length;if(pt.length===0)return null;return(<div key={p} className="bil-row"><span className={`pri ${p}`}>{p}</span><div style={{flex:1}}><div className="bil-bar"><div className="bil-fill" style={{width:pt.length?`${Math.round(pd/pt.length*100)}%`:"0%",background:PCOLS[p]}}/></div></div><span className="bil-pct">{pd}/{pt.length}</span></div>);} )}
+                </div>
+              </div>
+            </div>
+          </>}
+
+          {bilView==="trends"&&<>
+            <div className="card">
+              <div className="ct">To-Do completion · last 8 weeks</div>
+              <div className="cs">How many tasks you completed each week</div>
+              <div className="bil-chart">
+                {weeklyChart.map((w,i)=>(
+                  <div key={i} className="bil-col">
+                    <div className="bil-cval">{w.total>0?`${w.pct}%`:""}</div>
+                    <div className="bil-cbar" style={{height:`${w.total>0?(w.pct/maxChartPct)*60:2}px`,background:w.pct>=70?"linear-gradient(to top,#5a7050,#7a9070)":w.pct>=40?"linear-gradient(to top,#a8865a,#c9a87c)":"var(--parchment)"}}/>
+                    <div className="bil-clbl">{w.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{display:"flex",gap:18,marginTop:16,paddingTop:14,borderTop:"1px solid var(--border)"}}>
+                {(()=>{const avg=Math.round(weeklyChart.filter(w=>w.total>0).reduce((s,w)=>s+w.pct,0)/(weeklyChart.filter(w=>w.total>0).length||1));const best=weeklyChart.reduce((b,w)=>w.pct>b.pct?w:b,{pct:0,label:"-"});const totalDone=todos.filter(t=>t.done).length;return(<>
+                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--gold)"}}>{avg}%</div><div style={{fontSize:10,color:"var(--ink-light)"}}>8-week avg</div></div>
+                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--sage)"}}>{best.pct}%</div><div style={{fontSize:10,color:"var(--ink-light)"}}>best week ({best.label})</div></div>
+                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"#7090a8"}}>{totalDone}</div><div style={{fontSize:10,color:"var(--ink-light)"}}>total tasks done ever</div></div>
+                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"#b098c0"}}>{pomoCount}</div><div style={{fontSize:10,color:"var(--ink-light)"}}>focus sessions ever</div></div>
+                </>);})()}
+              </div>
+            </div>
+
+            {/* Goals across all months */}
+            <div className="card" style={{marginTop:18}}>
+              <div className="ct">Goals · all time</div>
+              <div className="cs">Progress across every month</div>
+              {Object.keys(goals).length===0&&<div className="emp">No goals yet ✦</div>}
+              {Object.entries(goals).sort(([a],[b])=>b.localeCompare(a)).slice(0,6).map(([mk,mgoals])=>{const avg=mgoals.length?Math.round(mgoals.reduce((s,g)=>s+g.progress,0)/mgoals.length):0;const[yr,mo]=mk.split("-");return(<div key={mk} className="bil-row" style={{marginBottom:13}}><span className="bil-lbl">{MONTHS[parseInt(mo)-1].slice(0,3)} {yr}</span><div style={{flex:1}}><div className="bil-bar"><div className="bil-fill" style={{width:`${avg}%`,background:"linear-gradient(90deg,#9078b0,#b098c0)"}}/></div></div><span className="bil-pct">{avg}%</span></div>);} )}
+            </div>
+          </>}
         </>}
 
         {/* ── GOALS ── */}
