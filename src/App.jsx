@@ -471,6 +471,7 @@ export default function App() {
   // Pomodoro controls
   const pomoStart=()=>{
     if(pomoActive||pomoLeft===0)return;
+    pomoBegin();
     setPomoActive(true);
     pomoInterval.current=setInterval(()=>{
       setPomoLeft(l=>{
@@ -479,8 +480,8 @@ export default function App() {
       });
     },1000);
   };
-  const pomoPause=()=>{clearInterval(pomoInterval.current);setPomoActive(false);};
-  const pomoStop=()=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoLeft(pomoDur);};
+  const pomoPause=()=>{clearInterval(pomoInterval.current);setPomoActive(false);pomoEnd();};
+  const pomoStop=()=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoLeft(pomoDur);pomoEnd();};
   const pomoSelect=s=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoDur(s);setPomoLeft(s);};
 
   const pomoProg=pomoDur>0?pomoLeft/pomoDur:0;
@@ -488,6 +489,8 @@ export default function App() {
   const pomoColor=pomoProg>0.5?"#c9a87c":pomoProg>0.25?"#c8887a":"#c05050";
 
   const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
+  const pomoBegin=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[440,554.37,659.25].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.14);g.gain.linearRampToValueAtTime(.15,ctx.currentTime+i*.14+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.14+.35);o.start(ctx.currentTime+i*.14);o.stop(ctx.currentTime+i*.14+.35);});}catch(e){}};
+  const pomoEnd=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[659.25,523.25,392].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.16);g.gain.linearRampToValueAtTime(.13,ctx.currentTime+i*.16+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.16+.4);o.start(ctx.currentTime+i*.16);o.stop(ctx.currentTime+i*.16+.4);});}catch(e){}};
   const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
 
   const toggleDay=(id,i)=>setHabits(h=>h.map(hab=>{if(hab.id!==id)return hab;const was=hab.days[i];if(!was)chime();return{...hab,days:hab.days.map((d,j)=>j===i?!d:d)};}));
@@ -581,9 +584,14 @@ export default function App() {
   const cleaningTodayArr=cleaning[TODAY_DAY]||[];
   const cleaningDoneToday=cleaningTodayArr.filter(t=>t.done).length;
   const cleaningTotalToday=cleaningTodayArr.length;
-  const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday;
-  const dayDone=habitsDoneToday+todosDoneToday+cleaningDoneToday;
-  const dayPct=dayTotal>0?Math.round((dayDone/dayTotal)*100):0;
+  const monthGoalsArr=goals[MK]||[];
+  const monthGoalsAvgPct=monthGoalsArr.length?Math.round(monthGoalsArr.reduce((s,g)=>s+g.progress,0)/monthGoalsArr.length):0;
+  const goalWeightV=monthGoalsArr.length>0?1:0;
+  const goalDoneV=monthGoalsArr.length>0?monthGoalsAvgPct/100:0;
+  const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday+goalWeightV;
+  const dayDoneRaw=habitsDoneToday+todosDoneToday+cleaningDoneToday+goalDoneV;
+  const dayDone=Math.round(dayDoneRaw);
+  const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
   const NAV=[
@@ -592,7 +600,7 @@ export default function App() {
     {id:"todos",label:"To-Do",icon:<S><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/><polyline points="4 12 5 13 7 11"/><polyline points="4 18 5 19 7 17"/></S>},
     {id:"goals",label:"Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
-    {id:"cleaning",label:"Cleaning",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
+    {id:"cleaning",label:"Rituel",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
     {id:"bilan",label:"Bilan",icon:<S><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></S>},
   ];
 
@@ -750,7 +758,7 @@ export default function App() {
               {/* Progress tracker */}
               <div className="card">
                 <div className="ct" style={{textAlign:"left"}}>Today's Progress</div>
-                <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Cleaning</div>
+                <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Goals · Rituel</div>
                 <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
                   <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
                     {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
@@ -766,12 +774,13 @@ export default function App() {
                   {[
                     {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
                     {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-                    {label:"Cleaning",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+                    {label:"Goals",done:monthGoalsAvgPct,total:100,color:"#b098c0",isPct:true},
+                    {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
                   ].map(row=>(
                     <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
                       <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
                       <div style={{fontSize:12,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.isPct?`${row.done}%`:`${row.done}/${row.total}`}</div>
                       <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
                         <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
                       </div>
@@ -873,7 +882,7 @@ export default function App() {
 
               {/* Today's cleaning */}
               <div className="card">
-                <div className="ct">Today's Cleaning</div>
+                <div className="ct">Rituel de Maison</div>
                 <div className="cs">Tasks for {TODAY_DAY}</div>
                 <div style={{display:"flex",flexDirection:"column",gap:6}}>
                   {cleaningTodayArr.map((task,i)=>(
@@ -1010,7 +1019,7 @@ export default function App() {
 
           {bilView==="week"&&<>
             {/* Week score hero */}
-            <div className="card" style={{background:"var(--ink)",borderColor:"var(--ink)",marginBottom:18}}>
+            <div className="card" style={{background:"linear-gradient(135deg,#352e28 0%,#433830 60%,#352e28 100%)",borderColor:"rgba(201,168,124,.2)",marginBottom:18}}>
               <div style={{display:"flex",alignItems:"center",gap:28}}>
                 <div>
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"rgba(201,168,124,.6)",letterSpacing:".12em",marginBottom:4}}>Week {bilWeekKey.split("-W")[1]} · {bilWeekDates[0]} → {bilWeekDates[6]}</div>
@@ -1021,7 +1030,7 @@ export default function App() {
                   {[
                     {label:"To-Do",pct:bilTodoPct,color:"#7a9070",sub:`${bilWeekDone}/${bilWeekTotal} tasks`},
                     {label:"Habits",pct:bilHabitPct,color:"#c9a87c",sub:`${bilHabitDone}/${bilHabitTotal} day-checks`},
-                    {label:"Cleaning",pct:bilCleanPct,color:"#7090a8",sub:`${bilCleanDone}/${bilCleanTotal} tasks`},
+                    {label:"Rituel",pct:bilCleanPct,color:"#7090a8",sub:`${bilCleanDone}/${bilCleanTotal} tasks`},
                     {label:"Goals",pct:bilGoalPct,color:"#b098c0",sub:`${bilMonthGoals.length} active this month`},
                   ].map(r=>(
                     <div key={r.label}>
@@ -1029,7 +1038,7 @@ export default function App() {
                         <span style={{fontSize:11,color:"rgba(240,232,220,.55)"}}>{r.label}</span>
                         <span style={{fontFamily:"'Playfair Display',serif",fontSize:11,color:"rgba(240,232,220,.7)"}}>{r.pct}%</span>
                       </div>
-                      <div className="bil-bar"><div className="bil-fill" style={{width:`${r.pct}%`,background:r.color}}/></div>
+                      <div className="bil-bar" style={{background:"rgba(255,255,255,.1)"}}><div className="bil-fill" style={{width:`${r.pct}%`,background:r.color}}/></div>
                     </div>
                   ))}
                 </div>
@@ -1070,7 +1079,7 @@ export default function App() {
                       <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>total completed</div>
                     </div>
                     <div style={{flex:1}}>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Cleaning</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Rituel de Maison</div>
                       <div style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:600,color:"#7090a8"}}>{bilCleanPct}<span style={{fontSize:16,fontWeight:400}}>%</span></div>
                       <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>{bilCleanDone}/{bilCleanTotal} tasks done</div>
                     </div>
@@ -1193,8 +1202,8 @@ export default function App() {
 
         {/* ── CLEANING SCHEDULE ── */}
         {page==="cleaning"&&<>
-          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>A clean home, a clear mind</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Cleaning <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Schedule</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Add, edit or remove tasks for any day · today is highlighted</p></div>
-          <div className="card"><div className="ct">Weekly schedule</div><div className="cs">Today is {TODAY_DAY} ✦</div>
+          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Une maison propre, un esprit clair</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Rituel de <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Maison</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Add, edit or remove tasks for any day · today is highlighted</p></div>
+          <div className="card"><div className="ct">Routine hebdomadaire</div><div className="cs">Today is {TODAY_DAY} ✦</div>
             <div className="cg">
               {DAYS.map(day=>(
                 <div key={day} className={`cd ${day===TODAY_DAY?"td2":""}`}>
