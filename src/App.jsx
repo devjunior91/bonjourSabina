@@ -809,7 +809,7 @@ export default function App() {
               {/* Progress tracker */}
               <div className="card">
                 <div className="ct" style={{textAlign:"left"}}>Today's Progress</div>
-                <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Goals · Rituel</div>
+                <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Rituel · Goals</div>
                 <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
                   <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
                     {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
@@ -825,7 +825,6 @@ export default function App() {
                   {[
                     {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
                     {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-                    {label:"Goals",done:monthGoalsAvgPct,total:100,color:"#b098c0",isPct:true},
                     {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
                   ].map(row=>(
                     <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
