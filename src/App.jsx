@@ -133,12 +133,12 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cs{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);margin-bottom:16px;}
 
 /* ── PROFILE CARD (left col) ── */
-.profile-card{background:var(--ivory);border:1px solid var(--gold);border-radius:16px;padding:24px;box-shadow:var(--shadow);text-align:left;}
+.profile-card{background:var(--ivory);border:1px solid var(--gold);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);text-align:left;}
 .ph-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--gold);letter-spacing:.14em;opacity:.9;margin-bottom:1px;line-height:1.2;}
 .ph-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--ink);line-height:1.2;margin-bottom:10px;margin-top:0;}
 .ph-title em{font-style:italic;color:var(--gold-deep);}
 .ph-sub{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--ink-light);margin-top:10px;}
-.profile-ring{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid var(--gold);box-shadow:0 4px 20px rgba(38,29,18,.14),0 0 0 5px rgba(201,168,124,.1);max-width:140px;margin:0 auto;display:block;}
+.profile-ring{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid var(--gold);box-shadow:0 4px 20px rgba(38,29,18,.14),0 0 0 5px rgba(201,168,124,.1);max-width:110px;margin:0 auto;display:block;}
 .profile-ring img{width:100%;height:100%;object-fit:cover;display:block;}
 
 /* ── STAT CARDS (right col) ── */
@@ -767,7 +767,7 @@ export default function App() {
               <div className="profile-card">
                 <div className="ph-eye">Your personal space</div>
                 <h1 className="ph-title">Bonjour, <em>Sabina</em></h1>
-                <div style={{display:"flex",justifyContent:"center",margin:"12px 0"}}>
+                <div style={{display:"flex",justifyContent:"center",margin:"8px 0"}}>
                   <div className="profile-ring">
                     <img src={sabinaPhoto} alt="Sabina"/>
                   </div>
@@ -810,9 +810,9 @@ export default function App() {
               <div className="card">
                 <div className="ct" style={{textAlign:"left"}}>Today's Progress</div>
                 <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Goals · Rituel</div>
-                <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:13}}>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
-                    {dayPct}<span style={{fontSize:18,color:"var(--ink-light)"}}>%</span>
+                <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
+                    {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
                   </div>
                   <div style={{flex:1}}>
                     <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
@@ -821,20 +821,18 @@ export default function App() {
                     <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"left"}}>{dayDone} of {dayTotal} tasks completed</div>
                   </div>
                 </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 14px"}}>
+                <div style={{display:"flex",flexDirection:"column",gap:9}}>
                   {[
                     {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
-                    {label:"To-Do",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+                    {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
                     {label:"Goals",done:monthGoalsAvgPct,total:100,color:"#b098c0",isPct:true},
                     {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
                   ].map(row=>(
-                    <div key={row.label} style={{display:"flex",flexDirection:"column",gap:4}}>
-                      <div style={{display:"flex",alignItems:"center",gap:6}}>
-                        <div style={{width:6,height:6,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-                        <div style={{fontSize:11,color:"var(--ink)",flex:1}}>{row.label}</div>
-                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{row.isPct?`${row.done}%`:`${row.done}/${row.total}`}</div>
-                      </div>
-                      <div style={{height:3,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}>
+                    <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
+                      <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+                      <div style={{fontSize:12,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.isPct?`${row.done}%`:`${row.done}/${row.total}`}</div>
+                      <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
                         <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
                       </div>
                     </div>
