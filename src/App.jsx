@@ -449,6 +449,10 @@ export default function App() {
   const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",notes:"",color:"#c9a87c",allDay:false});
   const [praise,setPraise]=useState(null);
   const [pomoCount,setPomoCount]=useDB("sab_pomo",0);
+  const [habitsWeekKey,setHabitsWeekKey]=useDB("sab_habits_week","");
+  const [habitsArchive,setHabitsArchive]=useDB("sab_habits_archive",{});
+  const [cleanWeekKey,setCleanWeekKey]=useDB("sab_clean_week","");
+  const [cleanArchive,setCleanArchive]=useDB("sab_clean_archive",{});
   const [bilView,setBilView]=useState("week");
 
   // Pomodoro timer state
@@ -456,32 +460,65 @@ export default function App() {
   const [pomoLeft,setPomoLeft]=useState(1500);
   const [pomoActive,setPomoActive]=useState(false);
   const pomoInterval=useRef(null);
+  const pomoEndTime=useRef(null);
 
   const pt=useRef(null);
   const ac=useRef(null);
 
   useEffect(()=>{const h=()=>setIconFor(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
   useEffect(()=>()=>clearInterval(pomoInterval.current),[]);
+  // Snap pomo time when tab becomes visible again (avoids throttled intervals)
+  useEffect(()=>{
+    const onVis=()=>{
+      if(!document.hidden&&pomoEndTime.current){
+        const rem=Math.round((pomoEndTime.current-Date.now())/1000);
+        if(rem<=0){clearInterval(pomoInterval.current);setPomoActive(false);setPomoCount(c=>c+1);chime();setPomoLeft(0);pomoEndTime.current=null;}
+        else setPomoLeft(rem);
+      }
+    };
+    document.addEventListener("visibilitychange",onVis);
+    return()=>document.removeEventListener("visibilitychange",onVis);
+  },[]);// eslint-disable-line react-hooks/exhaustive-deps
   useEffect(()=>{const t=setInterval(()=>{const d=new Date().toISOString().split("T")[0];setLiveDate(p=>p!==d?d:p);},30000);return()=>clearInterval(t);},[]);
   // Shadow module-level date constants with live reactive versions
   const TODAY=liveDate;
   const TOMORROW=new Date(new Date(liveDate+"T12:00:00").getTime()+86400000).toISOString().split("T")[0];
   const TODAY_DAY=DAYS[new Date(liveDate+"T12:00:00").getDay()===0?6:new Date(liveDate+"T12:00:00").getDay()-1];
 
+  // Weekly habit reset — archive last week, reset days to false
+  useEffect(()=>{
+    const wk=isoWeekKey(TODAY);
+    if(habitsWeekKey&&habitsWeekKey!==wk){
+      setHabitsArchive(a=>({...a,[habitsWeekKey]:habits.map(h=>({id:h.id,name:h.name,days:[...h.days]}))}));
+      setHabits(h=>h.map(hab=>({...hab,days:Array(7).fill(false)})));
+    }
+    if(!habitsWeekKey||habitsWeekKey!==wk)setHabitsWeekKey(wk);
+  },[TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Weekly cleaning reset — archive last week, uncheck all tasks
+  useEffect(()=>{
+    const wk=isoWeekKey(TODAY);
+    if(cleanWeekKey&&cleanWeekKey!==wk){
+      setCleanArchive(a=>({...a,[cleanWeekKey]:JSON.parse(JSON.stringify(cleaning))}));
+      setCleaning(c=>Object.fromEntries(Object.entries(c).map(([d,ts])=>[d,ts.map(t=>({...t,done:false}))])));
+    }
+    if(!cleanWeekKey||cleanWeekKey!==wk)setCleanWeekKey(wk);
+  },[TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+
   // Pomodoro controls
   const pomoStart=()=>{
     if(pomoActive||pomoLeft===0)return;
     pomoBegin();
+    pomoEndTime.current=Date.now()+pomoLeft*1000;
     setPomoActive(true);
     pomoInterval.current=setInterval(()=>{
-      setPomoLeft(l=>{
-        if(l<=1){clearInterval(pomoInterval.current);setPomoActive(false);setPomoCount(c=>c+1);chime();return 0;}
-        return l-1;
-      });
-    },1000);
+      const rem=Math.round((pomoEndTime.current-Date.now())/1000);
+      if(rem<=0){clearInterval(pomoInterval.current);setPomoActive(false);setPomoCount(c=>c+1);chime();setPomoLeft(0);pomoEndTime.current=null;}
+      else setPomoLeft(rem);
+    },500);
   };
-  const pomoPause=()=>{clearInterval(pomoInterval.current);setPomoActive(false);pomoEnd();};
-  const pomoStop=()=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoLeft(pomoDur);pomoEnd();};
+  const pomoPause=()=>{clearInterval(pomoInterval.current);setPomoActive(false);pomoEnd();pomoEndTime.current=null;};
+  const pomoStop=()=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoLeft(pomoDur);pomoEnd();pomoEndTime.current=null;};
   const pomoSelect=s=>{clearInterval(pomoInterval.current);setPomoActive(false);setPomoDur(s);setPomoLeft(s);};
 
   const pomoProg=pomoDur>0?pomoLeft/pomoDur:0;
@@ -759,9 +796,9 @@ export default function App() {
               <div className="card">
                 <div className="ct" style={{textAlign:"left"}}>Today's Progress</div>
                 <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Goals · Rituel</div>
-                <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
-                    {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
+                <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:13}}>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
+                    {dayPct}<span style={{fontSize:18,color:"var(--ink-light)"}}>%</span>
                   </div>
                   <div style={{flex:1}}>
                     <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
@@ -770,7 +807,7 @@ export default function App() {
                     <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"left"}}>{dayDone} of {dayTotal} tasks completed</div>
                   </div>
                 </div>
-                <div style={{display:"flex",flexDirection:"column",gap:9}}>
+                <div style={{display:"flex",flexDirection:"column",gap:7}}>
                   {[
                     {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
                     {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
