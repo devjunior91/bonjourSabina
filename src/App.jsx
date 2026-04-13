@@ -133,12 +133,12 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cs{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);margin-bottom:16px;}
 
 /* ── PROFILE CARD (left col) ── */
-.profile-card{background:var(--ivory);border:1px solid var(--gold);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);text-align:left;}
+.profile-card{background:var(--ivory);border:1px solid var(--gold);border-radius:16px;padding:24px;box-shadow:var(--shadow);text-align:left;}
 .ph-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--gold);letter-spacing:.14em;opacity:.9;margin-bottom:1px;line-height:1.2;}
 .ph-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--ink);line-height:1.2;margin-bottom:10px;margin-top:0;}
 .ph-title em{font-style:italic;color:var(--gold-deep);}
 .ph-sub{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--ink-light);margin-top:10px;}
-.profile-ring{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid var(--gold);box-shadow:0 4px 20px rgba(38,29,18,.14),0 0 0 5px rgba(201,168,124,.1);max-width:110px;margin:0 auto;display:block;}
+.profile-ring{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid var(--gold);box-shadow:0 4px 20px rgba(38,29,18,.14),0 0 0 5px rgba(201,168,124,.1);max-width:100px;margin:0 auto;display:block;}
 .profile-ring img{width:100%;height:100%;object-fit:cover;display:block;}
 
 /* ── STAT CARDS (right col) ── */
@@ -767,7 +767,7 @@ export default function App() {
               <div className="profile-card">
                 <div className="ph-eye">Your personal space</div>
                 <h1 className="ph-title">Bonjour, <em>Sabina</em></h1>
-                <div style={{display:"flex",justifyContent:"center",margin:"8px 0"}}>
+                <div style={{display:"flex",justifyContent:"center",margin:"12px 0"}}>
                   <div className="profile-ring">
                     <img src={sabinaPhoto} alt="Sabina"/>
                   </div>
