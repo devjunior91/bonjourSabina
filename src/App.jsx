@@ -821,18 +821,20 @@ export default function App() {
                     <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"left"}}>{dayDone} of {dayTotal} tasks completed</div>
                   </div>
                 </div>
-                <div style={{display:"flex",flexDirection:"column",gap:7}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 14px"}}>
                   {[
                     {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
-                    {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+                    {label:"To-Do",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
                     {label:"Goals",done:monthGoalsAvgPct,total:100,color:"#b098c0",isPct:true},
                     {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
                   ].map(row=>(
-                    <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
-                      <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-                      <div style={{fontSize:12,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.isPct?`${row.done}%`:`${row.done}/${row.total}`}</div>
-                      <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
+                    <div key={row.label} style={{display:"flex",flexDirection:"column",gap:4}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}>
+                        <div style={{width:6,height:6,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+                        <div style={{fontSize:11,color:"var(--ink)",flex:1}}>{row.label}</div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{row.isPct?`${row.done}%`:`${row.done}/${row.total}`}</div>
+                      </div>
+                      <div style={{height:3,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}>
                         <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
                       </div>
                     </div>
