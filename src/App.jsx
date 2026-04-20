@@ -463,7 +463,10 @@ export default function App() {
   const [cleanWeekKey,setCleanWeekKey]=useDB("sab_clean_week","");
   const [cleanArchive,setCleanArchive]=useDB("sab_clean_archive",{});
   const [resetVersion,setResetVersion]=useDB("sab_reset_v",0);
-  const [fitnessData,setFitnessData]=useDB("sab_fitness",{});
+  const [fitMove,setFitMove]=useDB("sab_fitness_move",null);
+  const [fitEx,setFitEx]=useDB("sab_fitness_ex",null);
+  const [fitStand,setFitStand]=useDB("sab_fitness_stand",null);
+  const [fitDate,setFitDate]=useDB("sab_fitness_date","");
   const [bilView,setBilView]=useState("week");
 
   // Pomodoro timer state
@@ -641,18 +644,16 @@ export default function App() {
   const dayDone=Math.round(dayDoneRaw);
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
   // Fitness rings
-  const todayFit=fitnessData[TODAY]||null;
-  const moveGoal=todayFit?.moveGoal||500;
-  const exGoal=todayFit?.exerciseGoal||30;
-  const standGoal=todayFit?.standGoal||12;
-  const movePct=todayFit?Math.min(todayFit.move/moveGoal,1):0;
-  const exPct=todayFit?Math.min(todayFit.exercise/exGoal,1):0;
-  const standPct=todayFit?Math.min(todayFit.stand/standGoal,1):0;
+  const todayFit=fitDate===TODAY;
+  const moveGoal=500,exGoal=30,standGoal=12;
+  const movePct=todayFit?Math.min((fitMove||0)/moveGoal,1):0;
+  const exPct=todayFit?Math.min((fitEx||0)/exGoal,1):0;
+  const standPct=todayFit?Math.min((fitStand||0)/standGoal,1):0;
   const RING_CX=60,RING_CY=60;
   const RINGS=[
-    {r:50,color:"#e85d5d",label:"Move",val:todayFit?.move,goal:moveGoal,unit:"cal",pct:movePct},
-    {r:37,color:"#5db85d",label:"Exercise",val:todayFit?.exercise,goal:exGoal,unit:"min",pct:exPct},
-    {r:24,color:"#5d9de8",label:"Stand",val:todayFit?.stand,goal:standGoal,unit:"hrs",pct:standPct},
+    {r:50,color:"#e85d5d",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
+    {r:37,color:"#5db85d",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
+    {r:24,color:"#5d9de8",label:"Stand",val:fitStand,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
@@ -987,7 +988,7 @@ export default function App() {
                         <div className="ring-dot" style={{background:ring.color}}/>
                         <span className="ring-lbl">{ring.label}</span>
                         <span className="ring-val">
-                          {todayFit?`${ring.val}/${ring.goal}${ring.unit}`:"—"}
+                          {todayFit&&ring.val!=null?`${Math.round(ring.val)}/${ring.goal}${ring.unit}`:"—"}
                         </span>
                       </div>
                     ))}
