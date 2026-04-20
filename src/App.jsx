@@ -468,19 +468,6 @@ export default function App() {
 
   useEffect(()=>{const h=()=>setIconFor(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
   useEffect(()=>()=>clearInterval(pomoInterval.current),[]);
-  // One-time migration: force habits + cleaning reset now that weekly archiving is in place
-  useEffect(()=>{
-    if(resetVersion<1){
-      const wk=isoWeekKey(new Date().toISOString().split("T")[0]);
-      setHabitsArchive(a=>({...a,["pre-v1"]:habits.map(h=>({id:h.id,name:h.name,days:[...h.days]}))}));
-      setHabits(h=>h.map(hab=>({...hab,days:Array(7).fill(false)})));
-      setHabitsWeekKey(wk);
-      setCleanArchive(a=>({...a,["pre-v1"]:JSON.parse(JSON.stringify(cleaning))}));
-      setCleaning(c=>Object.fromEntries(Object.entries(c).map(([d,ts])=>[d,ts.map(t=>({...t,done:false}))])));
-      setCleanWeekKey(wk);
-      setResetVersion(1);
-    }
-  },[]);// eslint-disable-line react-hooks/exhaustive-deps
   // Snap pomo time when tab becomes visible again (avoids throttled intervals)
   useEffect(()=>{
     const onVis=()=>{
