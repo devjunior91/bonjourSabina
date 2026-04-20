@@ -149,6 +149,15 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sn{font-family:'Playfair Display',serif;font-size:30px;font-weight:600;line-height:1;}
 .ss{font-size:10px;color:var(--ink-light);margin-top:4px;}
 
+/* ── FITNESS RINGS ── */
+.ring-wrap{display:flex;align-items:center;gap:18px;}
+.ring-legend{display:flex;flex-direction:column;gap:8px;flex:1;}
+.ring-legend-row{display:flex;align-items:center;gap:7px;}
+.ring-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.ring-lbl{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-light);flex:1;}
+.ring-val{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--ink);font-weight:400;}
+.ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
+
 /* ── QUOTE CARD ── */
 .qc{background:var(--ink);border-radius:16px;padding:24px 28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
 .qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(201,168,124,.08);line-height:1;pointer-events:none;}
@@ -454,6 +463,7 @@ export default function App() {
   const [cleanWeekKey,setCleanWeekKey]=useDB("sab_clean_week","");
   const [cleanArchive,setCleanArchive]=useDB("sab_clean_archive",{});
   const [resetVersion,setResetVersion]=useDB("sab_reset_v",0);
+  const [fitnessData,setFitnessData]=useDB("sab_fitness",{});
   const [bilView,setBilView]=useState("week");
 
   // Pomodoro timer state
@@ -630,6 +640,20 @@ export default function App() {
   const dayDoneRaw=habitsDoneToday+todosDoneToday+cleaningDoneToday+goalDoneV;
   const dayDone=Math.round(dayDoneRaw);
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
+  // Fitness rings
+  const todayFit=fitnessData[TODAY]||null;
+  const moveGoal=todayFit?.moveGoal||500;
+  const exGoal=todayFit?.exerciseGoal||30;
+  const standGoal=todayFit?.standGoal||12;
+  const movePct=todayFit?Math.min(todayFit.move/moveGoal,1):0;
+  const exPct=todayFit?Math.min(todayFit.exercise/exGoal,1):0;
+  const standPct=todayFit?Math.min(todayFit.stand/standGoal,1):0;
+  const RING_CX=60,RING_CY=60;
+  const RINGS=[
+    {r:50,color:"#e85d5d",label:"Move",val:todayFit?.move,goal:moveGoal,unit:"cal",pct:movePct},
+    {r:37,color:"#5db85d",label:"Exercise",val:todayFit?.exercise,goal:exGoal,unit:"min",pct:exPct},
+    {r:24,color:"#5d9de8",label:"Stand",val:todayFit?.stand,goal:standGoal,unit:"hrs",pct:standPct},
+  ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
   const NAV=[
@@ -930,6 +954,46 @@ export default function App() {
                   ))}
                   {cleaningTodayArr.length===0&&<div className="emp">No cleaning tasks today ✦</div>}
                 </div>
+              </div>
+
+              {/* Activity Rings */}
+              <div className="card">
+                <div className="ct">Activity Rings</div>
+                <div className="cs">Move · Exercise · Stand</div>
+                <div className="ring-wrap">
+                  <svg width="120" height="120" viewBox="0 0 120 120">
+                    {RINGS.map(ring=>{
+                      const circ=2*Math.PI*ring.r;
+                      const filled=circ*ring.pct;
+                      return (
+                        <g key={ring.label}>
+                          {/* Track */}
+                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
+                            stroke={ring.color+"28"} strokeWidth="10"/>
+                          {/* Progress */}
+                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
+                            stroke={ring.color} strokeWidth="10"
+                            strokeLinecap="round"
+                            strokeDasharray={`${filled} ${circ}`}
+                            transform={`rotate(-90 ${RING_CX} ${RING_CY})`}
+                            style={{transition:"stroke-dasharray .6s ease"}}/>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                  <div className="ring-legend">
+                    {RINGS.map(ring=>(
+                      <div key={ring.label} className="ring-legend-row">
+                        <div className="ring-dot" style={{background:ring.color}}/>
+                        <span className="ring-lbl">{ring.label}</span>
+                        <span className="ring-val">
+                          {todayFit?`${ring.val}/${ring.goal}${ring.unit}`:"—"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {!todayFit&&<div className="ring-sync">Awaiting today's sync ✦</div>}
               </div>
 
             </div>{/* end right col */}
