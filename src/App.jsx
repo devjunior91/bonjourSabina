@@ -159,10 +159,11 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
 
 /* ── QUOTE CARD ── */
-.qc{background:#7D5A44;border-radius:16px;padding:28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;min-height:270px;display:flex;flex-direction:column;justify-content:flex-end;}
-.qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(245,241,234,.08);line-height:1;pointer-events:none;}
-.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#F5F1EA;line-height:1.75;margin-bottom:10px;}
-.qa{font-size:10px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
+.qc{background:#7D5A44;border-radius:16px;padding:18px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;flex:1;}
+.qc::after{content:'"';position:absolute;right:10px;top:-8px;font-family:'Playfair Display',serif;font-size:70px;color:rgba(245,241,234,.08);line-height:1;pointer-events:none;}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#F5F1EA;line-height:1.65;margin-bottom:8px;}
+.qa{font-size:9px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
+.qr-row{display:flex;gap:12px;align-items:stretch;}
 
 /* ── UPCOMING EVENTS ── */
 .ue{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--parchment);margin-bottom:5px;transition:all .18s;cursor:pointer;border-left-width:3px;}
@@ -497,7 +498,7 @@ export default function App() {
   // Refresh fitness data at 8am, 1pm, 6pm, 9pm
   useEffect(()=>{
     if(!supabase)return;
-    const SYNC_HOURS=[8,13,18,21];
+    const SYNC_TIMES=[[8,0],[10,30],[13,30],[17,30],[21,0]];
     const refresh=()=>{
       [["sab_fitness_move",setFitMove],["sab_fitness_ex",setFitEx],["sab_fitness_stand",setFitStand],["sab_fitness_date",setFitDate]].forEach(([key,setter])=>{
         supabase.from("user_data").select("value").eq("key",key).maybeSingle()
@@ -506,7 +507,7 @@ export default function App() {
     };
     const t=setInterval(()=>{
       const now=new Date();
-      if(SYNC_HOURS.includes(now.getHours())&&now.getMinutes()===0)refresh();
+      if(SYNC_TIMES.some(([h,m])=>now.getHours()===h&&now.getMinutes()===m))refresh();
     },60*1000);
     return()=>clearInterval(t);
   },[]);
@@ -941,26 +942,26 @@ export default function App() {
             {/* ── RIGHT COLUMN ── */}
             <div className="dash-col">
 
-              {/* Quote */}
-              <div className="qc">
-                <div className="qt">"{QUOTE.text}"</div>
-                <div className="qa">— {QUOTE.attr}</div>
-              </div>
-
-              {/* Today's cleaning — compact */}
-              <div className="card" style={{padding:"14px 18px"}}>
-                <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:10}}>
-                  <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
-                  <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
+              {/* Quote + Rituel side by side */}
+              <div className="qr-row">
+                <div className="qc">
+                  <div className="qt">"{QUOTE.text}"</div>
+                  <div className="qa">— {QUOTE.attr}</div>
                 </div>
-                <div style={{display:"flex",flexDirection:"column",gap:4}}>
-                  {cleaningTodayArr.filter(t=>!t.done).map((task,i)=>(
-                    <div key={i} className="ctk" style={{padding:"3px 0"}}>
-                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,cleaningTodayArr.indexOf(task))}/>
-                      <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
-                    </div>
-                  ))}
-                  {cleaningTodayArr.filter(t=>!t.done).length===0&&<div className="emp">All done for today ✦</div>}
+                <div className="card" style={{padding:"14px 12px",flex:1,display:"flex",flexDirection:"column"}}>
+                  <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
+                    <div className="ct" style={{marginBottom:0,fontSize:11}}>Rituel</div>
+                    <div className="cs" style={{marginBottom:0,fontSize:9}}>{TODAY_DAY}</div>
+                  </div>
+                  <div style={{display:"flex",flexDirection:"column",gap:4,flex:1,justifyContent:"center"}}>
+                    {cleaningTodayArr.filter(t=>!t.done).map((task,i)=>(
+                      <div key={i} className="ctk" style={{padding:"2px 0"}}>
+                        <div className="cck" onClick={()=>toggleClean(TODAY_DAY,cleaningTodayArr.indexOf(task))}/>
+                        <span className="ctxt" style={{fontSize:10}}>{task.text}</span>
+                      </div>
+                    ))}
+                    {cleaningTodayArr.filter(t=>!t.done).length===0&&<div className="emp" style={{fontSize:10}}>All done ✦</div>}
+                  </div>
                 </div>
               </div>
 
