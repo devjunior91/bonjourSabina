@@ -161,7 +161,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── QUOTE CARD ── */
 .qc{background:#7D5A44;border-radius:16px;padding:16px 20px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;}
 .qc::after{content:'"';position:absolute;right:14px;top:-8px;font-family:'Playfair Display',serif;font-size:80px;color:rgba(245,241,234,.08);line-height:1;pointer-events:none;}
-.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:#F5F1EA;line-height:1.65;margin-bottom:6px;}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#F5F1EA;line-height:1.7;margin-bottom:8px;}
 .qa{font-size:9px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
 
 /* ── UPCOMING EVENTS ── */
@@ -942,7 +942,7 @@ export default function App() {
             <div className="dash-col">
 
               {/* Quote + Rituel — fixed height container to align with left/mid top cards */}
-              <div style={{display:"flex",flexDirection:"column",gap:18,height:310}}>
+              <div style={{display:"flex",flexDirection:"column",gap:18,height:310,justifyContent:"space-between"}}>
                 {/* Quote */}
                 <div className="qc" style={{flex:"0 0 auto"}}>
                   <div className="qt">"{QUOTE.text}"</div>
@@ -950,16 +950,16 @@ export default function App() {
                 </div>
 
                 {/* Today's cleaning — show all tasks */}
-                <div className="card" style={{padding:"10px 14px",flex:1,overflow:"hidden"}}>
-                  <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:6}}>
-                    <div className="ct" style={{marginBottom:0,fontSize:11}}>Rituel de Maison</div>
-                    <div className="cs" style={{marginBottom:0,fontSize:9}}>{TODAY_DAY}</div>
+                <div className="card" style={{padding:"14px 18px",flex:"0 0 auto",overflow:"hidden"}}>
+                  <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
+                    <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
+                    <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
                   </div>
-                  <div style={{display:"flex",flexDirection:"column",gap:2}}>
+                  <div style={{display:"flex",flexDirection:"column",gap:4}}>
                     {cleaningTodayArr.map((task,i)=>(
-                      <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"2px 0"}}>
+                      <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"3px 0"}}>
                         <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
-                        <span className="ctxt" style={{fontSize:10}}>{task.text}</span>
+                        <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
                       </div>
                     ))}
                   </div>
