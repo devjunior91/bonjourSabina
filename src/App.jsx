@@ -920,21 +920,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Today's cleaning */}
-              <div className="card">
-                <div className="ct">Rituel de Maison</div>
-                <div className="cs">Tasks for {TODAY_DAY}</div>
-                <div style={{display:"flex",flexDirection:"column",gap:6}}>
-                  {cleaningTodayArr.map((task,i)=>(
-                    <div key={i} className={`ctk ${task.done?"dc":""}`}>
-                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
-                      <span className="ctxt">{task.text}</span>
-                    </div>
-                  ))}
-                  {cleaningTodayArr.length===0&&<div className="emp">No cleaning tasks today ✦</div>}
-                </div>
-              </div>
-
             </div>{/* end middle col */}
 
             {/* ── RIGHT COLUMN ── */}
@@ -944,6 +929,23 @@ export default function App() {
               <div className="qc">
                 <div className="qt">"{QUOTE.text}"</div>
                 <div className="qa">— {QUOTE.attr}</div>
+              </div>
+
+              {/* Today's cleaning — compact */}
+              <div className="card" style={{padding:"14px 18px"}}>
+                <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:10}}>
+                  <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
+                  <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                  {cleaningTodayArr.map((task,i)=>(
+                    <div key={i} className={`ctk ${task.done?"dc":""}`} style={{padding:"3px 0"}}>
+                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
+                      <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
+                    </div>
+                  ))}
+                  {cleaningTodayArr.length===0&&<div className="emp">No cleaning tasks today ✦</div>}
+                </div>
               </div>
 
               {/* Pomodoro timer */}
