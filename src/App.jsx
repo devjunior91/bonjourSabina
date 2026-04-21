@@ -159,9 +159,9 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
 
 /* ── QUOTE CARD ── */
-.qc{background:#7D5A44;border-radius:16px;padding:20px 22px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;min-height:162px;}
+.qc{background:#7D5A44;border-radius:16px;padding:16px 20px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;}
 .qc::after{content:'"';position:absolute;right:14px;top:-8px;font-family:'Playfair Display',serif;font-size:80px;color:rgba(245,241,234,.08);line-height:1;pointer-events:none;}
-.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#F5F1EA;line-height:1.7;margin-bottom:8px;}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:#F5F1EA;line-height:1.65;margin-bottom:6px;}
 .qa{font-size:9px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
 
 /* ── UPCOMING EVENTS ── */
