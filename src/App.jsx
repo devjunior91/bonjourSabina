@@ -173,13 +173,13 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ue-away{font-size:9px;color:var(--ink-light);background:var(--gold-pale);padding:2px 7px;border-radius:10px;white-space:nowrap;}
 
 /* ── POMODORO TIMER ── */
-.pomo-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
-.pomo-presets{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
-.pomo-preset{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
+.pomo-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.pomo-presets{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.pomo-preset{padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
 .pomo-preset:hover,.pomo-preset.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
 .pomo-svg{filter:drop-shadow(0 2px 8px rgba(201,168,124,.18));}
 .pomo-btns{display:flex;gap:8px;}
-.pomo-btn{padding:8px 22px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;letter-spacing:.02em;}
+.pomo-btn{padding:6px 18px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;letter-spacing:.02em;}
 .pomo-btn.start{background:var(--ink);color:#f4ede3;}
 .pomo-btn.start:hover{background:var(--gold-deep);}
 .pomo-btn.pause{background:var(--parchment);color:var(--ink);border:1px solid var(--border);}
@@ -956,7 +956,7 @@ export default function App() {
                       <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
                     ))}
                   </div>
-                  <svg width="140" height="140" viewBox="0 0 110 110" className="pomo-svg">
+                  <svg width="100" height="100" viewBox="0 0 110 110" className="pomo-svg">
                     <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
                     <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
                     <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
