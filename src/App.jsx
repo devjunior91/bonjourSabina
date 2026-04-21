@@ -159,7 +159,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
 
 /* ── QUOTE CARD ── */
-.qc{background:#7D5A44;border-radius:16px;padding:18px 24px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+.qc{background:#7D5A44;border-radius:16px;padding:28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;min-height:270px;display:flex;flex-direction:column;justify-content:flex-end;}
 .qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(245,241,234,.08);line-height:1;pointer-events:none;}
 .qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#F5F1EA;line-height:1.75;margin-bottom:10px;}
 .qa{font-size:10px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
