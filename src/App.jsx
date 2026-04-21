@@ -151,11 +151,11 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 
 /* ── FITNESS RINGS ── */
 .ring-wrap{display:flex;align-items:center;gap:18px;}
-.ring-legend{display:flex;flex-direction:column;gap:8px;flex:1;}
+.ring-legend{display:flex;flex-direction:column;gap:12px;flex:1;}
 .ring-legend-row{display:flex;align-items:center;gap:7px;}
-.ring-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.ring-lbl{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-light);flex:1;}
-.ring-val{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--ink);font-weight:400;}
+.ring-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.ring-lbl{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);flex:1;}
+.ring-val{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink);font-weight:400;}
 .ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
 
 /* ── QUOTE CARD ── */
@@ -653,8 +653,8 @@ export default function App() {
   const RING_CX=60,RING_CY=60;
   const RINGS=[
     {r:50,color:"#c9a87c",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
-    {r:37,color:"#a8c4a0",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
-    {r:24,color:"#e8a4b8",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
+    {r:37,color:"#d4b896",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
+    {r:24,color:"#f2c0cc",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
@@ -894,11 +894,11 @@ export default function App() {
             <div className="dash-col">
 
               {/* Activity Rings */}
-              <div className="card" style={{minHeight:220}}>
+              <div className="card" style={{minHeight:280}}>
                 <div className="ct">Activity Rings</div>
                 <div className="cs">Move · Exercise · Stand</div>
-                <div className="ring-wrap">
-                  <svg width="140" height="140" viewBox="0 0 120 120">
+                <div className="ring-wrap" style={{marginTop:12}}>
+                  <svg width="160" height="160" viewBox="0 0 120 120">
                     {RINGS.map(ring=>{
                       const circ=2*Math.PI*ring.r;
                       const filled=circ*ring.pct;
