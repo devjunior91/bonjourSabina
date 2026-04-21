@@ -159,10 +159,10 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
 
 /* ── QUOTE CARD ── */
-.qc{background:var(--parchment);border-radius:16px;padding:24px 28px;box-shadow:var(--shadow);border-left:3px solid var(--gold);position:relative;overflow:hidden;}
-.qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(201,168,124,.12);line-height:1;pointer-events:none;}
-.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--ink);line-height:1.75;margin-bottom:10px;}
-.qa{font-size:10px;color:var(--ink-light);letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
+.qc{background:#7D5A44;border-radius:16px;padding:24px 28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+.qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(245,241,234,.08);line-height:1;pointer-events:none;}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#F5F1EA;line-height:1.75;margin-bottom:10px;}
+.qa{font-size:10px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
 
 /* ── UPCOMING EVENTS ── */
 .ue{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--parchment);margin-bottom:6px;transition:all .18s;cursor:pointer;border-left-width:3px;}
@@ -652,9 +652,9 @@ export default function App() {
   const standPct=todayFit?Math.min((fitStand||0)/12/standGoal,1):0;
   const RING_CX=60,RING_CY=60;
   const RINGS=[
-    {r:50,color:"#c9a87c",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
-    {r:37,color:"#d4b896",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
-    {r:24,color:"#f2c0cc",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
+    {r:50,color:"#B2967D",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
+    {r:37,color:"#D7C9B8",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
+    {r:24,color:"#7D5A44",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
