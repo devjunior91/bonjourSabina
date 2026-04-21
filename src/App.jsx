@@ -941,31 +941,6 @@ export default function App() {
             {/* ── RIGHT COLUMN ── */}
             <div className="dash-col">
 
-              {/* Quote + Rituel — fixed height container to align with left/mid top cards */}
-              <div style={{display:"flex",flexDirection:"column",gap:18,height:310,justifyContent:"space-between"}}>
-                {/* Quote */}
-                <div className="qc" style={{flex:"0 0 auto"}}>
-                  <div className="qt">"{QUOTE.text}"</div>
-                  <div className="qa">— {QUOTE.attr}</div>
-                </div>
-
-                {/* Today's cleaning — show all tasks */}
-                <div className="card" style={{padding:"14px 18px",flex:"0 0 auto",overflow:"hidden"}}>
-                  <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
-                    <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
-                    <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
-                  </div>
-                  <div style={{display:"flex",flexDirection:"column",gap:4}}>
-                    {cleaningTodayArr.map((task,i)=>(
-                      <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"3px 0"}}>
-                        <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
-                        <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
               {/* Pomodoro timer */}
               <div className="card">
                 <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
@@ -989,6 +964,28 @@ export default function App() {
                     }
                     <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
                   </div>
+                </div>
+              </div>
+
+              {/* Quote */}
+              <div className="qc">
+                <div className="qt">"{QUOTE.text}"</div>
+                <div className="qa">— {QUOTE.attr}</div>
+              </div>
+
+              {/* Today's cleaning — show all tasks */}
+              <div className="card" style={{padding:"14px 18px"}}>
+                <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
+                  <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
+                  <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                  {cleaningTodayArr.map((task,i)=>(
+                    <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"3px 0"}}>
+                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
+                      <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
