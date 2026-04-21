@@ -788,10 +788,42 @@ export default function App() {
                 <p className="ph-sub">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p>
               </div>
 
-              {/* Quote */}
-              <div className="qc">
-                <div className="qt">"{QUOTE.text}"</div>
-                <div className="qa">— {QUOTE.attr}</div>
+              {/* Activity Rings */}
+              <div className="card" style={{minHeight:280}}>
+                <div className="ct">Activity Rings</div>
+                <div className="cs">Move · Exercise · Stand</div>
+                <div className="ring-wrap" style={{marginTop:12}}>
+                  <svg width="160" height="160" viewBox="0 0 120 120">
+                    {RINGS.map(ring=>{
+                      const circ=2*Math.PI*ring.r;
+                      const filled=circ*ring.pct;
+                      return (
+                        <g key={ring.label}>
+                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
+                            stroke={ring.color+"28"} strokeWidth="10"/>
+                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
+                            stroke={ring.color} strokeWidth="10"
+                            strokeLinecap="round"
+                            strokeDasharray={`${circ*ring.pct} ${circ}`}
+                            transform={`rotate(-90 ${RING_CX} ${RING_CY})`}
+                            style={{transition:"stroke-dasharray .6s ease"}}/>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                  <div className="ring-legend">
+                    {RINGS.map(ring=>(
+                      <div key={ring.label} className="ring-legend-row">
+                        <div className="ring-dot" style={{background:ring.color}}/>
+                        <span className="ring-lbl">{ring.label}</span>
+                        <span className="ring-val">
+                          {todayFit&&ring.val!=null?`${Math.round(ring.val*10)/10}/${ring.goal}${ring.unit}`:"—"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {!todayFit&&<div className="ring-sync">Awaiting today's sync ✦</div>}
               </div>
 
               {/* Quick nav buttons */}
@@ -893,44 +925,10 @@ export default function App() {
             {/* ── RIGHT COLUMN ── */}
             <div className="dash-col">
 
-              {/* Activity Rings */}
-              <div className="card" style={{minHeight:280}}>
-                <div className="ct">Activity Rings</div>
-                <div className="cs">Move · Exercise · Stand</div>
-                <div className="ring-wrap" style={{marginTop:12}}>
-                  <svg width="160" height="160" viewBox="0 0 120 120">
-                    {RINGS.map(ring=>{
-                      const circ=2*Math.PI*ring.r;
-                      const filled=circ*ring.pct;
-                      return (
-                        <g key={ring.label}>
-                          {/* Track */}
-                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
-                            stroke={ring.color+"28"} strokeWidth="10"/>
-                          {/* Progress */}
-                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
-                            stroke={ring.color} strokeWidth="10"
-                            strokeLinecap="round"
-                            strokeDasharray={`${filled} ${circ}`}
-                            transform={`rotate(-90 ${RING_CX} ${RING_CY})`}
-                            style={{transition:"stroke-dasharray .6s ease"}}/>
-                        </g>
-                      );
-                    })}
-                  </svg>
-                  <div className="ring-legend">
-                    {RINGS.map(ring=>(
-                      <div key={ring.label} className="ring-legend-row">
-                        <div className="ring-dot" style={{background:ring.color}}/>
-                        <span className="ring-lbl">{ring.label}</span>
-                        <span className="ring-val">
-                          {todayFit&&ring.val!=null?`${Math.round(ring.val*10)/10}/${ring.goal}${ring.unit}`:"—"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {!todayFit&&<div className="ring-sync">Awaiting today's sync ✦</div>}
+              {/* Quote */}
+              <div className="qc">
+                <div className="qt">"{QUOTE.text}"</div>
+                <div className="qa">— {QUOTE.attr}</div>
               </div>
 
               {/* Pomodoro timer */}
