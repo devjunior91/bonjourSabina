@@ -652,9 +652,9 @@ export default function App() {
   const standPct=todayFit?Math.min((fitStand||0)/12/standGoal,1):0;
   const RING_CX=60,RING_CY=60;
   const RINGS=[
-    {r:50,color:"#e85d5d",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
-    {r:37,color:"#5db85d",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
-    {r:24,color:"#5d9de8",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
+    {r:50,color:"#c9a87c",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
+    {r:37,color:"#7a9070",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
+    {r:24,color:"#b098c0",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
