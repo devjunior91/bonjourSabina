@@ -653,8 +653,8 @@ export default function App() {
   const RING_CX=60,RING_CY=60;
   const RINGS=[
     {r:50,color:"#c9a87c",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
-    {r:37,color:"#7a9070",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
-    {r:24,color:"#b098c0",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
+    {r:37,color:"#a8c4a0",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
+    {r:24,color:"#e8a4b8",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
