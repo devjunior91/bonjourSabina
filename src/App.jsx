@@ -788,30 +788,10 @@ export default function App() {
                 <p className="ph-sub">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p>
               </div>
 
-              {/* Pomodoro timer */}
-              <div className="card">
-                <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
-                <div className="cs" style={{textAlign:"center"}}>Pomodoro</div>
-                <div className="pomo-wrap">
-                  <div className="pomo-presets">
-                    {POMO_PRESETS.map(p=>(
-                      <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
-                    ))}
-                  </div>
-                  <svg width="140" height="140" viewBox="0 0 110 110" className="pomo-svg">
-                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
-                    <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-                    <text x="55" y="65" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="9" fontStyle="italic" fill="var(--ink-light)">{pomoActive?"focus":"ready"}</text>
-                  </svg>
-                  <div className="pomo-btns">
-                    {!pomoActive
-                      ? <button className="pomo-btn start" onClick={pomoStart}>{pomoLeft<pomoDur&&pomoLeft>0?"Resume":"Start"}</button>
-                      : <button className="pomo-btn pause" onClick={pomoPause}>Pause</button>
-                    }
-                    <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
-                  </div>
-                </div>
+              {/* Quote */}
+              <div className="qc">
+                <div className="qt">"{QUOTE.text}"</div>
+                <div className="qa">— {QUOTE.attr}</div>
               </div>
 
             </div>{/* end left col */}
@@ -891,40 +871,27 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 4 stat cards in 2×2 grid */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-                <div className="sc" style={{"--c1":"#c9a87c","--c2":"#a8865a"}} onClick={()=>setPage("habits")}>
-                  <div className="sl">Habits today</div>
-                  <div className="sn" style={{color:"#c9a87c",fontSize:26}}>{habitsToday}<span style={{fontSize:13,color:"var(--ink-light)"}}>/{habits.length}</span></div>
-                  <div className="ss">Habit Tracker →</div>
-                </div>
-                <div className="sc" style={{"--c1":"#7a9070","--c2":"#5a7050"}} onClick={()=>setPage("todos")}>
-                  <div className="sl">Tasks done</div>
-                  <div className="sn" style={{color:"#7a9070",fontSize:26}}>{todosDone}<span style={{fontSize:13,color:"var(--ink-light)"}}>/{todayTodos.length}</span></div>
-                  <div className="ss">To-Do Lists →</div>
-                </div>
-                <div className="sc" style={{"--c1":"#b098c0","--c2":"#907098"}} onClick={()=>setPage("goals")}>
-                  <div className="sl">Avg goal</div>
-                  <div className="sn" style={{color:"#b098c0",fontSize:26}}>{avgProg}<span style={{fontSize:13,color:"var(--ink-light)"}}>%</span></div>
-                  <div className="ss">Monthly Goals →</div>
-                </div>
-                <div className="sc" style={{"--c1":"#7090a8","--c2":"#507090"}} onClick={()=>setPage("calendar")}>
-                  <div className="sl">Events ahead</div>
-                  <div className="sn" style={{color:"#7090a8",fontSize:26}}>{upcoming.length}</div>
-                  <div className="ss">Calendar →</div>
-                </div>
+              {/* Quick nav buttons */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                {[
+                  {label:"Habits",page:"habits",color:"#c9a87c",val:`${habitsToday}/${habits.length}`},
+                  {label:"To-Do",page:"todos",color:"#7a9070",val:`${todosDone} done`},
+                  {label:"Goals",page:"goals",color:"#b098c0",val:`${avgProg}%`},
+                  {label:"Calendar",page:"calendar",color:"#7090a8",val:`${upcoming.length} ahead`},
+                ].map(b=>(
+                  <button key={b.page} onClick={()=>setPage(b.page)} style={{background:"var(--ivory)",border:`1px solid ${b.color}44`,borderRadius:12,padding:"10px 12px",cursor:"pointer",textAlign:"left",transition:"all .2s"}}
+                    onMouseEnter={e=>e.currentTarget.style.background=b.color+"18"}
+                    onMouseLeave={e=>e.currentTarget.style.background="var(--ivory)"}>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:b.color,marginBottom:2}}>{b.label}</div>
+                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>{b.val}</div>
+                  </button>
+                ))}
               </div>
 
             </div>{/* end middle col */}
 
             {/* ── RIGHT COLUMN ── */}
             <div className="dash-col">
-
-              {/* Quote */}
-              <div className="qc">
-                <div className="qt">"{QUOTE.text}"</div>
-                <div className="qa">— {QUOTE.attr}</div>
-              </div>
 
               {/* Activity Rings */}
               <div className="card">
@@ -964,6 +931,32 @@ export default function App() {
                   </div>
                 </div>
                 {!todayFit&&<div className="ring-sync">Awaiting today's sync ✦</div>}
+              </div>
+
+              {/* Pomodoro timer */}
+              <div className="card">
+                <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
+                <div className="cs" style={{textAlign:"center"}}>Pomodoro</div>
+                <div className="pomo-wrap">
+                  <div className="pomo-presets">
+                    {POMO_PRESETS.map(p=>(
+                      <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
+                    ))}
+                  </div>
+                  <svg width="140" height="140" viewBox="0 0 110 110" className="pomo-svg">
+                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
+                    <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+                    <text x="55" y="65" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="9" fontStyle="italic" fill="var(--ink-light)">{pomoActive?"focus":"ready"}</text>
+                  </svg>
+                  <div className="pomo-btns">
+                    {!pomoActive
+                      ? <button className="pomo-btn start" onClick={pomoStart}>{pomoLeft<pomoDur&&pomoLeft>0?"Resume":"Start"}</button>
+                      : <button className="pomo-btn pause" onClick={pomoPause}>Pause</button>
+                    }
+                    <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
+                  </div>
+                </div>
               </div>
 
               {/* Upcoming events */}
