@@ -920,21 +920,19 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Upcoming events */}
+              {/* Today's cleaning */}
               <div className="card">
-                <div className="ct">Upcoming Events</div>
-                <div className="cs">Next 2 dates</div>
-                {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-                {upcoming.slice(0,2).map(e=>(
-                  <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
-                    <div className="ue-dot" style={{background:e.color}}/>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div className="ue-name">{e.title}</div>
-                      <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
+                <div className="ct">Rituel de Maison</div>
+                <div className="cs">Tasks for {TODAY_DAY}</div>
+                <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                  {cleaningTodayArr.map((task,i)=>(
+                    <div key={i} className={`ctk ${task.done?"dc":""}`}>
+                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
+                      <span className="ctxt">{task.text}</span>
                     </div>
-                    <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
-                  </div>
-                ))}
+                  ))}
+                  {cleaningTodayArr.length===0&&<div className="emp">No cleaning tasks today ✦</div>}
+                </div>
               </div>
 
             </div>{/* end middle col */}
@@ -974,19 +972,21 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Today's cleaning */}
+              {/* Upcoming events */}
               <div className="card">
-                <div className="ct">Rituel de Maison</div>
-                <div className="cs">Tasks for {TODAY_DAY}</div>
-                <div style={{display:"flex",flexDirection:"column",gap:6}}>
-                  {cleaningTodayArr.map((task,i)=>(
-                    <div key={i} className={`ctk ${task.done?"dc":""}`}>
-                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
-                      <span className="ctxt">{task.text}</span>
+                <div className="ct">Upcoming Events</div>
+                <div className="cs">Next 3 dates</div>
+                {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
+                {upcoming.slice(0,3).map(e=>(
+                  <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
+                    <div className="ue-dot" style={{background:e.color}}/>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div className="ue-name">{e.title}</div>
+                      <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
                     </div>
-                  ))}
-                  {cleaningTodayArr.length===0&&<div className="emp">No cleaning tasks today ✦</div>}
-                </div>
+                    <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
+                  </div>
+                ))}
               </div>
 
             </div>{/* end right col */}
