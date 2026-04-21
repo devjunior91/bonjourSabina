@@ -645,15 +645,16 @@ export default function App() {
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
   // Fitness rings
   const todayFit=fitMove!=null;
-  const moveGoal=500,exGoal=30,standGoal=120;
+  const moveGoal=300,exGoal=30,standGoal=2;
+  const standHrs=fitStand?Math.round((fitStand/60)*10)/10:null;
   const movePct=todayFit?Math.min((fitMove||0)/moveGoal,1):0;
   const exPct=todayFit?Math.min((fitEx||0)/exGoal,1):0;
-  const standPct=todayFit?Math.min((fitStand||0)/standGoal,1):0;
+  const standPct=todayFit?Math.min((fitStand||0)/60/standGoal,1):0;
   const RING_CX=60,RING_CY=60;
   const RINGS=[
     {r:50,color:"#e85d5d",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
     {r:37,color:"#5db85d",label:"Exercise",val:fitEx,goal:exGoal,unit:"min",pct:exPct},
-    {r:24,color:"#5d9de8",label:"Stand",val:fitStand,goal:standGoal,unit:"min",pct:standPct},
+    {r:24,color:"#5d9de8",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
