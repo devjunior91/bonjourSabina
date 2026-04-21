@@ -644,7 +644,7 @@ export default function App() {
   const dayDone=Math.round(dayDoneRaw);
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
   // Fitness rings
-  const todayFit=fitDate===TODAY;
+  const todayFit=fitMove!=null;
   const moveGoal=500,exGoal=30,standGoal=12;
   const movePct=todayFit?Math.min((fitMove||0)/moveGoal,1):0;
   const exPct=todayFit?Math.min((fitEx||0)/exGoal,1):0;
