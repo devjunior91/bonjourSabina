@@ -106,7 +106,7 @@ const CSS=`
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
 
 /* ── TOP NAV ── */
-.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gradient(90deg,#6e4f3a 0%,#7D5A44 50%,#6e4f3a 100%);border-bottom:2px solid var(--gold);box-shadow:0 4px 28px rgba(20,16,12,.22);display:flex;align-items:center;padding:0 36px;gap:28px;z-index:200;}
+.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gradient(90deg,#352e28 0%,#433830 50%,#352e28 100%);border-bottom:2px solid var(--gold);box-shadow:0 4px 28px rgba(20,16,12,.22);display:flex;align-items:center;padding:0 36px;gap:28px;z-index:200;}
 .tn-brand{display:flex;flex-direction:column;gap:2px;flex-shrink:0;margin-right:10px;}
 .tn-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--gold);letter-spacing:.18em;opacity:.85;}
 .tn-name{font-family:'Playfair Display',serif;font-size:17px;color:#f0e8dc;font-weight:600;letter-spacing:.02em;}
