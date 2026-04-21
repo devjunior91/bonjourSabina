@@ -494,6 +494,18 @@ export default function App() {
     return()=>document.removeEventListener("visibilitychange",onVis);
   },[]);// eslint-disable-line react-hooks/exhaustive-deps
   useEffect(()=>{const t=setInterval(()=>{const d=new Date().toISOString().split("T")[0];setLiveDate(p=>p!==d?d:p);},30000);return()=>clearInterval(t);},[]);
+  // Refresh fitness data from Supabase every 30 minutes
+  useEffect(()=>{
+    if(!supabase)return;
+    const refresh=()=>{
+      [["sab_fitness_move",setFitMove],["sab_fitness_ex",setFitEx],["sab_fitness_stand",setFitStand],["sab_fitness_date",setFitDate]].forEach(([key,setter])=>{
+        supabase.from("user_data").select("value").eq("key",key).maybeSingle()
+          .then(({data,error})=>{if(!error&&data?.value!==undefined&&data.value!==null){setter(data.value);try{localStorage.setItem(key,JSON.stringify(data.value));}catch{}}});
+      });
+    };
+    const t=setInterval(refresh,30*60*1000);
+    return()=>clearInterval(t);
+  },[]);
   // Shadow module-level date constants with live reactive versions
   const TODAY=liveDate;
   const TOMORROW=new Date(new Date(liveDate+"T12:00:00").getTime()+86400000).toISOString().split("T")[0];
