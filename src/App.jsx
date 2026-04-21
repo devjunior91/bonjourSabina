@@ -646,10 +646,10 @@ export default function App() {
   // Fitness rings
   const todayFit=fitMove!=null;
   const moveGoal=300,exGoal=30,standGoal=6;
-  const standHrs=fitStand?Math.round(fitStand*10)/10:null;
+  const standHrs=fitStand?Math.round((fitStand/12)*10)/10:null;
   const movePct=todayFit?Math.min((fitMove||0)/moveGoal,1):0;
   const exPct=todayFit?Math.min((fitEx||0)/exGoal,1):0;
-  const standPct=todayFit?Math.min((fitStand||0)/standGoal,1):0;
+  const standPct=todayFit?Math.min((fitStand||0)/12/standGoal,1):0;
   const RING_CX=60,RING_CY=60;
   const RINGS=[
     {r:50,color:"#e85d5d",label:"Move",val:fitMove,goal:moveGoal,unit:"cal",pct:movePct},
