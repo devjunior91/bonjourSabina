@@ -159,10 +159,10 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ring-sync{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;margin-top:10px;}
 
 /* ── QUOTE CARD ── */
-.qc{background:var(--ink);border-radius:16px;padding:24px 28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
-.qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(201,168,124,.08);line-height:1;pointer-events:none;}
-.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16.5px;color:#f0e8dc;line-height:1.75;margin-bottom:10px;}
-.qa{font-size:10px;color:rgba(201,168,124,.6);letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
+.qc{background:var(--parchment);border-radius:16px;padding:24px 28px;box-shadow:var(--shadow);border-left:3px solid var(--gold);position:relative;overflow:hidden;}
+.qc::after{content:'"';position:absolute;right:18px;top:-8px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(201,168,124,.12);line-height:1;pointer-events:none;}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--ink);line-height:1.75;margin-bottom:10px;}
+.qa{font-size:10px;color:var(--ink-light);letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
 
 /* ── UPCOMING EVENTS ── */
 .ue{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--parchment);margin-bottom:6px;transition:all .18s;cursor:pointer;border-left-width:3px;}
@@ -794,6 +794,23 @@ export default function App() {
                 <div className="qa">— {QUOTE.attr}</div>
               </div>
 
+              {/* Quick nav buttons */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                {[
+                  {label:"Habits",page:"habits",color:"#c9a87c",val:`${habitsToday}/${habits.length}`},
+                  {label:"To-Do",page:"todos",color:"#7a9070",val:`${todosDone} done`},
+                  {label:"Goals",page:"goals",color:"#b098c0",val:`${avgProg}%`},
+                  {label:"Calendar",page:"calendar",color:"#7090a8",val:`${upcoming.length} ahead`},
+                ].map(b=>(
+                  <button key={b.page} onClick={()=>setPage(b.page)} style={{background:"var(--ivory)",border:`1px solid ${b.color}44`,borderRadius:12,padding:"10px 12px",cursor:"pointer",textAlign:"left",transition:"all .2s"}}
+                    onMouseEnter={e=>e.currentTarget.style.background=b.color+"18"}
+                    onMouseLeave={e=>e.currentTarget.style.background="var(--ivory)"}>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:b.color,marginBottom:2}}>{b.label}</div>
+                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>{b.val}</div>
+                  </button>
+                ))}
+              </div>
+
             </div>{/* end left col */}
 
             {/* ── MIDDLE COLUMN ── */}
@@ -871,34 +888,17 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Quick nav buttons */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                {[
-                  {label:"Habits",page:"habits",color:"#c9a87c",val:`${habitsToday}/${habits.length}`},
-                  {label:"To-Do",page:"todos",color:"#7a9070",val:`${todosDone} done`},
-                  {label:"Goals",page:"goals",color:"#b098c0",val:`${avgProg}%`},
-                  {label:"Calendar",page:"calendar",color:"#7090a8",val:`${upcoming.length} ahead`},
-                ].map(b=>(
-                  <button key={b.page} onClick={()=>setPage(b.page)} style={{background:"var(--ivory)",border:`1px solid ${b.color}44`,borderRadius:12,padding:"10px 12px",cursor:"pointer",textAlign:"left",transition:"all .2s"}}
-                    onMouseEnter={e=>e.currentTarget.style.background=b.color+"18"}
-                    onMouseLeave={e=>e.currentTarget.style.background="var(--ivory)"}>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:b.color,marginBottom:2}}>{b.label}</div>
-                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>{b.val}</div>
-                  </button>
-                ))}
-              </div>
-
             </div>{/* end middle col */}
 
             {/* ── RIGHT COLUMN ── */}
             <div className="dash-col">
 
               {/* Activity Rings */}
-              <div className="card">
+              <div className="card" style={{minHeight:220}}>
                 <div className="ct">Activity Rings</div>
                 <div className="cs">Move · Exercise · Stand</div>
                 <div className="ring-wrap">
-                  <svg width="120" height="120" viewBox="0 0 120 120">
+                  <svg width="140" height="140" viewBox="0 0 120 120">
                     {RINGS.map(ring=>{
                       const circ=2*Math.PI*ring.r;
                       const filled=circ*ring.pct;
