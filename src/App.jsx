@@ -165,7 +165,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .qa{font-size:10px;color:#D7C9B8;letter-spacing:.12em;font-family:'DM Sans',sans-serif;}
 
 /* ── UPCOMING EVENTS ── */
-.ue{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--parchment);margin-bottom:6px;transition:all .18s;cursor:pointer;border-left-width:3px;}
+.ue{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--parchment);margin-bottom:5px;transition:all .18s;cursor:pointer;border-left-width:3px;}
 .ue:hover{opacity:.85;}
 .ue-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .ue-name{font-size:12.5px;color:var(--ink);text-align:left;}
@@ -923,9 +923,9 @@ export default function App() {
               {/* Upcoming events */}
               <div className="card">
                 <div className="ct">Upcoming Events</div>
-                <div className="cs">Next 3 dates</div>
+                <div className="cs">Next 2 dates</div>
                 {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-                {upcoming.map(e=>(
+                {upcoming.slice(0,2).map(e=>(
                   <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
                     <div className="ue-dot" style={{background:e.color}}/>
                     <div style={{flex:1,minWidth:0}}>
