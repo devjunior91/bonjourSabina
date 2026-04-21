@@ -920,6 +920,23 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Upcoming events */}
+              <div className="card">
+                <div className="ct">Upcoming Events</div>
+                <div className="cs">Next 3 dates</div>
+                {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
+                {upcoming.map(e=>(
+                  <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
+                    <div className="ue-dot" style={{background:e.color}}/>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div className="ue-name">{e.title}</div>
+                      <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
+                    </div>
+                    <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
+                  </div>
+                ))}
+              </div>
+
             </div>{/* end middle col */}
 
             {/* ── RIGHT COLUMN ── */}
@@ -955,23 +972,6 @@ export default function App() {
                     <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
                   </div>
                 </div>
-              </div>
-
-              {/* Upcoming events */}
-              <div className="card">
-                <div className="ct">Upcoming Events</div>
-                <div className="cs">Next 3 dates</div>
-                {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-                {upcoming.map(e=>(
-                  <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
-                    <div className="ue-dot" style={{background:e.color}}/>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div className="ue-name">{e.title}</div>
-                      <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
-                    </div>
-                    <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
-                  </div>
-                ))}
               </div>
 
               {/* Today's cleaning */}
