@@ -499,6 +499,7 @@ export default function App() {
   const [goals,setGoals]=useDB("sab_goals",{});
   const [cleaning,setCleaning]=useDB("sab_clean",DEF_CLEANING);
   const [pack,setPack]=useDB("sab_pack",DEF_PACK);
+  const [packInputs,setPackInputs]=useState({});
   const [events,setEvents]=useDB("sab_events",[]);
   const [newHabit,setNewHabit]=useState("");
   const [editHabit,setEditHabit]=useState(null);
@@ -1412,7 +1413,6 @@ export default function App() {
           const toggleItem=(catId,itemId)=>setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:c.items.map(i=>i.id===itemId?{...i,done:!i.done}:i)}:c)}));
           const delItem=(catId,itemId)=>setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:c.items.filter(i=>i.id!==itemId)}:c)}));
           const addItem=(catId,text)=>{if(!text.trim())return;const newId=Date.now();setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:[...c.items,{id:newId,text:text.trim(),done:false}]}:c)}));};
-          const [packInputs,setPackInputs]=useState({});
           return(<>
             <div style={{marginBottom:28}}>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Bon voyage, Sabina</div>
