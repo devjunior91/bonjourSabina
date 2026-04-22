@@ -70,6 +70,51 @@ const DEF_CLEAN_TASKS={Mon:["Vacuum living room","Wipe kitchen surfaces","Clean 
 const DEF_HABITS=[{id:1,name:"Morning pages",icon:"✎",color:"#c9a87c",days:Array(7).fill(false)},{id:2,name:"Walk 30 min",icon:"◎",color:"#a89080",days:Array(7).fill(false)},{id:3,name:"Read",icon:"□",color:"#7a9070",days:Array(7).fill(false)},{id:4,name:"Meditate",icon:"○",color:"#b098c0",days:Array(7).fill(false)},{id:5,name:"Drink 2L water",icon:"◇",color:"#7090a8",days:Array(7).fill(false)}];
 const DEF_TAGS=["Personal","Work","Fitness","Health","Creative"];
 const DEF_CLEANING=Object.fromEntries(DAYS.map(d=>[d,DEF_CLEAN_TASKS[d].map(t=>({text:t,done:false}))]));
+const DEF_PACK={
+  trip:{destination:"London",from:"22 Apr 2026",nights:7},
+  categories:[
+    {id:"clothing",label:"Clothing",icon:"👗",items:[
+      {id:1,text:"7 × tops / blouses",done:false},{id:2,text:"3 × jeans / trousers",done:false},
+      {id:3,text:"1 × smart outfit",done:false},{id:4,text:"1–2 × going-out outfits",done:false},
+      {id:5,text:"Pyjamas",done:false},{id:6,text:"7 × underwear",done:false},
+      {id:7,text:"7 × socks",done:false},{id:8,text:"Warm jumper / cardigan",done:false},
+      {id:9,text:"Coat / jacket",done:false},
+    ]},
+    {id:"fitness",label:"Fitness",icon:"🏋️",items:[
+      {id:20,text:"3 × gym / workout sets",done:false},{id:21,text:"3 × sports bras",done:false},
+      {id:22,text:"Running / gym trainers",done:false},{id:23,text:"Water bottle",done:false},
+    ]},
+    {id:"shoes",label:"Shoes & Accessories",icon:"👟",items:[
+      {id:30,text:"Everyday trainers / flats",done:false},{id:31,text:"Smart / going-out shoes",done:false},
+      {id:32,text:"Handbag",done:false},{id:33,text:"Sunglasses",done:false},
+    ]},
+    {id:"toiletries",label:"Toiletries & Beauty",icon:"🧴",items:[
+      {id:40,text:"Shampoo & conditioner",done:false},{id:41,text:"Body wash",done:false},
+      {id:42,text:"Face wash & moisturiser",done:false},{id:43,text:"SPF",done:false},
+      {id:44,text:"Makeup bag",done:false},{id:45,text:"Perfume",done:false},
+      {id:46,text:"Deodorant",done:false},{id:47,text:"Toothbrush & toothpaste",done:false},
+      {id:48,text:"Razor",done:false},{id:49,text:"Hair tools (straightener etc.)",done:false},
+      {id:50,text:"Cotton pads / skincare extras",done:false},
+    ]},
+    {id:"electronics",label:"Electronics",icon:"💻",items:[
+      {id:60,text:"Phone & charger",done:false},{id:61,text:"Laptop & charger",done:false},
+      {id:62,text:"Apple Watch & charger",done:false},{id:63,text:"AirPods / earphones",done:false},
+      {id:64,text:"Power bank",done:false},{id:65,text:"Plug adaptor (if needed)",done:false},
+    ]},
+    {id:"health",label:"Health & Meds",icon:"💊",items:[
+      {id:70,text:"Regular medication",done:false},{id:71,text:"Vitamins",done:false},
+      {id:72,text:"Paracetamol / ibuprofen",done:false},{id:73,text:"Plasters",done:false},
+    ]},
+    {id:"documents",label:"Documents & Finance",icon:"📄",items:[
+      {id:80,text:"Passport / ID card",done:false},{id:81,text:"Bank cards & cash",done:false},
+      {id:82,text:"Travel insurance details",done:false},
+    ]},
+    {id:"misc",label:"Miscellaneous",icon:"🎒",items:[
+      {id:90,text:"Umbrella (it's London!)",done:false},{id:91,text:"Book / Kindle",done:false},
+      {id:92,text:"Reusable shopping bag",done:false},{id:93,text:"Snacks for travel",done:false},
+    ]},
+  ]
+};
 
 const NOW=new Date();
 const TODAY=NOW.toISOString().split("T")[0];
@@ -360,6 +405,30 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .bil-tabs{display:flex;gap:4px;margin-bottom:20px;}
 .bil-tab{padding:6px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
 .bil-tab.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.pack-cat{background:var(--ivory);border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:0;}
+.pack-cat-hd{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+.pack-cat-icon{font-size:16px;line-height:1;}
+.pack-cat-lbl{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);font-weight:400;}
+.pack-cat-count{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-left:auto;}
+.pack-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(38,29,18,.05);}
+.pack-item:last-child{border-bottom:none;}
+.pack-check{width:14px;height:14px;border-radius:3px;border:1.5px solid rgba(122,98,82,.35);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.pack-check.done{background:var(--sage);border-color:var(--sage);}
+.pack-check.done::after{content:"✓";font-size:8px;color:white;}
+.pack-txt{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);flex:1;}
+.pack-txt.done{text-decoration:line-through;opacity:.45;}
+.pack-del{opacity:0;background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink-light);line-height:1;padding:0 2px;transition:opacity .15s;}
+.pack-item:hover .pack-del{opacity:1;}
+.pack-add{display:flex;gap:6px;margin-top:10px;}
+.pack-prog{height:4px;border-radius:2px;background:var(--parchment);margin-bottom:14px;overflow:hidden;}
+.pack-prog-fill{height:100%;border-radius:2px;background:var(--sage);transition:width .4s;}
+.pack-trip-hd{display:flex;align-items:center;gap:18px;background:var(--ivory);border:1px solid var(--border);border-radius:16px;padding:20px 26px;margin-bottom:24px;}
+.pack-trip-dest{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--ink);}
+.pack-trip-meta{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--ink-light);margin-top:2px;}
+.pack-total{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);margin-left:auto;text-align:right;}
+@media(max-width:900px){.pack-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.pack-grid{grid-template-columns:1fr;}}
 .bil-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .bil-score{font-family:'Playfair Display',serif;font-size:68px;font-weight:600;line-height:1;}
 .bil-bar{height:7px;background:var(--parchment);border-radius:8px;overflow:hidden;margin:5px 0 2px;}
@@ -429,6 +498,7 @@ export default function App() {
   const [todos,setTodos]=useDB("sab_todos",[]);
   const [goals,setGoals]=useDB("sab_goals",{});
   const [cleaning,setCleaning]=useDB("sab_clean",DEF_CLEANING);
+  const [pack,setPack]=useDB("sab_pack",DEF_PACK);
   const [events,setEvents]=useDB("sab_events",[]);
   const [newHabit,setNewHabit]=useState("");
   const [editHabit,setEditHabit]=useState(null);
@@ -682,6 +752,7 @@ export default function App() {
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
     {id:"cleaning",label:"Rituel",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
     {id:"bilan",label:"Bilan",icon:<S><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></S>},
+    {id:"packing",label:"Packing",icon:<S><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></S>},
   ];
 
   // ── PASSWORD GATE ──
@@ -1333,6 +1404,67 @@ export default function App() {
             </div>
           </div>
         </>}
+
+        {page==="packing"&&(()=>{
+          const totalItems=pack.categories.reduce((a,c)=>a+c.items.length,0);
+          const doneItems=pack.categories.reduce((a,c)=>a+c.items.filter(i=>i.done).length,0);
+          const pct=totalItems?Math.round(doneItems/totalItems*100):0;
+          const toggleItem=(catId,itemId)=>setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:c.items.map(i=>i.id===itemId?{...i,done:!i.done}:i)}:c)}));
+          const delItem=(catId,itemId)=>setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:c.items.filter(i=>i.id!==itemId)}:c)}));
+          const addItem=(catId,text)=>{if(!text.trim())return;const newId=Date.now();setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:[...c.items,{id:newId,text:text.trim(),done:false}]}:c)}));};
+          const [packInputs,setPackInputs]=useState({});
+          return(<>
+            <div style={{marginBottom:28}}>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Bon voyage, Sabina</div>
+              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Packing <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>List</em></h1>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Tick items as you pack them · add or remove anything you need</p>
+            </div>
+
+            {/* Trip header */}
+            <div className="pack-trip-hd">
+              <div style={{fontSize:28}}>✈️</div>
+              <div>
+                <div className="pack-trip-dest">🇬🇧 {pack.trip.destination}</div>
+                <div className="pack-trip-meta">Departing {pack.trip.from} · {pack.trip.nights} nights</div>
+              </div>
+              <div className="pack-total">
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink)",fontWeight:400}}>{doneItems}<span style={{fontSize:14,color:"var(--ink-light)"}}>/{totalItems}</span></div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:pct===100?"var(--sage)":"var(--ink-light)"}}>{pct===100?"All packed ✦":`${pct}% packed`}</div>
+                <div style={{height:4,borderRadius:2,background:"var(--parchment)",marginTop:6,width:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:2,background:"var(--sage)",width:`${pct}%`,transition:"width .4s"}}/></div>
+              </div>
+            </div>
+
+            {/* Categories grid */}
+            <div className="pack-grid">
+              {pack.categories.map(cat=>{
+                const catDone=cat.items.filter(i=>i.done).length;
+                const catTotal=cat.items.length;
+                const catPct=catTotal?catDone/catTotal:0;
+                return(
+                  <div key={cat.id} className="pack-cat">
+                    <div className="pack-cat-hd">
+                      <span className="pack-cat-icon">{cat.icon}</span>
+                      <span className="pack-cat-lbl">{cat.label}</span>
+                      <span className="pack-cat-count">{catDone}/{catTotal}</span>
+                    </div>
+                    <div className="pack-prog"><div className="pack-prog-fill" style={{width:`${catPct*100}%`}}/></div>
+                    {cat.items.map(item=>(
+                      <div key={item.id} className="pack-item">
+                        <div className={`pack-check${item.done?" done":""}`} onClick={()=>toggleItem(cat.id,item.id)}/>
+                        <span className={`pack-txt${item.done?" done":""}`}>{item.text}</span>
+                        <button className="pack-del" onClick={()=>delItem(cat.id,item.id)}>×</button>
+                      </div>
+                    ))}
+                    <div className="pack-add">
+                      <input className="inp" style={{flex:1,fontSize:11,padding:"5px 10px"}} placeholder="Add item…" value={packInputs[cat.id]||""} onChange={e=>setPackInputs(p=>({...p,[cat.id]:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){addItem(cat.id,packInputs[cat.id]||"");setPackInputs(p=>({...p,[cat.id]:""}));}}}/>
+                      <button className="bp" style={{fontSize:12,padding:"5px 12px"}} onClick={()=>{addItem(cat.id,packInputs[cat.id]||"");setPackInputs(p=>({...p,[cat.id]:""}));}}>+</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>);
+        })()}
 
       </main>
     </>
