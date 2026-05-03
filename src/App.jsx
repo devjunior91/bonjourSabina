@@ -164,24 +164,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .main{margin-left:var(--sidebar-w);padding:32px 36px 64px;min-height:100vh;position:relative;z-index:1;}
 
 /* ── DASHBOARD ── */
-.dash-header{display:flex;align-items:center;gap:24px;margin-bottom:28px;}
-.dash-photo{width:64px;height:64px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;}
-.dash-photo img{width:100%;height:100%;object-fit:cover;}
-.dash-hi{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold);letter-spacing:.12em;margin-bottom:2px;}
-.dash-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:var(--ink);line-height:1.1;}
-.dash-title em{font-style:italic;color:var(--gold-deep);}
-.dash-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);margin-top:3px;}
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
 .dash-col{display:flex;flex-direction:column;gap:16px;}
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.stat-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
-.stat-icon{font-size:20px;margin-bottom:8px;}
-.stat-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--ink);line-height:1;}
-.stat-goal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
-.stat-label{font-size:10px;color:var(--ink-light);letter-spacing:.1em;text-transform:uppercase;margin-top:6px;}
-.stat-bar{height:3px;background:var(--parchment);border-radius:2px;margin-top:10px;overflow:hidden;}
-.stat-bar-fill{height:100%;border-radius:2px;transition:width .5s;}
-.dash-habits{display:flex;flex-direction:column;gap:8px;}
 .dh-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--parchment);border-radius:10px;}
 .dh-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .dh-name{font-size:12px;color:var(--ink);flex:1;}
@@ -189,10 +173,6 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .dh-dots{display:flex;gap:3px;}
 .dh-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
 .dh-dot.on{background:var(--sage);}
-.streak-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);}
-.streak-num{font-family:'Playfair Display',serif;font-size:42px;font-weight:600;color:var(--ink);line-height:1;}
-.streak-bars{display:flex;align-items:flex-end;gap:4px;height:40px;margin-top:12px;}
-.streak-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height .4s;}
 .goals-mini{display:flex;flex-direction:column;gap:10px;}
 .gm-row{display:flex;flex-direction:column;gap:4px;}
 .gm-top{display:flex;justify-content:space-between;align-items:baseline;}
@@ -200,8 +180,78 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .gm-pct{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
 .gm-bar{height:4px;background:var(--parchment);border-radius:2px;overflow:hidden;}
 .gm-fill{height:100%;border-radius:2px;transition:width .5s;}
-@media(max-width:1100px){.dash-grid{grid-template-columns:1fr 280px;}}
-@media(max-width:800px){.dash-grid{grid-template-columns:1fr;}.stat-row{grid-template-columns:1fr 1fr 1fr;}}
+
+/* Page header */
+.dash-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.dash-page-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;color:var(--ink);line-height:1.1;}
+.dash-page-title em{font-style:italic;color:var(--gold-deep);}
+.dash-page-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);margin-top:4px;}
+.dash-search{display:flex;align-items:center;gap:10px;}
+.dash-search-bar{display:flex;align-items:center;gap:8px;background:var(--ivory);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);width:200px;}
+.dash-icon-btn{width:34px;height:34px;border-radius:50%;background:var(--ivory);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-light);}
+
+/* Top row */
+.dash-top-row{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:16px;align-items:stretch;}
+
+/* Progress card with photo */
+.prog-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);display:flex;gap:20px;align-items:flex-start;}
+.prog-photo{width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;}
+.prog-photo img{width:100%;height:100%;object-fit:cover;}
+.prog-content{flex:1;min-width:0;}
+
+/* Quote card - light */
+.qc-light{background:#f0ebe3;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;justify-content:center;}
+.qc-mark{font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);line-height:1;margin-bottom:8px;opacity:.6;}
+.qc-light-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--ink);line-height:1.6;}
+.qc-light-dash{width:24px;height:1.5px;background:var(--ink-light);margin-top:14px;opacity:.4;}
+
+/* Activity row with calendar */
+.dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 260px;gap:12px;margin-bottom:16px;}
+.act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);overflow:hidden;position:relative;}
+.act-label{font-size:11px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:10px;}
+.act-icon{font-size:18px;margin-bottom:6px;}
+.act-val{font-family:'Playfair Display',serif;font-size:34px;font-weight:600;color:var(--ink);line-height:1;}
+.act-goal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
+.act-wave{position:absolute;bottom:0;left:0;right:0;opacity:.35;}
+
+/* Mini calendar */
+.cal-widget{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+.cal-w-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;}
+.cal-w-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
+.cal-w-link{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--gold-deep);cursor:pointer;background:none;border:none;padding:0;}
+.cal-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px;}
+.cal-week-day{text-align:center;font-size:9px;color:var(--ink-light);letter-spacing:.06em;padding-bottom:4px;}
+.cal-week-date{text-align:center;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);cursor:pointer;margin:0 auto;}
+.cal-week-date.today{background:var(--ink);color:white;}
+.cal-today-hd{font-size:10px;color:var(--ink-light);letter-spacing:.06em;margin-bottom:8px;padding-top:8px;border-top:1px solid var(--border);}
+.cal-ev-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.cal-ev-time{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--ink-light);min-width:36px;}
+.cal-ev-name{font-size:11px;color:var(--ink);flex:1;}
+.cal-ev-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* Bottom 3-col row */
+.dash-mid-row{display:grid;grid-template-columns:1fr 1fr 220px;gap:16px;margin-bottom:16px;align-items:start;}
+
+/* Streak card */
+.streak-big{font-family:'Playfair Display',serif;font-size:52px;font-weight:600;color:var(--ink);line-height:1;display:flex;align-items:baseline;gap:8px;}
+.streak-unit{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--ink-light);}
+.streak-bars-row{display:flex;align-items:flex-end;gap:5px;height:50px;margin-top:14px;}
+.streak-b{flex:1;border-radius:3px 3px 0 0;background:var(--parchment);min-height:4px;transition:height .4s;}
+
+/* Bottom row: Upcoming + Goals */
+.dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.upcoming-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+.upcoming-date-block{display:flex;flex-direction:column;align-items:center;background:var(--parchment);border-radius:8px;padding:6px 12px;min-width:50px;flex-shrink:0;}
+.upcoming-month{font-size:9px;color:var(--ink-light);letter-spacing:.1em;text-transform:uppercase;}
+.upcoming-day{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--ink);line-height:1;}
+.upcoming-detail{flex:1;}
+.upcoming-title{font-size:13px;color:var(--ink);margin-bottom:4px;}
+.goals-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.goal-mini-card{background:var(--parchment);border-radius:10px;padding:14px;}
+.goal-mini-name{font-size:12px;color:var(--ink);margin-bottom:2px;}
+.goal-mini-pct{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--ink);}
+.goal-mini-bar{height:4px;background:rgba(0,0,0,.08);border-radius:2px;margin-top:8px;overflow:hidden;}
+.goal-mini-fill{height:100%;border-radius:2px;transition:width .5s;}
 
 /* ── CARDS ── */
 .card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);}
@@ -903,247 +953,242 @@ export default function App() {
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
-  <div>
-    {/* Header */}
-    <div className="dash-header">
-      <div className="dash-photo"><img src={sabinaPhoto} alt="Sabina"/></div>
-      <div>
-        <div className="dash-hi">Bonjour,</div>
-        <div className="dash-title"><em>Sabina</em></div>
-        <div className="dash-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</div>
-      </div>
-      <div style={{marginLeft:"auto",display:"flex",gap:10}}>
-        {[{label:"Habits",val:`${habitsToday}/${habits.length}`,color:"#c9a87c",pg:"habits"},{label:"To-Do",val:`${todosDone} done`,color:"#7a9070",pg:"todos"},{label:"Goals",val:`${avgProg}%`,color:"#b098c0",pg:"goals"}].map(b=>(
-          <button key={b.pg} onClick={()=>setPage(b.pg)} style={{background:"var(--ivory)",border:`1.5px solid ${b.color}55`,borderRadius:12,padding:"8px 14px",cursor:"pointer",textAlign:"center",transition:"all .2s",boxShadow:"var(--shadow)"}}
-            onMouseEnter={e=>e.currentTarget.style.background=b.color+"18"}
-            onMouseLeave={e=>e.currentTarget.style.background="var(--ivory)"}>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:b.color,letterSpacing:".08em"}}>{b.label}</div>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:600,color:"var(--ink)"}}>{b.val}</div>
-          </button>
-        ))}
-      </div>
+<div>
+  {/* Page header */}
+  <div className="dash-page-header">
+    <div>
+      <div className="dash-page-title">Bonjour, <em>Sabina</em></div>
+      <div className="dash-page-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</div>
     </div>
+    <div className="dash-search">
+      <div className="dash-search-bar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search anything…
+        <span style={{marginLeft:"auto",fontSize:10,color:"var(--border)",border:"1px solid var(--border)",borderRadius:4,padding:"1px 5px"}}>⌘K</span>
+      </div>
+      <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+    </div>
+  </div>
 
-    {/* Top row: Today's Progress + Quote */}
-    <div style={{display:"grid",gridTemplateColumns:"1fr 300px",gap:16,marginBottom:16}}>
-      {/* Today's Progress */}
-      <div className="card">
-        <div className="ct">Today's Progress</div>
-        <div className="cs">Habits · To-Do · Rituel · Goals</div>
-        <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
-            {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
-          </div>
-          <div style={{flex:1}}>
-            <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
-              <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:10,transition:"width .6s ease"}}/>
-            </div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
-          </div>
+  {/* Top row: Progress card + Quote */}
+  <div className="dash-top-row">
+    <div className="prog-card">
+      <div className="prog-photo"><img src={sabinaPhoto} alt="Sabina"/></div>
+      <div className="prog-content">
+        <div className="ct" style={{marginBottom:2}}>Today's Progress</div>
+        <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"6px 0 4px"}}>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>{dayPct}</span>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--ink-light)"}}>%</span>
         </div>
-        <div style={{display:"flex",flexDirection:"column",gap:9}}>
+        <div style={{height:7,background:"var(--parchment)",borderRadius:6,overflow:"hidden",marginBottom:6}}>
+          <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:6,transition:"width .6s"}}/>
+        </div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:14}}>{dayDone} of {dayTotal} tasks completed</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
           {[
             {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
             {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-            {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+            {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
           ].map(row=>(
-            <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
-              <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-              <div style={{fontSize:12,color:"var(--ink)",flex:1}}>{row.label}</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
-              <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
-                <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
+            <div key={row.label} style={{display:"flex",alignItems:"center",gap:8}}>
+              <div style={{width:6,height:6,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+              <div style={{fontSize:11.5,color:"var(--ink)",flex:1}}>{row.label}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:11,color:"var(--ink-light)",minWidth:28,textAlign:"right"}}>{row.done}/{row.total}</div>
+              <div style={{width:60,height:3,background:"var(--parchment)",borderRadius:3,overflow:"hidden"}}>
+                <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:3,transition:"width .5s"}}/>
               </div>
             </div>
           ))}
-          </div>
-          {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
         </div>
-
-      {/* Quote — sits beside Today's Progress */}
-      <div className="qc" style={{minHeight:160}}>
-        <div className="qt">"{QUOTE.text}"</div>
-        <div className="qa">— {QUOTE.attr}</div>
       </div>
-    </div>{/* end top row */}
-
-    {/* Activity stat cards */}
-    <div className="stat-row" style={{marginBottom:16}}>
-      {[
-        {icon:"🔥",label:"Move",val:todayFit&&fitMove!=null?Math.round(fitMove):null,goal:moveGoal,unit:"cal",color:"#B2967D",pct:movePct},
-        {icon:"💪",label:"Exercise",val:todayFit&&fitEx!=null?Math.round(fitEx):null,goal:exGoal,unit:"min",color:"#D7C9B8",pct:exPct},
-        {icon:"🧍",label:"Stand",val:todayFit&&standHrs!=null?standHrs:null,goal:standGoal,unit:"hrs",color:"#7D5A44",pct:standPct},
-      ].map(s=>(
-        <div key={s.label} className="stat-card">
-          <div className="stat-icon">{s.icon}</div>
-          <div className="stat-val" style={{color:s.color}}>{s.val!=null?s.val:"—"}</div>
-          <div className="stat-goal">/{s.goal}{s.unit}</div>
-          <div className="stat-label">{s.label}</div>
-          <div className="stat-bar"><div className="stat-bar-fill" style={{width:`${s.pct*100}%`,background:s.color}}/></div>
-        </div>
-      ))}
     </div>
 
-    <div className="dash-grid">
-      {/* ── LEFT ── */}
-      <div className="dash-col">
-
-        {/* Today's priorities */}
-        <div className="card">
-          <div className="ct">Today's priorities</div>
-          <div className="cs">Active tasks for today</div>
-          <div className="dash-toggle">
-            <button className={`dash-tog ${dashTodoDay==="today"?"on":""}`} onClick={()=>setDashTodoDay("today")}>Today</button>
-            <button className={`dash-tog ${dashTodoDay==="tomorrow"?"on":""}`} onClick={()=>setDashTodoDay("tomorrow")}>Tomorrow</button>
-          </div>
-          <div className="tl">
-            {byPri(todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW))).slice(0,5).map(todo=>(
-              <div key={todo.id} className="ti">
-                <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                <div className="tb2">
-                  <div className="tt">{todo.text}</div>
-                  <div className="tm">
-                    {todo.priority==="high"&&<span className="pri high">high</span>}
-                    <span className={`tg ${todo.tag}`}>{todo.tag}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW)).length===0&&<div className="emp">All caught up ✦</div>}
-          </div>
-          <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid var(--border)"}}>
-            <div className="pri-row">
-              <span className="pri-lbl">Priority:</span>
-              {["high","medium","low"].map(p=>(
-                <button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>
-              ))}
-            </div>
-            <div className="row">
-              <input className="inp" placeholder={`Add ${dashTodoDay} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
-              <select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select>
-              <button className="bp" onClick={addTodoDash}>+ Add</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Habits preview */}
-        <div className="card">
-          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:14}}>
-            <div><div className="ct" style={{marginBottom:0}}>Habits</div><div className="cs" style={{marginBottom:0}}>This week</div></div>
-            <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all →</button>
-          </div>
-          <div className="dash-habits">
-            {habits.slice(0,5).map(hab=>(
-              <div key={hab.id} className="dh-row">
-                <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
-                <div className="dh-name">{hab.name}</div>
-                <div className="dh-dots">
-                  {hab.days.map((done,i)=>(
-                    <div key={i} className={`dh-dot${done?" on":""}`}/>
-                  ))}
-                </div>
-                <div className="dh-streak">{streak(hab.days)}/7</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>{/* end left col */}
-
-      {/* ── RIGHT ── */}
-      <div className="dash-col">
-
-        {/* Rituel de Maison */}
-        <div className="card" style={{padding:"14px 18px"}}>
-          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
-            <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
-            <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:4}}>
-            {cleaningTodayArr.map((task,i)=>(
-              <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"3px 0"}}>
-                <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
-                <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Upcoming events */}
-        <div className="card">
-          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-            <div className="ct" style={{marginBottom:0}}>Upcoming Events</div>
-            <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all →</button>
-          </div>
-          <div className="cs">Next 3 dates</div>
-          {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-          {upcoming.slice(0,3).map(e=>(
-            <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
-              <div className="ue-dot" style={{background:e.color}}/>
-              <div style={{flex:1,minWidth:0}}>
-                <div className="ue-name">{e.title}</div>
-                <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
-              </div>
-              <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Streak + Goals */}
-        <div className="streak-card">
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,color:"var(--ink)"}}>Current Streak 🔥</div>
-          </div>
-          <div style={{display:"flex",alignItems:"flex-end",gap:10,marginBottom:16}}>
-            <div className="streak-num">{habitsDoneToday>0?habits.filter(h=>h.days[todayDayIndex]).length:0}</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",paddingBottom:6}}>habits today</div>
-          </div>
-          <div style={{borderTop:"1px solid var(--border)",paddingTop:14,marginTop:4}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)",marginBottom:10}}>Goals</div>
-            <div className="goals-mini">
-              {allGoals.slice(0,3).map(g=>(
-                <div key={g.id} className="gm-row">
-                  <div className="gm-top">
-                    <div className="gm-name">{g.title}</div>
-                    <div className="gm-pct">{g.progress}%</div>
-                  </div>
-                  <div className="gm-bar"><div className="gm-fill" style={{width:`${g.progress}%`,background:g.color||"var(--gold)"}}/></div>
-                </div>
-              ))}
-              {allGoals.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No goals yet ✦</div>}
-            </div>
-          </div>
-        </div>
-
-        {/* Focus timer */}
-        <div className="card">
-          <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
-          <div className="cs" style={{textAlign:"center"}}>Pomodoro</div>
-          <div className="pomo-wrap">
-            <div className="pomo-presets">
-              {POMO_PRESETS.map(p=>(
-                <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
-              ))}
-            </div>
-            <svg width="100" height="100" viewBox="0 0 110 110" className="pomo-svg">
-              <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-              <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
-              <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-              <text x="55" y="65" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="9" fontStyle="italic" fill="var(--ink-light)">{pomoActive?"focus":"ready"}</text>
-            </svg>
-            <div className="pomo-btns">
-              {!pomoActive
-                ? <button className="pomo-btn start" onClick={pomoStart}>{pomoLeft<pomoDur&&pomoLeft>0?"Resume":"Start"}</button>
-                : <button className="pomo-btn pause" onClick={pomoPause}>Pause</button>
-              }
-              <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
-            </div>
-          </div>
-        </div>
-
-      </div>{/* end right col */}
+    {/* Quote - light */}
+    <div className="qc-light">
+      <div className="qc-mark">"</div>
+      <div className="qc-light-text">{QUOTE.text}</div>
+      <div className="qc-light-dash"/>
     </div>
   </div>
+
+  {/* Activity row + Calendar */}
+  <div className="dash-activity-row">
+    {[
+      {icon:"🔥",label:"Move",val:todayFit&&fitMove!=null?Math.round(fitMove):null,goal:moveGoal,unit:"cal",color:"#B2967D",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
+      {icon:"💪",label:"Exercise",val:todayFit&&fitEx!=null?Math.round(fitEx):null,goal:exGoal,unit:"min",color:"#D7C9B8",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
+      {icon:"🧍",label:"Stand",val:todayFit&&standHrs!=null?standHrs:null,goal:standGoal,unit:"hrs",color:"#7D5A44",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
+    ].map(s=>(
+      <div key={s.label} className="act-card">
+        <div className="act-label">{s.label}</div>
+        <div className="act-icon">{s.icon}</div>
+        <div className="act-val">{s.val!=null?s.val:"—"}</div>
+        <div className="act-goal">/{s.goal}{s.unit}</div>
+        <svg className="act-wave" viewBox="0 0 180 50" preserveAspectRatio="none" height="42">
+          <path d={s.wave} fill={s.color}/>
+        </svg>
+      </div>
+    ))}
+
+    {/* Calendar widget */}
+    <div className="cal-widget">
+      <div className="cal-w-hd">
+        <div className="cal-w-title">Calendar</div>
+        <button className="cal-w-link" onClick={()=>setPage("calendar")}>View full calendar</button>
+      </div>
+      {(()=>{
+        const todayDate=NOW.getDate();
+        const todayDow=NOW.getDay();
+        // Get this week Mon-Sun
+        const mondayOffset=todayDow===0?-6:1-todayDow;
+        const weekDays=["M","T","W","T","F","S","S"];
+        const weekDates=Array.from({length:7},(_,i)=>{const d=new Date(NOW);d.setDate(NOW.getDate()+mondayOffset+i);return d;});
+        const todayEvents=events.filter(e=>e.date===TODAY).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+        return(<>
+          <div className="cal-week-row">
+            {weekDays.map((d,i)=><div key={i} className="cal-week-day">{d}</div>)}
+          </div>
+          <div className="cal-week-row">
+            {weekDates.map((d,i)=>(
+              <div key={i} className={`cal-week-date${d.toISOString().split("T")[0]===TODAY?" today":""}`}>{d.getDate()}</div>
+            ))}
+          </div>
+          <div className="cal-today-hd">TODAY · {NOW.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"long"}).toUpperCase()}</div>
+          {todayEvents.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Nothing scheduled ✦</div>}
+          {todayEvents.slice(0,3).map(e=>(
+            <div key={e.id} className="cal-ev-row">
+              <div className="cal-ev-time">{e.allDay?"All day":e.time||""}</div>
+              <div className="cal-ev-name">{e.title}</div>
+              <div className="cal-ev-dot" style={{background:e.color}}/>
+            </div>
+          ))}
+        </>);
+      })()}
+    </div>
+  </div>
+
+  {/* Mid row: Priorities | Habits | Streak */}
+  <div className="dash-mid-row">
+    {/* Today's priorities */}
+    <div className="card">
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+        <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
+        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
+      <div className="tl" style={{marginBottom:12}}>
+        {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).slice(0,4).map(todo=>(
+          <div key={todo.id} className="ti">
+            <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+            <div className="tb2">
+              <div className="tt">{todo.text}</div>
+              <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+            </div>
+          </div>
+        ))}
+        {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
+      </div>
+      <div style={{borderTop:"1px solid var(--border)",paddingTop:10}}>
+        <div className="row">
+          <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
+          <button className="bp" onClick={addTodoDash}>Add</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Habits */}
+    <div className="card">
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+        <div className="ct" style={{marginBottom:0}}>Habits</div>
+        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div className="cs" style={{marginBottom:12}}>This week</div>
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {habits.slice(0,5).map(hab=>(
+          <div key={hab.id} className="dh-row">
+            <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
+            <div className="dh-name">{hab.name}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
+            <div className="dh-dots">
+              {hab.days.map((done,i)=><div key={i} className={`dh-dot${done?" on":""}`}/>)}
+            </div>
+          </div>
+        ))}
+        {habits.length===0&&<div className="emp">No habits yet ✦</div>}
+      </div>
+    </div>
+
+    {/* Current streak */}
+    <div className="card">
+      <div className="ct" style={{marginBottom:2}}>Current streak 🔥</div>
+      <div className="streak-big">
+        <span>{habitsDoneToday}</span>
+        <span className="streak-unit">habits today</span>
+      </div>
+      <div className="streak-bars-row">
+        {DAYS.map((d,i)=>{
+          const count=habits.filter(h=>h.days[i]).length;
+          const maxH=Math.max(habits.length,1);
+          return(
+            <div key={d} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,flex:1}}>
+              <div className="streak-b" style={{height:`${Math.max((count/maxH)*44,4)}px`,background:count>0?"var(--gold)":"var(--parchment)"}}/>
+              <div style={{fontSize:9,color:"var(--ink-light)"}}>{d}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+
+  {/* Bottom row: Upcoming + Goals */}
+  <div className="dash-bottom-row">
+    {/* Upcoming */}
+    <div className="card">
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
+        <div className="ct" style={{marginBottom:0}}>Upcoming</div>
+        <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
+      {upcoming.slice(0,3).map(e=>{
+        const d=new Date(e.date+"T00:00:00");
+        return(
+          <div key={e.id} className="upcoming-item" onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer"}}>
+            <div className="upcoming-date-block">
+              <div className="upcoming-month">{MONTHS[d.getMonth()].slice(0,3).toUpperCase()}</div>
+              <div className="upcoming-day">{d.getDate()}</div>
+            </div>
+            <div className="upcoming-detail">
+              <div className="upcoming-title">{e.title}</div>
+              {e.allDay
+                ? <span className="tg">All day</span>
+                : e.time?<span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{e.time}</span>:null}
+              <div style={{marginTop:4}}><span className={`tg ${e.tag||""}`}>{e.tag||"Event"}</span></div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Goals */}
+    <div className="card">
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
+        <div className="ct" style={{marginBottom:0}}>Goals</div>
+        <button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      {allGoals.length===0&&<div className="emp">No goals yet ✦</div>}
+      <div className="goals-2col">
+        {allGoals.slice(0,4).map(g=>(
+          <div key={g.id} className="goal-mini-card">
+            <div className="goal-mini-name">{g.title}</div>
+            <div className="goal-mini-pct">{g.progress}%</div>
+            <div className="goal-mini-bar"><div className="goal-mini-fill" style={{width:`${g.progress}%`,background:g.color||"var(--gold)"}}/></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+</div>
 )}
 
         {/* ── TO-DO LISTS ── */}
