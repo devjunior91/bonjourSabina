@@ -146,30 +146,62 @@ const CSS=`
   --border:rgba(26,20,16,.12);
   --shadow:0 1px 3px rgba(26,20,16,.04),0 6px 22px rgba(26,20,16,.08);
   --shadow-lg:0 4px 14px rgba(26,20,16,.08),0 16px 48px rgba(26,20,16,.14);
-  --nav-h:66px;
+  --sidebar-w:220px;
 }
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
-
-/* ── TOP NAV ── */
-.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gradient(90deg,#352e28 0%,#433830 50%,#352e28 100%);border-bottom:2px solid var(--gold);box-shadow:0 4px 28px rgba(20,16,12,.22);display:flex;align-items:center;padding:0 36px;gap:28px;z-index:200;}
-.tn-brand{display:flex;flex-direction:column;gap:2px;flex-shrink:0;margin-right:10px;}
-.tn-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--gold);letter-spacing:.18em;opacity:.85;}
-.tn-name{font-family:'Playfair Display',serif;font-size:17px;color:#f0e8dc;font-weight:600;letter-spacing:.02em;}
-.tn-divider{width:1px;height:28px;background:rgba(201,168,124,.18);flex-shrink:0;}
-.tn-links{display:flex;align-items:center;gap:2px;flex:1;}
-.ni{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;cursor:pointer;transition:all .18s;color:rgba(240,232,220,.45);font-size:12px;border:1px solid transparent;white-space:nowrap;letter-spacing:.01em;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#352e28 0%,#2d2520 100%);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.sb-brand{padding:28px 20px 8px;border-bottom:1px solid rgba(201,168,124,.1);margin-bottom:8px;}
+.sb-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--gold);letter-spacing:.18em;opacity:.85;margin-bottom:2px;}
+.sb-name{font-family:'Playfair Display',serif;font-size:18px;color:#f0e8dc;font-weight:600;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:8px 12px;flex:1;}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;cursor:pointer;transition:all .18s;color:rgba(240,232,220,.45);font-size:12.5px;white-space:nowrap;letter-spacing:.01em;}
 .ni:hover{background:rgba(201,168,124,.1);color:#f0e8dc;}
-.ni.on{background:rgba(201,168,124,.18);color:var(--gold);border-color:rgba(201,168,124,.22);}
+.ni.on{background:rgba(201,168,124,.18);color:var(--gold);}
 .ni svg{flex-shrink:0;}
-.ni-label{display:inline;}
-.tn-dt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.4);flex-shrink:0;white-space:nowrap;}
+.sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
 
 /* ── MAIN ── */
-.main{padding:calc(var(--nav-h) + 28px) 20px 64px;min-height:100vh;position:relative;z-index:1;}
+.main{margin-left:var(--sidebar-w);padding:32px 36px 64px;min-height:100vh;position:relative;z-index:1;}
 
-/* ── DASHBOARD 3-COLUMN GRID ── */
-.dash-grid{display:grid;grid-template-columns:280px 1fr 280px;gap:16px;align-items:start;}
-.dash-col{display:flex;flex-direction:column;gap:18px;}
+/* ── DASHBOARD ── */
+.dash-header{display:flex;align-items:center;gap:24px;margin-bottom:28px;}
+.dash-photo{width:64px;height:64px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;}
+.dash-photo img{width:100%;height:100%;object-fit:cover;}
+.dash-hi{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold);letter-spacing:.12em;margin-bottom:2px;}
+.dash-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:var(--ink);line-height:1.1;}
+.dash-title em{font-style:italic;color:var(--gold-deep);}
+.dash-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);margin-top:3px;}
+.dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+.dash-col{display:flex;flex-direction:column;gap:16px;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.stat-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.stat-icon{font-size:20px;margin-bottom:8px;}
+.stat-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--ink);line-height:1;}
+.stat-goal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
+.stat-label{font-size:10px;color:var(--ink-light);letter-spacing:.1em;text-transform:uppercase;margin-top:6px;}
+.stat-bar{height:3px;background:var(--parchment);border-radius:2px;margin-top:10px;overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:2px;transition:width .5s;}
+.dash-habits{display:flex;flex-direction:column;gap:8px;}
+.dh-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--parchment);border-radius:10px;}
+.dh-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.dh-name{font-size:12px;color:var(--ink);flex:1;}
+.dh-streak{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);white-space:nowrap;}
+.dh-dots{display:flex;gap:3px;}
+.dh-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.dh-dot.on{background:var(--sage);}
+.streak-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);}
+.streak-num{font-family:'Playfair Display',serif;font-size:42px;font-weight:600;color:var(--ink);line-height:1;}
+.streak-bars{display:flex;align-items:flex-end;gap:4px;height:40px;margin-top:12px;}
+.streak-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height .4s;}
+.goals-mini{display:flex;flex-direction:column;gap:10px;}
+.gm-row{display:flex;flex-direction:column;gap:4px;}
+.gm-top{display:flex;justify-content:space-between;align-items:baseline;}
+.gm-name{font-size:12px;color:var(--ink);}
+.gm-pct{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
+.gm-bar{height:4px;background:var(--parchment);border-radius:2px;overflow:hidden;}
+.gm-fill{height:100%;border-radius:2px;transition:width .5s;}
+@media(max-width:1100px){.dash-grid{grid-template-columns:1fr 280px;}}
+@media(max-width:800px){.dash-grid{grid-template-columns:1fr;}.stat-row{grid-template-columns:1fr 1fr 1fr;}}
 
 /* ── CARDS ── */
 .card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);}
@@ -447,7 +479,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @media(max-width:700px){.bil-grid{grid-template-columns:1fr;}}
 .todo-grid{display:grid;grid-template-columns:1fr 270px;gap:18px;align-items:start;}
 .todo-main{display:flex;flex-direction:column;gap:18px;}
-.todo-side{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(var(--nav-h) + 36px);}
+.todo-side{display:flex;flex-direction:column;gap:18px;position:sticky;top:36px;}
 @media(max-width:900px){.todo-grid{grid-template-columns:1fr;}.todo-side{position:static;}}
 .pri{display:inline-flex;align-items:center;padding:1px 7px;border-radius:10px;font-size:9.5px;font-weight:500;letter-spacing:.02em;}
 .pri.high{background:#fde8e8;color:#c05050;border:1px solid rgba(192,80,80,.2);}
@@ -466,25 +498,10 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,124,.3);border-radius:10px;}
 
 /* ── RESPONSIVE ── */
-@media(max-width:1200px){.dash-grid{grid-template-columns:240px 1fr 240px;}}
 @media(max-width:960px){
-  .dash-grid{grid-template-columns:1fr 1fr;gap:14px;}
-  .dash-col:nth-child(2){grid-column:1/-1;}
-  .main{padding:calc(var(--nav-h) + 20px) 14px 48px;}
-  .topnav{padding:0 16px;gap:10px;}
-  .tn-dt{display:none;}
   .gg{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:700px){
-  .dash-grid{grid-template-columns:1fr;gap:12px;}
-  .dash-col:nth-child(2){grid-column:1;}
-  .main{padding:calc(var(--nav-h) + 12px) 10px 48px;}
-  .topnav{padding:0 10px;gap:4px;}
-  .tn-brand,.tn-divider{display:none;}
-  .tn-links{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-  .tn-links::-webkit-scrollbar{display:none;}
-  .ni-label{display:none;}
-  .ni{padding:9px 12px;}
   .cg{grid-template-columns:1fr 1fr;}
   .gg{grid-template-columns:1fr;}
 }
@@ -837,251 +854,23 @@ export default function App() {
         </div>
       )}
 
-      {/* Top nav */}
-      <nav className="topnav">
-        <div className="tn-brand">
-          <span className="tn-eye">Welcome back</span>
-          <span className="tn-name">Sabina ✦</span>
+      <aside className="sidebar">
+        <div className="sb-brand">
+          <div className="sb-eye">Welcome back</div>
+          <div className="sb-name">Sabina ✦</div>
         </div>
-        <div className="tn-divider"/>
-        <div className="tn-links">
+        <div className="sb-nav">
           {NAV.map(n=>(
             <div key={n.id} className={`ni ${page===n.id?"on":""}`} onClick={()=>setPage(n.id)}>
               {n.icon}
-              <span className="ni-label">{n.label}</span>
+              <span>{n.label}</span>
             </div>
           ))}
         </div>
-        <div className="tn-dt">{NOW.getDate()} {MONTHS[NOW.getMonth()]} {NOW.getFullYear()}</div>
-      </nav>
+        <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
+      </aside>
 
       <main className="main">
-
-        {/* ── DASHBOARD ── */}
-        {page==="dashboard"&&(
-          <div className="dash-grid">
-
-            {/* ── LEFT COLUMN ── */}
-            <div className="dash-col">
-
-              {/* Profile card */}
-              <div className="profile-card">
-                <div className="ph-eye">Your personal space</div>
-                <h1 className="ph-title">Bonjour, <em>Sabina</em></h1>
-                <div style={{display:"flex",justifyContent:"center",margin:"12px 0"}}>
-                  <div className="profile-ring">
-                    <img src={sabinaPhoto} alt="Sabina"/>
-                  </div>
-                </div>
-                <p className="ph-sub">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p>
-              </div>
-
-              {/* Activity Rings */}
-              <div className="card" style={{minHeight:280}}>
-                <div className="ct">Activity Rings</div>
-                <div className="cs">Move · Exercise · Stand</div>
-                <div className="ring-wrap" style={{marginTop:12}}>
-                  <svg width="160" height="160" viewBox="0 0 120 120">
-                    {RINGS.map(ring=>{
-                      const circ=2*Math.PI*ring.r;
-                      const filled=circ*ring.pct;
-                      return (
-                        <g key={ring.label}>
-                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
-                            stroke={ring.color+"28"} strokeWidth="10"/>
-                          <circle cx={RING_CX} cy={RING_CY} r={ring.r} fill="none"
-                            stroke={ring.color} strokeWidth="10"
-                            strokeLinecap="round"
-                            strokeDasharray={`${circ*ring.pct} ${circ}`}
-                            transform={`rotate(-90 ${RING_CX} ${RING_CY})`}
-                            style={{transition:"stroke-dasharray .6s ease"}}/>
-                        </g>
-                      );
-                    })}
-                  </svg>
-                  <div className="ring-legend">
-                    {RINGS.map(ring=>(
-                      <div key={ring.label} className="ring-legend-row">
-                        <div className="ring-dot" style={{background:ring.color}}/>
-                        <span className="ring-lbl">{ring.label}</span>
-                        <span className="ring-val">
-                          {todayFit&&ring.val!=null?`${Math.round(ring.val*10)/10}/${ring.goal}${ring.unit}`:"—"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {!todayFit&&<div className="ring-sync">Awaiting today's sync ✦</div>}
-              </div>
-
-              {/* Quick nav buttons */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                {[
-                  {label:"Habits",page:"habits",color:"#c9a87c",val:`${habitsToday}/${habits.length}`},
-                  {label:"To-Do",page:"todos",color:"#7a9070",val:`${todosDone} done`},
-                  {label:"Goals",page:"goals",color:"#b098c0",val:`${avgProg}%`},
-                  {label:"Calendar",page:"calendar",color:"#7090a8",val:`${upcoming.length} ahead`},
-                ].map(b=>(
-                  <button key={b.page} onClick={()=>setPage(b.page)} style={{background:"var(--ivory)",border:`1px solid ${b.color}44`,borderRadius:12,padding:"10px 12px",cursor:"pointer",textAlign:"left",transition:"all .2s"}}
-                    onMouseEnter={e=>e.currentTarget.style.background=b.color+"18"}
-                    onMouseLeave={e=>e.currentTarget.style.background="var(--ivory)"}>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:b.color,marginBottom:2}}>{b.label}</div>
-                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>{b.val}</div>
-                  </button>
-                ))}
-              </div>
-
-            </div>{/* end left col */}
-
-            {/* ── MIDDLE COLUMN ── */}
-            <div className="dash-col">
-
-              {/* Progress tracker */}
-              <div className="card">
-                <div className="ct" style={{textAlign:"left"}}>Today's Progress</div>
-                <div className="cs" style={{textAlign:"left"}}>Habits · To-Do · Rituel · Goals</div>
-                <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
-                    {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
-                  </div>
-                  <div style={{flex:1}}>
-                    <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
-                      <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:10,transition:"width .6s ease"}}/>
-                    </div>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"left"}}>{dayDone} of {dayTotal} tasks completed</div>
-                  </div>
-                </div>
-                <div style={{display:"flex",flexDirection:"column",gap:9}}>
-                  {[
-                    {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
-                    {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-                    {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
-                  ].map(row=>(
-                    <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
-                      <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-                      <div style={{fontSize:12,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.isPct?`${row.done}%`:`${row.done}/${row.total}`}</div>
-                      <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
-                        <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
-              </div>
-
-              {/* Today's / Tomorrow's priorities */}
-              <div className="card">
-                <div className="ct">{dashTodoDay==="today"?"Today's":"Tomorrow's"} priorities</div>
-                <div className="cs">Active tasks for {dashTodoDay}</div>
-                <div className="dash-toggle">
-                  <button className={`dash-tog ${dashTodoDay==="today"?"on":""}`} onClick={()=>setDashTodoDay("today")}>Today</button>
-                  <button className={`dash-tog ${dashTodoDay==="tomorrow"?"on":""}`} onClick={()=>setDashTodoDay("tomorrow")}>Tomorrow</button>
-                </div>
-                <div className="tl">
-                  {byPri(todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW))).slice(0,5).map(todo=>(
-                    <div key={todo.id} className="ti">
-                      <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                      <div className="tb2">
-                        <div className="tt">{todo.text}</div>
-                        <div className="tm">
-                          {todo.priority==="high"&&<span className="pri high">high</span>}
-                          <span className={`tg ${todo.tag}`}>{todo.tag}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW)).length===0&&<div className="emp">All caught up ✦</div>}
-                </div>
-                <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid var(--border)"}}>
-                  <div className="pri-row">
-                    <span className="pri-lbl">Priority:</span>
-                    {["high","medium","low"].map(p=>(
-                      <button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>
-                    ))}
-                  </div>
-                  <div className="row">
-                    <input className="inp" placeholder={`Add ${dashTodoDay} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
-                    <select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select>
-                    <button className="bp" onClick={addTodoDash}>+ Add</button>
-                  </div>
-                </div>
-              </div>
-
-            </div>{/* end middle col */}
-
-            {/* ── RIGHT COLUMN ── */}
-            <div className="dash-col">
-
-              {/* Pomodoro timer */}
-              <div className="card">
-                <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
-                <div className="cs" style={{textAlign:"center"}}>Pomodoro</div>
-                <div className="pomo-wrap">
-                  <div className="pomo-presets">
-                    {POMO_PRESETS.map(p=>(
-                      <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
-                    ))}
-                  </div>
-                  <svg width="100" height="100" viewBox="0 0 110 110" className="pomo-svg">
-                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-                    <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
-                    <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-                    <text x="55" y="65" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="9" fontStyle="italic" fill="var(--ink-light)">{pomoActive?"focus":"ready"}</text>
-                  </svg>
-                  <div className="pomo-btns">
-                    {!pomoActive
-                      ? <button className="pomo-btn start" onClick={pomoStart}>{pomoLeft<pomoDur&&pomoLeft>0?"Resume":"Start"}</button>
-                      : <button className="pomo-btn pause" onClick={pomoPause}>Pause</button>
-                    }
-                    <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quote */}
-              <div className="qc">
-                <div className="qt">"{QUOTE.text}"</div>
-                <div className="qa">— {QUOTE.attr}</div>
-              </div>
-
-              {/* Today's cleaning — show all tasks */}
-              <div className="card" style={{padding:"14px 18px"}}>
-                <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
-                  <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
-                  <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
-                </div>
-                <div style={{display:"flex",flexDirection:"column",gap:4}}>
-                  {cleaningTodayArr.map((task,i)=>(
-                    <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"3px 0"}}>
-                      <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
-                      <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Upcoming events */}
-              <div className="card">
-                <div className="ct">Upcoming Events</div>
-                <div className="cs">Next 3 dates</div>
-                {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-                {upcoming.slice(0,3).map(e=>(
-                  <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
-                    <div className="ue-dot" style={{background:e.color}}/>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div className="ue-name">{e.title}</div>
-                      <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
-                    </div>
-                    <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
-                  </div>
-                ))}
-              </div>
-
-            </div>{/* end right col */}
-
-          </div>
-        )}
 
         {/* ── HABITS ── */}
         {page==="habits"&&<>
@@ -1111,6 +900,248 @@ export default function App() {
             </div>
           </div>
         </>}
+
+        {/* ── DASHBOARD ── */}
+        {page==="dashboard"&&(
+  <div>
+    {/* Header */}
+    <div className="dash-header">
+      <div className="dash-photo"><img src={sabinaPhoto} alt="Sabina"/></div>
+      <div>
+        <div className="dash-hi">Bonjour,</div>
+        <div className="dash-title"><em>Sabina</em></div>
+        <div className="dash-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</div>
+      </div>
+      <div style={{marginLeft:"auto",display:"flex",gap:10}}>
+        {[{label:"Habits",val:`${habitsToday}/${habits.length}`,color:"#c9a87c",pg:"habits"},{label:"To-Do",val:`${todosDone} done`,color:"#7a9070",pg:"todos"},{label:"Goals",val:`${avgProg}%`,color:"#b098c0",pg:"goals"}].map(b=>(
+          <button key={b.pg} onClick={()=>setPage(b.pg)} style={{background:"var(--ivory)",border:`1.5px solid ${b.color}55`,borderRadius:12,padding:"8px 14px",cursor:"pointer",textAlign:"center",transition:"all .2s",boxShadow:"var(--shadow)"}}
+            onMouseEnter={e=>e.currentTarget.style.background=b.color+"18"}
+            onMouseLeave={e=>e.currentTarget.style.background="var(--ivory)"}>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:b.color,letterSpacing:".08em"}}>{b.label}</div>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:600,color:"var(--ink)"}}>{b.val}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* Activity stat cards */}
+    <div className="stat-row" style={{marginBottom:16}}>
+      {[
+        {icon:"🔥",label:"Move",val:todayFit&&fitMove!=null?Math.round(fitMove):null,goal:moveGoal,unit:"cal",color:"#B2967D",pct:movePct},
+        {icon:"💪",label:"Exercise",val:todayFit&&fitEx!=null?Math.round(fitEx):null,goal:exGoal,unit:"min",color:"#D7C9B8",pct:exPct},
+        {icon:"🧍",label:"Stand",val:todayFit&&standHrs!=null?standHrs:null,goal:standGoal,unit:"hrs",color:"#7D5A44",pct:standPct},
+      ].map(s=>(
+        <div key={s.label} className="stat-card">
+          <div className="stat-icon">{s.icon}</div>
+          <div className="stat-val" style={{color:s.color}}>{s.val!=null?s.val:"—"}</div>
+          <div className="stat-goal">/{s.goal}{s.unit}</div>
+          <div className="stat-label">{s.label}</div>
+          <div className="stat-bar"><div className="stat-bar-fill" style={{width:`${s.pct*100}%`,background:s.color}}/></div>
+        </div>
+      ))}
+    </div>
+
+    <div className="dash-grid">
+      {/* ── LEFT ── */}
+      <div className="dash-col">
+
+        {/* Today's Progress */}
+        <div className="card">
+          <div className="ct">Today's Progress</div>
+          <div className="cs">Habits · To-Do · Rituel · Goals</div>
+          <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
+              {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
+                <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:10,transition:"width .6s ease"}}/>
+              </div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
+            </div>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:9}}>
+            {[
+              {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
+              {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+              {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+            ].map(row=>(
+              <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
+                <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+                <div style={{fontSize:12,color:"var(--ink)",flex:1}}>{row.label}</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
+                <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
+                  <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+          {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
+        </div>
+
+        {/* Today's priorities */}
+        <div className="card">
+          <div className="ct">Today's priorities</div>
+          <div className="cs">Active tasks for today</div>
+          <div className="dash-toggle">
+            <button className={`dash-tog ${dashTodoDay==="today"?"on":""}`} onClick={()=>setDashTodoDay("today")}>Today</button>
+            <button className={`dash-tog ${dashTodoDay==="tomorrow"?"on":""}`} onClick={()=>setDashTodoDay("tomorrow")}>Tomorrow</button>
+          </div>
+          <div className="tl">
+            {byPri(todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW))).slice(0,5).map(todo=>(
+              <div key={todo.id} className="ti">
+                <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                <div className="tb2">
+                  <div className="tt">{todo.text}</div>
+                  <div className="tm">
+                    {todo.priority==="high"&&<span className="pri high">high</span>}
+                    <span className={`tg ${todo.tag}`}>{todo.tag}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {todos.filter(t=>!t.done&&t.date===(dashTodoDay==="today"?TODAY:TOMORROW)).length===0&&<div className="emp">All caught up ✦</div>}
+          </div>
+          <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid var(--border)"}}>
+            <div className="pri-row">
+              <span className="pri-lbl">Priority:</span>
+              {["high","medium","low"].map(p=>(
+                <button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>
+              ))}
+            </div>
+            <div className="row">
+              <input className="inp" placeholder={`Add ${dashTodoDay} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
+              <select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select>
+              <button className="bp" onClick={addTodoDash}>+ Add</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Habits preview */}
+        <div className="card">
+          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:14}}>
+            <div><div className="ct" style={{marginBottom:0}}>Habits</div><div className="cs" style={{marginBottom:0}}>This week</div></div>
+            <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all →</button>
+          </div>
+          <div className="dash-habits">
+            {habits.slice(0,5).map(hab=>(
+              <div key={hab.id} className="dh-row">
+                <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
+                <div className="dh-name">{hab.name}</div>
+                <div className="dh-dots">
+                  {hab.days.map((done,i)=>(
+                    <div key={i} className={`dh-dot${done?" on":""}`}/>
+                  ))}
+                </div>
+                <div className="dh-streak">{streak(hab.days)}/7</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>{/* end left col */}
+
+      {/* ── RIGHT ── */}
+      <div className="dash-col">
+
+        {/* Quote */}
+        <div className="qc">
+          <div className="qt">"{QUOTE.text}"</div>
+          <div className="qa">— {QUOTE.attr}</div>
+        </div>
+
+        {/* Rituel de Maison */}
+        <div className="card" style={{padding:"14px 18px"}}>
+          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8}}>
+            <div className="ct" style={{marginBottom:0}}>Rituel de Maison</div>
+            <div className="cs" style={{marginBottom:0}}>{TODAY_DAY}</div>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:4}}>
+            {cleaningTodayArr.map((task,i)=>(
+              <div key={i} className={`ctk${task.done?" dc":""}`} style={{padding:"3px 0"}}>
+                <div className="cck" onClick={()=>toggleClean(TODAY_DAY,i)}/>
+                <span className="ctxt" style={{fontSize:11}}>{task.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Upcoming events */}
+        <div className="card">
+          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+            <div className="ct" style={{marginBottom:0}}>Upcoming Events</div>
+            <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all →</button>
+          </div>
+          <div className="cs">Next 3 dates</div>
+          {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
+          {upcoming.slice(0,3).map(e=>(
+            <div key={e.id} className="ue" style={{borderLeftColor:e.color}} onClick={ev=>openEditEv(e,ev)}>
+              <div className="ue-dot" style={{background:e.color}}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div className="ue-name">{e.title}</div>
+                <div className="ue-date">{fd(e.date)}{e.allDay?" · All day":e.time?` · ${e.time}`:""}</div>
+              </div>
+              <div className="ue-away">{e.away===0?"Today":e.away===1?"Tomorrow":`${e.away}d`}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Streak + Goals */}
+        <div className="streak-card">
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,color:"var(--ink)"}}>Current Streak 🔥</div>
+          </div>
+          <div style={{display:"flex",alignItems:"flex-end",gap:10,marginBottom:16}}>
+            <div className="streak-num">{habitsDoneToday>0?habits.filter(h=>h.days[todayDayIndex]).length:0}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",paddingBottom:6}}>habits today</div>
+          </div>
+          <div style={{borderTop:"1px solid var(--border)",paddingTop:14,marginTop:4}}>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)",marginBottom:10}}>Goals</div>
+            <div className="goals-mini">
+              {allGoals.slice(0,3).map(g=>(
+                <div key={g.id} className="gm-row">
+                  <div className="gm-top">
+                    <div className="gm-name">{g.title}</div>
+                    <div className="gm-pct">{g.progress}%</div>
+                  </div>
+                  <div className="gm-bar"><div className="gm-fill" style={{width:`${g.progress}%`,background:g.color||"var(--gold)"}}/></div>
+                </div>
+              ))}
+              {allGoals.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No goals yet ✦</div>}
+            </div>
+          </div>
+        </div>
+
+        {/* Focus timer */}
+        <div className="card">
+          <div className="ct" style={{textAlign:"center",marginBottom:2}}>Focus Timer</div>
+          <div className="cs" style={{textAlign:"center"}}>Pomodoro</div>
+          <div className="pomo-wrap">
+            <div className="pomo-presets">
+              {POMO_PRESETS.map(p=>(
+                <button key={p.s} className={`pomo-preset ${pomoDur===p.s&&!pomoActive?"on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
+              ))}
+            </div>
+            <svg width="100" height="100" viewBox="0 0 110 110" className="pomo-svg">
+              <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+              <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoActive?pomoColor:"var(--gold)"} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${pomoDash} ${POMO_CIRC}`} style={{transform:"rotate(-90deg)",transformOrigin:"55px 55px",transition:"stroke-dasharray .9s linear, stroke .5s"}}/>
+              <text x="55" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="18" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+              <text x="55" y="65" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="9" fontStyle="italic" fill="var(--ink-light)">{pomoActive?"focus":"ready"}</text>
+            </svg>
+            <div className="pomo-btns">
+              {!pomoActive
+                ? <button className="pomo-btn start" onClick={pomoStart}>{pomoLeft<pomoDur&&pomoLeft>0?"Resume":"Start"}</button>
+                : <button className="pomo-btn pause" onClick={pomoPause}>Pause</button>
+              }
+              <button className="pomo-btn stop" onClick={pomoStop}>Stop</button>
+            </div>
+          </div>
+        </div>
+
+      </div>{/* end right col */}
+    </div>
+  </div>
+)}
 
         {/* ── TO-DO LISTS ── */}
         {page==="todos"&&<>
