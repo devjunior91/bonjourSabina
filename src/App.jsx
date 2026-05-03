@@ -924,6 +924,49 @@ export default function App() {
       </div>
     </div>
 
+    {/* Top row: Today's Progress + Quote */}
+    <div style={{display:"grid",gridTemplateColumns:"1fr 300px",gap:16,marginBottom:16}}>
+      {/* Today's Progress */}
+      <div className="card">
+        <div className="ct">Today's Progress</div>
+        <div className="cs">Habits · To-Do · Rituel · Goals</div>
+        <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
+            {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
+              <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:10,transition:"width .6s ease"}}/>
+            </div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:9}}>
+          {[
+            {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
+            {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+            {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+          ].map(row=>(
+            <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+              <div style={{fontSize:12,color:"var(--ink)",flex:1}}>{row.label}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
+              <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
+                <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
+              </div>
+            </div>
+          ))}
+          </div>
+          {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
+        </div>
+
+      {/* Quote — sits beside Today's Progress */}
+      <div className="qc" style={{minHeight:160}}>
+        <div className="qt">"{QUOTE.text}"</div>
+        <div className="qa">— {QUOTE.attr}</div>
+      </div>
+    </div>{/* end top row */}
+
     {/* Activity stat cards */}
     <div className="stat-row" style={{marginBottom:16}}>
       {[
@@ -944,40 +987,6 @@ export default function App() {
     <div className="dash-grid">
       {/* ── LEFT ── */}
       <div className="dash-col">
-
-        {/* Today's Progress */}
-        <div className="card">
-          <div className="ct">Today's Progress</div>
-          <div className="cs">Habits · To-Do · Rituel · Goals</div>
-          <div style={{display:"flex",alignItems:"center",gap:22,marginBottom:18}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:50,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>
-              {dayPct}<span style={{fontSize:20,color:"var(--ink-light)"}}>%</span>
-            </div>
-            <div style={{flex:1}}>
-              <div style={{height:10,background:"var(--parchment)",borderRadius:10,overflow:"hidden",marginBottom:7}}>
-                <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:10,transition:"width .6s ease"}}/>
-              </div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
-            </div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:9}}>
-            {[
-              {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
-              {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-              {label:"Rituel",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
-            ].map(row=>(
-              <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
-                <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-                <div style={{fontSize:12,color:"var(--ink)",flex:1}}>{row.label}</div>
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
-                <div style={{width:70,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden",flexShrink:0}}>
-                  <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:4,transition:"width .5s"}}/>
-                </div>
-              </div>
-            ))}
-          </div>
-          {dayPct===100&&<div style={{marginTop:16,textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--sage)"}}>Parfait day, Sabina ✦</div>}
-        </div>
 
         {/* Today's priorities */}
         <div className="card">
@@ -1043,12 +1052,6 @@ export default function App() {
 
       {/* ── RIGHT ── */}
       <div className="dash-col">
-
-        {/* Quote */}
-        <div className="qc">
-          <div className="qt">"{QUOTE.text}"</div>
-          <div className="qa">— {QUOTE.attr}</div>
-        </div>
 
         {/* Rituel de Maison */}
         <div className="card" style={{padding:"14px 18px"}}>
