@@ -161,7 +161,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:32px 36px 64px;min-height:100vh;position:relative;z-index:1;}
+.main{margin-left:var(--sidebar-w);padding:32px 20px 64px;min-height:100vh;position:relative;z-index:1;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -985,13 +985,13 @@ export default function App() {
           <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:6,transition:"width .6s"}}/>
         </div>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:14}}>{dayDone} of {dayTotal} tasks completed</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start"}}>
           {[
             {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
             {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
             {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
           ].map(row=>(
-            <div key={row.label} style={{display:"flex",alignItems:"center",gap:8}}>
+            <div key={row.label} style={{display:"flex",alignItems:"center",gap:8,width:"100%"}}>
               <div style={{width:6,height:6,borderRadius:"50%",background:row.color,flexShrink:0}}/>
               <div style={{fontSize:11.5,color:"var(--ink)",flex:1}}>{row.label}</div>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:11,color:"var(--ink-light)",minWidth:28,textAlign:"right"}}>{row.done}/{row.total}</div>
@@ -1076,8 +1076,8 @@ export default function App() {
         <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
       <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
-      <div className="tl" style={{marginBottom:12}}>
-        {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).slice(0,4).map(todo=>(
+      <div className="tl" style={{marginBottom:12,maxHeight:200,overflowY:"auto"}}>
+        {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map(todo=>(
           <div key={todo.id} className="ti">
             <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
             <div className="tb2">
