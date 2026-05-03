@@ -197,7 +197,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .prog-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);display:flex;gap:20px;align-items:flex-start;}
 .prog-photo{width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;}
 .prog-photo img{width:100%;height:100%;object-fit:cover;}
-.prog-content{flex:1;min-width:0;}
+.prog-content{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;}
 
 /* Quote card - light */
 .qc-light{background:#f0ebe3;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;justify-content:center;}
@@ -981,19 +981,19 @@ export default function App() {
           <span style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>{dayPct}</span>
           <span style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--ink-light)"}}>%</span>
         </div>
-        <div style={{height:7,background:"var(--parchment)",borderRadius:6,overflow:"hidden",marginBottom:6}}>
+        <div style={{height:7,background:"var(--parchment)",borderRadius:6,overflow:"hidden",marginBottom:6,width:"100%"}}>
           <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:6,transition:"width .6s"}}/>
         </div>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:14}}>{dayDone} of {dayTotal} tasks completed</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start"}}>
+        <div style={{display:"flex",flexDirection:"column",gap:8,width:"100%"}}>
           {[
             {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
             {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
             {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
           ].map(row=>(
-            <div key={row.label} style={{display:"flex",alignItems:"center",gap:8,width:"100%"}}>
+            <div key={row.label} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",gap:8,width:"100%"}}>
               <div style={{width:6,height:6,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-              <div style={{fontSize:11.5,color:"var(--ink)",flex:1}}>{row.label}</div>
+              <div style={{fontSize:11.5,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:11,color:"var(--ink-light)",minWidth:28,textAlign:"right"}}>{row.done}/{row.total}</div>
               <div style={{width:60,height:3,background:"var(--parchment)",borderRadius:3,overflow:"hidden"}}>
                 <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:3,transition:"width .5s"}}/>
