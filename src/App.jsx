@@ -161,7 +161,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:32px 20px 64px;min-height:100vh;position:relative;z-index:1;}
+.main{margin-left:var(--sidebar-w);padding:32px 8px 64px;min-height:100vh;position:relative;z-index:1;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -193,11 +193,11 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* Top row */
 .dash-top-row{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:16px;align-items:stretch;}
 
-/* Progress card with photo */
-.prog-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);display:flex;gap:20px;align-items:flex-start;}
-.prog-photo{width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;}
-.prog-photo img{width:100%;height:100%;object-fit:cover;}
-.prog-content{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;}
+/* Progress card */
+.prog-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:22px 26px;box-shadow:var(--shadow);display:flex;gap:24px;align-items:center;}
+.prog-ring-col{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.prog-center{flex:1;min-width:0;display:flex;flex-direction:column;}
+.prog-bullets{flex-shrink:0;display:flex;flex-direction:column;gap:12px;justify-content:center;}
 
 /* Quote card - light */
 .qc-light{background:#f0ebe3;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;justify-content:center;}
@@ -205,8 +205,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .qc-light-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--ink);line-height:1.6;}
 .qc-light-dash{width:24px;height:1.5px;background:var(--ink-light);margin-top:14px;opacity:.4;}
 
-/* Activity row with calendar */
-.dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 260px;gap:12px;margin-bottom:16px;}
+/* Activity row */
+.dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;}
 .act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);overflow:hidden;position:relative;}
 .act-label{font-size:11px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:10px;}
 .act-icon{font-size:18px;margin-bottom:6px;}
@@ -229,8 +229,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-ev-name{font-size:11px;color:var(--ink);flex:1;}
 .cal-ev-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 
-/* Bottom 3-col row */
-.dash-mid-row{display:grid;grid-template-columns:1fr 1fr 220px;gap:16px;margin-bottom:16px;align-items:start;}
+/* Mid row */
+.dash-mid-row{display:grid;grid-template-columns:1fr 1fr 1fr 180px;gap:12px;margin-bottom:16px;align-items:start;}
 
 /* Streak card */
 .streak-big{font-family:'Playfair Display',serif;font-size:52px;font-weight:600;color:var(--ink);line-height:1;display:flex;align-items:baseline;gap:8px;}
@@ -974,33 +974,48 @@ export default function App() {
   {/* Top row: Progress card + Quote */}
   <div className="dash-top-row">
     <div className="prog-card">
-      <div className="prog-photo"><img src={sabinaPhoto} alt="Sabina"/></div>
-      <div className="prog-content">
-        <div className="ct" style={{marginBottom:2}}>Today's Progress</div>
-        <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"6px 0 4px"}}>
-          <span style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink-light)"}}>{dayPct}</span>
-          <span style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--ink-light)"}}>%</span>
+      {/* 1 — Photo with circular progress ring */}
+      <div className="prog-ring-col">
+        {(()=>{
+          const R=46,C=2*Math.PI*R;
+          const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";
+          return(
+            <svg width="120" height="120" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
+              <circle cx="60" cy="60" r={R} fill="none" stroke="var(--parchment)" strokeWidth="6"/>
+              <circle cx="60" cy="60" r={R} fill="none" stroke={rc} strokeWidth="6"
+                strokeDasharray={C} strokeDashoffset={C*(1-dayPct/100)}
+                strokeLinecap="round" transform="rotate(-90 60 60)" style={{transition:"stroke-dashoffset .6s"}}/>
+              <clipPath id="ppClip"><circle cx="60" cy="60" r="36"/></clipPath>
+              <image href={sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
+            </svg>
+          );
+        })()}
+      </div>
+      {/* 2 — Big % number + bar */}
+      <div className="prog-center">
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",letterSpacing:".06em",marginBottom:2}}>Today's Progress</div>
+        <div style={{display:"flex",alignItems:"baseline",gap:4,margin:"2px 0 4px"}}>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink)"}}>{dayPct}</span>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink-light)",fontWeight:400}}>%</span>
         </div>
-        <div style={{height:7,background:"var(--parchment)",borderRadius:6,overflow:"hidden",marginBottom:6,width:"100%"}}>
-          <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:6,transition:"width .6s"}}/>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:12}}>{dayDone} of {dayTotal} tasks completed</div>
+        <div style={{height:6,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}>
+          <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:4,transition:"width .6s"}}/>
         </div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:14}}>{dayDone} of {dayTotal} tasks completed</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8,width:"100%"}}>
-          {[
-            {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
-            {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-            {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
-          ].map(row=>(
-            <div key={row.label} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",gap:8,width:"100%"}}>
-              <div style={{width:6,height:6,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-              <div style={{fontSize:11.5,color:"var(--ink)",flex:1,textAlign:"left"}}>{row.label}</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:11,color:"var(--ink-light)",minWidth:28,textAlign:"right"}}>{row.done}/{row.total}</div>
-              <div style={{width:60,height:3,background:"var(--parchment)",borderRadius:3,overflow:"hidden"}}>
-                <div style={{height:"100%",width:row.total>0?`${Math.round(row.done/row.total*100)}%`:"0%",background:row.color,borderRadius:3,transition:"width .5s"}}/>
-              </div>
-            </div>
-          ))}
-        </div>
+      </div>
+      {/* 3 — Category bullets */}
+      <div className="prog-bullets">
+        {[
+          {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
+          {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+          {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+        ].map(row=>(
+          <div key={row.label} style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+            <div style={{fontSize:11.5,color:"var(--ink)",minWidth:72}}>{row.label}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -1030,40 +1045,30 @@ export default function App() {
       </div>
     ))}
 
-    {/* Calendar widget */}
-    <div className="cal-widget">
-      <div className="cal-w-hd">
-        <div className="cal-w-title">Calendar</div>
-        <button className="cal-w-link" onClick={()=>setPage("calendar")}>View full calendar</button>
+    {/* Pomodoro timer */}
+    <div className="act-card" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
+      <div className="act-label" style={{alignSelf:"flex-start"}}>Focus Timer</div>
+      <div className="pomo-presets" style={{gap:3,justifyContent:"center"}}>
+        {POMO_PRESETS.map(p=>(
+          <button key={p.s} className={`pomo-preset${pomoDur===p.s?" on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
+        ))}
       </div>
-      {(()=>{
-        const todayDate=NOW.getDate();
-        const todayDow=NOW.getDay();
-        // Get this week Mon-Sun
-        const mondayOffset=todayDow===0?-6:1-todayDow;
-        const weekDays=["M","T","W","T","F","S","S"];
-        const weekDates=Array.from({length:7},(_,i)=>{const d=new Date(NOW);d.setDate(NOW.getDate()+mondayOffset+i);return d;});
-        const todayEvents=events.filter(e=>e.date===TODAY).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
-        return(<>
-          <div className="cal-week-row">
-            {weekDays.map((d,i)=><div key={i} className="cal-week-day">{d}</div>)}
-          </div>
-          <div className="cal-week-row">
-            {weekDates.map((d,i)=>(
-              <div key={i} className={`cal-week-date${d.toISOString().split("T")[0]===TODAY?" today":""}`}>{d.getDate()}</div>
-            ))}
-          </div>
-          <div className="cal-today-hd">TODAY · {NOW.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"long"}).toUpperCase()}</div>
-          {todayEvents.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Nothing scheduled ✦</div>}
-          {todayEvents.slice(0,3).map(e=>(
-            <div key={e.id} className="cal-ev-row">
-              <div className="cal-ev-time">{e.allDay?"All day":e.time||""}</div>
-              <div className="cal-ev-name">{e.title}</div>
-              <div className="cal-ev-dot" style={{background:e.color}}/>
-            </div>
-          ))}
-        </>);
-      })()}
+      <svg width="100" height="100" viewBox="0 0 110 110" className="pomo-svg" style={{margin:"4px 0"}}>
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7"
+          strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash}
+          strokeLinecap="round" transform="rotate(-90 55 55)"/>
+        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="14" fontWeight="500" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+        <text x="55" y="64" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="9" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"focus ✦":"ready"}</text>
+      </svg>
+      <div style={{display:"flex",gap:5}}>
+        {!pomoActive
+          ?<button className="pomo-btn start" style={{padding:"5px 14px",fontSize:10}} onClick={pomoStart}>▶ Start</button>
+          :<button className="pomo-btn pause" style={{padding:"5px 14px",fontSize:10}} onClick={pomoPause}>⏸ Pause</button>
+        }
+        <button className="pomo-btn stop" style={{padding:"5px 10px",fontSize:10}} onClick={pomoStop}>↺</button>
+      </div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed</div>
     </div>
   </div>
 
@@ -1103,8 +1108,8 @@ export default function App() {
         <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
       <div className="cs" style={{marginBottom:12}}>This week</div>
-      <div style={{display:"flex",flexDirection:"column",gap:8}}>
-        {habits.slice(0,5).map(hab=>(
+      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:190,overflowY:"auto"}}>
+        {habits.map(hab=>(
           <div key={hab.id} className="dh-row">
             <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
             <div className="dh-name">{hab.name}</div>
@@ -1118,20 +1123,48 @@ export default function App() {
       </div>
     </div>
 
-    {/* Current streak */}
+    {/* Rituel */}
     <div className="card">
-      <div className="ct" style={{marginBottom:2}}>Current streak 🔥</div>
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+        <div className="ct" style={{marginBottom:0}}>Rituel</div>
+        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div className="cs" style={{marginBottom:10}}>{TODAY_DAY}'s tasks</div>
+      <div style={{maxHeight:180,overflowY:"auto",display:"flex",flexDirection:"column",gap:6}}>
+        {cleaningTodayArr.map((task,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:8,paddingBottom:6,borderBottom:"1px solid var(--border)"}}>
+            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:14,height:14,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(122,98,82,.3)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,transition:"all .15s"}}/>
+            <span style={{fontSize:11.5,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
+          </div>
+        ))}
+        {cleaningTodayArr.length===0&&<div className="emp">Rest day ✦</div>}
+      </div>
+    </div>
+
+    {/* Current streak — all categories */}
+    <div className="card">
+      <div className="ct" style={{marginBottom:2}}>Daily streak 🔥</div>
       <div className="streak-big">
-        <span>{habitsDoneToday}</span>
-        <span className="streak-unit">habits today</span>
+        <span>{dayDone}</span>
+        <span className="streak-unit">done today</span>
+      </div>
+      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden",margin:"10px 0 14px"}}>
+        <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:2,transition:"width .6s"}}/>
       </div>
       <div className="streak-bars-row">
         {DAYS.map((d,i)=>{
-          const count=habits.filter(h=>h.days[i]).length;
-          const maxH=Math.max(habits.length,1);
+          const habPct=habits.length>0?habits.filter(h=>h.days[i]).length/habits.length:0;
+          const cleanArr=cleaning[d]||[];
+          const cleanPct=cleanArr.length>0?cleanArr.filter(t=>t.done).length/cleanArr.length:0;
+          const mondayOffset=new Date(liveDate+"T12:00:00").getDay()===0?-6:1-new Date(liveDate+"T12:00:00").getDay();
+          const dayDate=new Date(new Date(liveDate+"T12:00:00").getTime()+(mondayOffset+i)*86400000).toISOString().split("T")[0];
+          const dayTodos=todos.filter(t=>t.date===dayDate);
+          const todoPct=dayTodos.length>0?dayTodos.filter(t=>t.done).length/dayTodos.length:0;
+          const cats=[habPct,cleanPct,todoPct].filter((_,j)=>[habits.length,cleanArr.length,dayTodos.length][j]>0);
+          const avg=cats.length>0?cats.reduce((s,v)=>s+v,0)/cats.length:0;
           return(
             <div key={d} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,flex:1}}>
-              <div className="streak-b" style={{height:`${Math.max((count/maxH)*44,4)}px`,background:count>0?"var(--gold)":"var(--parchment)"}}/>
+              <div className="streak-b" style={{height:`${Math.max(avg*44,4)}px`,background:avg>0?"var(--gold)":"var(--parchment)"}}/>
               <div style={{fontSize:9,color:"var(--ink-light)"}}>{d}</div>
             </div>
           );
