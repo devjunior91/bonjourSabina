@@ -792,23 +792,6 @@ export default function App() {
   const todosDone=todos.filter(t=>t.done&&t.date===TODAY).length;
   const allGoals=Object.values(goals).flat();
   const avgProg=allGoals.length?Math.round(allGoals.reduce((a,g)=>a+g.progress,0)/allGoals.length):0;
-
-  // Recent Wins — auto-generated from app activity
-  const recentWins=(()=>{
-    const wins=[];
-    // Productive day
-    if(dayTotal>0&&dayPct>=50) wins.push({type:"productive",title:"Productive Day",text:`Completed ${dayPct}% of today's tasks`});
-    // Habit streaks ≥3 days
-    habits.forEach(h=>{const s=streak(h.days);if(s>=3)wins.push({type:"streak",title:"Streak",text:`${h.name} — ${s} days in a row`});});
-    // Goals milestones completed
-    allGoals.forEach(g=>{
-      g.milestones.filter(m=>m.done).slice(0,1).forEach(m=>wins.push({type:"milestone",title:"New Milestone",text:`${m.text} in "${g.title}"`}));
-      if(g.progress>=50&&g.progress<100) wins.push({type:"goal",title:"Goal Progress",text:`${g.title} is now ${g.progress}% complete`});
-    });
-    // Rituel all done today
-    if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Rituel Complete",text:`All ${TODAY_DAY} rituel tasks done ✦`});
-    return wins.slice(0,5);
-  })();
   const upcoming=events.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(e=>({...e,away:Math.round((new Date(e.date+"T00:00:00")-new Date(TODAY+"T00:00:00"))/864e5)}));
   const graphData=DAYS.map((d,i)=>({day:d,count:habits.filter(h=>h.days[i]).length}));
   const maxBar=Math.max(...graphData.map(d=>d.count),1);
@@ -851,6 +834,20 @@ export default function App() {
   const dayDoneRaw=habitsDoneToday+todosDoneToday+cleaningDoneToday+goalDoneV;
   const dayDone=Math.round(dayDoneRaw);
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
+
+  // Recent Wins — computed after all dependencies are defined
+  const recentWins=(()=>{
+    const wins=[];
+    if(dayTotal>0&&dayPct>=50) wins.push({type:"productive",title:"Productive Day",text:`Completed ${dayPct}% of today's tasks`});
+    habits.forEach(h=>{const s=streak(h.days);if(s>=3)wins.push({type:"streak",title:"Streak",text:`${h.name} — ${s} days in a row`});});
+    allGoals.forEach(g=>{
+      g.milestones.filter(m=>m.done).slice(0,1).forEach(m=>wins.push({type:"milestone",title:"New Milestone",text:`${m.text} in "${g.title}"`}));
+      if(g.progress>=50&&g.progress<100) wins.push({type:"goal",title:"Goal Progress",text:`${g.title} is now ${g.progress}% complete`});
+    });
+    if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Rituel Complete",text:`All ${TODAY_DAY} rituel tasks done ✦`});
+    return wins.slice(0,5);
+  })();
+
   // Fitness rings
   const todayFit=fitMove!=null;
   const moveGoal=300,exGoal=30,standGoal=6;
