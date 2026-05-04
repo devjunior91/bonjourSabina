@@ -161,7 +161,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:28px 8px 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;}
+.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -197,7 +197,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .prog-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:22px 26px;box-shadow:var(--shadow);display:flex;gap:24px;align-items:center;}
 .prog-ring-col{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .prog-center{flex:1;min-width:0;display:flex;flex-direction:column;}
-.prog-bullets{flex-shrink:0;display:flex;flex-direction:column;gap:12px;justify-content:center;}
+.prog-bullets{flex-shrink:0;display:flex;flex-direction:column;gap:10px;justify-content:center;align-items:flex-start;min-width:130px;}
 
 /* Quote card - light */
 .qc-light{background:#f0ebe3;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;justify-content:center;}
@@ -205,7 +205,13 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .qc-light-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--ink);line-height:1.6;}
 .qc-light-dash{width:24px;height:1.5px;background:var(--ink-light);margin-top:14px;opacity:.4;}
 
-/* Activity row */
+/* Combined activity + mid section */
+.dash-combined-row{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
+.dash-left-col{display:flex;flex-direction:column;gap:12px;}
+.dash-act-sub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.dash-mid-sub{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;}
+.dash-right-col{display:flex;flex-direction:column;gap:12px;}
+/* Activity row (kept for compat) */
 .dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
 .act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:10px 14px 0;box-shadow:var(--shadow);overflow:hidden;position:relative;}
 .act-label{font-size:10px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase;}
@@ -235,8 +241,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* Streak card */
 .streak-big{font-family:'Playfair Display',serif;font-size:52px;font-weight:600;color:var(--ink);line-height:1;display:flex;align-items:baseline;gap:8px;}
 .streak-unit{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--ink-light);}
-.streak-bars-row{display:flex;align-items:flex-end;gap:5px;height:50px;margin-top:14px;}
-.streak-b{flex:1;border-radius:3px 3px 0 0;background:var(--parchment);min-height:4px;transition:height .4s;}
+.streak-bars-row{display:flex;align-items:flex-end;gap:4px;height:46px;margin-top:10px;}
+.streak-b{flex:1;border-radius:3px 3px 0 0;min-height:8px;transition:height .4s;}
 
 /* Bottom row: Upcoming + Goals */
 .dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
@@ -560,17 +566,18 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .25s;}
-  .main{margin-left:0;padding:20px 10px 80px;}
+  .main{margin-left:0;padding:20px 8px 80px;}
   .dash-top-row{grid-template-columns:1fr;}
-  .dash-activity-row{grid-template-columns:1fr 1fr;}
-  .dash-mid-row{grid-template-columns:1fr 1fr;}
+  .dash-combined-row{grid-template-columns:1fr;}
+  .dash-act-sub{grid-template-columns:1fr 1fr 1fr;}
+  .dash-mid-sub{grid-template-columns:1fr 1fr;}
   .dash-bottom-row{grid-template-columns:1fr;}
   .prog-card{flex-wrap:wrap;}
   .prog-center{min-width:200px;}
 }
 @media(max-width:600px){
-  .dash-activity-row{grid-template-columns:1fr 1fr;}
-  .dash-mid-row{grid-template-columns:1fr;}
+  .dash-act-sub{grid-template-columns:1fr 1fr;}
+  .dash-mid-sub{grid-template-columns:1fr;}
   .prog-bullets{flex-direction:row;flex-wrap:wrap;gap:8px;}
   .dash-page-header{flex-direction:column;gap:12px;}
   .dash-search{display:none;}
@@ -960,7 +967,7 @@ export default function App() {
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
-<div>
+<div style={{padding:"0 8px"}}>
   {/* Page header */}
   <div className="dash-page-header">
     <div>
@@ -1017,10 +1024,10 @@ export default function App() {
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
           {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
         ].map(row=>(
-          <div key={row.label} style={{display:"flex",alignItems:"center",gap:8}}>
+          <div key={row.label} style={{display:"flex",alignItems:"center",gap:7,width:"100%"}}>
             <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-            <div style={{fontSize:11.5,color:"var(--ink)",minWidth:72}}>{row.label}</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",minWidth:32,textAlign:"right"}}>{row.done}/{row.total}</div>
+            <div style={{fontSize:11,color:"var(--ink)",flex:1}}>{row.label}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",textAlign:"right"}}>{row.done}/{row.total}</div>
           </div>
         ))}
       </div>
@@ -1035,103 +1042,110 @@ export default function App() {
   </div>
 
   {/* Activity row + Calendar */}
-  <div className="dash-activity-row">
-    {[
-      {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C8.3 22 5.5 19.2 5.5 15.6C5.5 12.7 7.2 10.6 9.1 8.7C10.4 7.4 11.4 5.9 11.6 3.8C11.7 3.1 12.6 2.8 13.1 3.3C15.3 5.5 18.5 9.1 18.5 14.8C18.5 19 15.6 22 12 22Z" fill="#B89576"/><path d="M12.1 19.4C10.3 19.4 9 18.1 9 16.4C9 15.1 9.8 14.1 10.7 13.2C11.3 12.6 11.8 11.9 11.9 10.9C12 10.4 12.6 10.2 13 10.6C14 11.7 15.2 13.3 15.2 15.8C15.2 17.9 13.8 19.4 12.1 19.4Z" fill="#F4EFE8"/></svg>,label:"Move",val:todayFit&&fitMove!=null?Math.round(fitMove):null,goal:moveGoal,unit:"cal",color:"#B89576",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
-      {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M17.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M4 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M20 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M7.5 12H16.5" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/></svg>,label:"Exercise",val:todayFit&&fitEx!=null?Math.round(fitEx):null,goal:exGoal,unit:"min",color:"#A9B39F",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
-      {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2" fill="#9BAFC7"/><path d="M12 8V15" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M8.5 10.5H15.5" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 21L12 15L14 21" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"Stand",val:todayFit&&standHrs!=null?standHrs:null,goal:standGoal,unit:"hrs",color:"#9BAFC7",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
-    ].map(s=>(
-      <div key={s.label} className="act-card">
-        <div className="act-label">{s.label}</div>
-        <div className="act-icon">{s.icon}</div>
-        <div className="act-val">{s.val!=null?s.val:"—"}</div>
-        <div className="act-goal">/{s.goal}{s.unit}</div>
-        <svg className="act-wave" viewBox="0 0 180 50" preserveAspectRatio="none" height="22">
-          <path d={s.wave} fill={s.color}/>
-        </svg>
-      </div>
-    ))}
-
-    {/* Pomodoro timer */}
-    <div className="act-card" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
-      <div className="act-label" style={{alignSelf:"flex-start"}}>Focus Timer</div>
-      <div className="pomo-presets" style={{gap:3,justifyContent:"center"}}>
-        {POMO_PRESETS.map(p=>(
-          <button key={p.s} className={`pomo-preset${pomoDur===p.s?" on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
-        ))}
-      </div>
-      <svg width="76" height="76" viewBox="0 0 110 110" className="pomo-svg" style={{margin:"2px 0"}}>
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7"
-          strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash}
-          strokeLinecap="round" transform="rotate(-90 55 55)"/>
-        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="14" fontWeight="500" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-        <text x="55" y="64" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="9" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"focus ✦":"ready"}</text>
-      </svg>
-      <div style={{display:"flex",gap:5}}>
-        {!pomoActive
-          ?<button className="pomo-btn start" style={{padding:"5px 14px",fontSize:10}} onClick={pomoStart}>▶ Start</button>
-          :<button className="pomo-btn pause" style={{padding:"5px 14px",fontSize:10}} onClick={pomoPause}>⏸ Pause</button>
-        }
-        <button className="pomo-btn stop" style={{padding:"5px 10px",fontSize:10}} onClick={pomoStop}>↺</button>
-      </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed</div>
-    </div>
-  </div>
-
-  {/* Mid row: Priorities | Habits | Streak */}
-  <div className="dash-mid-row">
-    {/* Today's priorities */}
-    <div className="card">
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-        <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
-        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-      </div>
-      <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
-      <div className="tl" style={{marginBottom:12,maxHeight:200,overflowY:"auto"}}>
-        {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map(todo=>(
-          <div key={todo.id} className="ti">
-            <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-            <div className="tb2">
-              <div className="tt">{todo.text}</div>
-              <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
-            </div>
+  {/* Combined activity + mid section — shared 320px right column */}
+  <div className="dash-combined-row">
+    {/* Left: activity cards + priorities/habits */}
+    <div className="dash-left-col">
+      {/* Activity row: Move | Exercise | Stand */}
+      <div className="dash-act-sub">
+        {[
+          {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C8.3 22 5.5 19.2 5.5 15.6C5.5 12.7 7.2 10.6 9.1 8.7C10.4 7.4 11.4 5.9 11.6 3.8C11.7 3.1 12.6 2.8 13.1 3.3C15.3 5.5 18.5 9.1 18.5 14.8C18.5 19 15.6 22 12 22Z" fill="#B89576"/><path d="M12.1 19.4C10.3 19.4 9 18.1 9 16.4C9 15.1 9.8 14.1 10.7 13.2C11.3 12.6 11.8 11.9 11.9 10.9C12 10.4 12.6 10.2 13 10.6C14 11.7 15.2 13.3 15.2 15.8C15.2 17.9 13.8 19.4 12.1 19.4Z" fill="#F4EFE8"/></svg>,label:"Move",val:todayFit&&fitMove!=null?Math.round(fitMove):null,goal:moveGoal,unit:"cal",color:"#B89576",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
+          {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M17.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M4 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M20 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M7.5 12H16.5" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/></svg>,label:"Exercise",val:todayFit&&fitEx!=null?Math.round(fitEx):null,goal:exGoal,unit:"min",color:"#A9B39F",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
+          {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2" fill="#9BAFC7"/><path d="M12 8V15" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M8.5 10.5H15.5" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 21L12 15L14 21" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"Stand",val:todayFit&&standHrs!=null?standHrs:null,goal:standGoal,unit:"hrs",color:"#9BAFC7",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
+        ].map(s=>(
+          <div key={s.label} className="act-card">
+            <div className="act-label">{s.label}</div>
+            <div className="act-icon">{s.icon}</div>
+            <div className="act-val">{s.val!=null?s.val:"—"}</div>
+            <div className="act-goal">/{s.goal}{s.unit}</div>
+            <svg className="act-wave" viewBox="0 0 180 50" preserveAspectRatio="none" height="22">
+              <path d={s.wave} fill={s.color}/>
+            </svg>
           </div>
         ))}
-        {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
       </div>
-      <div style={{borderTop:"1px solid var(--border)",paddingTop:10}}>
-        <div className="row">
-          <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
-          <button className="bp" onClick={addTodoDash}>Add</button>
+
+      {/* Mid row: Priorities | Habits */}
+      <div className="dash-mid-sub">
+        {/* Today's priorities */}
+        <div className="card">
+          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+            <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
+            <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+          </div>
+          <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
+          <div className="tl" style={{marginBottom:12,maxHeight:200,overflowY:"auto"}}>
+            {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map(todo=>(
+              <div key={todo.id} className="ti">
+                <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                <div className="tb2">
+                  <div className="tt">{todo.text}</div>
+                  <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                </div>
+              </div>
+            ))}
+            {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
+          </div>
+          <div style={{borderTop:"1px solid var(--border)",paddingTop:10}}>
+            <div className="row">
+              <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
+              <button className="bp" onClick={addTodoDash}>Add</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Habits */}
+        <div className="card">
+          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+            <div className="ct" style={{marginBottom:0}}>Habits</div>
+            <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+          </div>
+          <div className="cs" style={{marginBottom:12}}>This week</div>
+          <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:190,overflowY:"auto"}}>
+            {habits.map(hab=>(
+              <div key={hab.id} className="dh-row">
+                <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
+                <div className="dh-name">{hab.name}</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
+                <div className="dh-dots">
+                  {hab.days.map((done,i)=><div key={i} className={`dh-dot${done?" on":""}`}/>)}
+                </div>
+              </div>
+            ))}
+            {habits.length===0&&<div className="emp">No habits yet ✦</div>}
+          </div>
         </div>
       </div>
     </div>
 
-    {/* Habits */}
-    <div className="card">
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-        <div className="ct" style={{marginBottom:0}}>Habits</div>
-        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+    {/* Right column: Focus Timer + Rituel + Streak stacked */}
+    <div className="dash-right-col">
+      {/* Pomodoro timer */}
+      <div className="act-card" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"12px 14px"}}>
+        <div className="act-label" style={{alignSelf:"flex-start"}}>Focus Timer</div>
+        <div className="pomo-presets" style={{gap:3,justifyContent:"center"}}>
+          {POMO_PRESETS.map(p=>(
+            <button key={p.s} className={`pomo-preset${pomoDur===p.s?" on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
+          ))}
+        </div>
+        <svg width="76" height="76" viewBox="0 0 110 110" className="pomo-svg" style={{margin:"2px 0"}}>
+          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7"
+            strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash}
+            strokeLinecap="round" transform="rotate(-90 55 55)"/>
+          <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="14" fontWeight="500" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+          <text x="55" y="64" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="9" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"focus ✦":"ready"}</text>
+        </svg>
+        <div style={{display:"flex",gap:5}}>
+          {!pomoActive
+            ?<button className="pomo-btn start" style={{padding:"5px 14px",fontSize:10}} onClick={pomoStart}>▶ Start</button>
+            :<button className="pomo-btn pause" style={{padding:"5px 14px",fontSize:10}} onClick={pomoPause}>⏸ Pause</button>
+          }
+          <button className="pomo-btn stop" style={{padding:"5px 10px",fontSize:10}} onClick={pomoStop}>↺</button>
+        </div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed</div>
       </div>
-      <div className="cs" style={{marginBottom:12}}>This week</div>
-      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:190,overflowY:"auto"}}>
-        {habits.map(hab=>(
-          <div key={hab.id} className="dh-row">
-            <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
-            <div className="dh-name">{hab.name}</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
-            <div className="dh-dots">
-              {hab.days.map((done,i)=><div key={i} className={`dh-dot${done?" on":""}`}/>)}
-            </div>
-          </div>
-        ))}
-        {habits.length===0&&<div className="emp">No habits yet ✦</div>}
-      </div>
-    </div>
 
-    {/* Right column: Rituel + Streak stacked */}
-    <div style={{display:"flex",flexDirection:"column",gap:12}}>
       {/* Rituel */}
       <div className="card">
         <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
@@ -1139,7 +1153,7 @@ export default function App() {
           <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
         </div>
         <div className="cs" style={{marginBottom:10}}>{TODAY_DAY}'s tasks</div>
-        <div style={{maxHeight:140,overflowY:"auto",display:"flex",flexDirection:"column",gap:6}}>
+        <div style={{maxHeight:130,overflowY:"auto",display:"flex",flexDirection:"column",gap:6}}>
           {cleaningTodayArr.map((task,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:8,paddingBottom:6,borderBottom:"1px solid var(--border)"}}>
               <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:14,height:14,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(122,98,82,.3)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,transition:"all .15s"}}/>
@@ -1167,7 +1181,7 @@ export default function App() {
         <div style={{height:4,background:"#F3EAE1",borderRadius:2,overflow:"hidden",margin:"8px 0 12px"}}>
           <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"#B89576",borderRadius:2,transition:"width .6s"}}/>
         </div>
-        <div className="streak-bars-row" style={{alignItems:"flex-end"}}>
+        <div className="streak-bars-row">
           {DAYS.map((d,i)=>{
             const habPct=habits.length>0?habits.filter(h=>h.days[i]).length/habits.length:0;
             const cleanArr=cleaning[d]||[];
@@ -1179,9 +1193,7 @@ export default function App() {
             const cats=[habPct,cleanPct,todoPct].filter((_,j)=>[habits.length,cleanArr.length,dayTodos.length][j]>0);
             const avg=cats.length>0?cats.reduce((s,v)=>s+v,0)/cats.length:0;
             return(
-              <div key={d} style={{flex:1,display:"flex",justifyContent:"center"}}>
-                <div className="streak-b" style={{height:`${Math.max(avg*44,4)}px`,background:avg>0?"#B89576":"#F3EAE1"}}/>
-              </div>
+              <div key={d} className="streak-b" style={{height:`${Math.max(avg*44,8)}px`,background:avg>0.05?"#B89576":"#D9CFC6"}}/>
             );
           })}
         </div>
