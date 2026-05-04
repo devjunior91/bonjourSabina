@@ -149,17 +149,17 @@ const CSS=`
   --sidebar-w:220px;
 }
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:#18140f;display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
-.sb-brand{padding:26px 20px 20px;margin-bottom:0;}
-.sb-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:rgba(240,232,220,.4);letter-spacing:.16em;margin-bottom:3px;}
-.sb-name{font-family:'Playfair Display',serif;font-size:17px;color:#f0e8dc;font-weight:600;letter-spacing:.01em;}
-.sb-section{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,232,220,.28);padding:14px 20px 6px;font-family:'DM Sans',sans-serif;font-weight:500;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:#faf7f3;border-right:1px solid rgba(26,20,16,.08);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.sb-brand{padding:26px 20px 16px;margin-bottom:0;}
+.sb-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--ink-light);letter-spacing:.16em;margin-bottom:3px;opacity:.6;}
+.sb-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);font-weight:600;letter-spacing:.01em;}
+.sb-section{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(26,20,16,.35);padding:12px 20px 5px;font-family:'DM Sans',sans-serif;font-weight:500;}
 .sb-nav{display:flex;flex-direction:column;gap:1px;padding:0 10px;flex:1;}
-.ni{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .15s;color:rgba(240,232,220,.42);font-size:12.5px;white-space:nowrap;letter-spacing:.01em;}
-.ni:hover{background:rgba(255,255,255,.05);color:rgba(240,232,220,.78);}
-.ni.on{background:rgba(255,255,255,.08);color:#f0e8dc;}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .15s;color:rgba(26,20,16,.48);font-size:12.5px;white-space:nowrap;letter-spacing:.01em;}
+.ni:hover{background:rgba(26,20,16,.04);color:var(--ink);}
+.ni.on{background:#ede8e1;color:var(--ink);}
 .ni svg{flex-shrink:0;}
-.sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(240,232,220,.22);border-top:1px solid rgba(255,255,255,.05);}
+.sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);border-top:1px solid rgba(26,20,16,.07);}
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
@@ -210,7 +210,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .dash-combined-row{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
 .dash-left-col{display:flex;flex-direction:column;gap:12px;}
 .dash-act-sub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-.dash-mid-sub{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;}
+.dash-mid-sub{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;}
+.dash-mid-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);height:260px;display:flex;flex-direction:column;}
 .dash-right-col{display:flex;flex-direction:column;gap:12px;}
 /* Activity row (kept for compat) */
 .dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
@@ -567,21 +568,28 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .25s;}
-  .main{margin-left:0;padding:20px 8px 80px;}
+  .main{margin-left:0;padding:16px 10px 80px;}
   .dash-top-row{grid-template-columns:1fr;}
   .dash-combined-row{grid-template-columns:1fr;}
+  .dash-right-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .dash-act-sub{grid-template-columns:1fr 1fr 1fr;}
   .dash-mid-sub{grid-template-columns:1fr 1fr;}
+  .dash-mid-card{height:auto;min-height:200px;}
   .dash-bottom-row{grid-template-columns:1fr;}
-  .prog-card{flex-wrap:wrap;}
-  .prog-center{min-width:200px;}
+  .prog-card{flex-wrap:wrap;gap:16px;}
+  .prog-center{min-width:180px;}
+  .prog-bullets{min-width:unset;}
 }
 @media(max-width:600px){
   .dash-act-sub{grid-template-columns:1fr 1fr;}
+  .dash-right-col{grid-template-columns:1fr;}
   .dash-mid-sub{grid-template-columns:1fr;}
-  .prog-bullets{flex-direction:row;flex-wrap:wrap;gap:8px;}
+  .dash-mid-card{height:auto;}
+  .prog-card{flex-direction:column;align-items:flex-start;}
+  .prog-bullets{flex-direction:row;flex-wrap:wrap;gap:8px;min-width:unset;}
   .dash-page-header{flex-direction:column;gap:12px;}
   .dash-search{display:none;}
+  .streak-big{font-size:36px;}
 }
 `;
 
@@ -1070,13 +1078,13 @@ export default function App() {
       {/* Mid row: Priorities | Habits */}
       <div className="dash-mid-sub">
         {/* Today's priorities */}
-        <div className="card" style={{display:"flex",flexDirection:"column"}}>
+        <div className="dash-mid-card">
           <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
             <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
             <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
           </div>
           <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
-          <div className="tl" style={{marginBottom:12,flex:1,overflowY:"auto"}}>
+          <div className="tl" style={{marginBottom:12,flex:1,overflowY:"auto",minHeight:0}}>
             {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map(todo=>(
               <div key={todo.id} className="ti">
                 <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
@@ -1088,7 +1096,7 @@ export default function App() {
             ))}
             {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
           </div>
-          <div style={{borderTop:"1px solid var(--border)",paddingTop:10}}>
+          <div style={{borderTop:"1px solid var(--border)",paddingTop:10,flexShrink:0}}>
             <div className="row">
               <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
               <button className="bp" onClick={addTodoDash}>Add</button>
@@ -1097,13 +1105,13 @@ export default function App() {
         </div>
 
         {/* Habits */}
-        <div className="card" style={{display:"flex",flexDirection:"column"}}>
+        <div className="dash-mid-card">
           <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
             <div className="ct" style={{marginBottom:0}}>Habits</div>
             <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
           </div>
           <div className="cs" style={{marginBottom:12}}>This week</div>
-          <div style={{display:"flex",flexDirection:"column",gap:8,flex:1,overflowY:"auto"}}>
+          <div style={{display:"flex",flexDirection:"column",gap:8,flex:1,overflowY:"auto",minHeight:0}}>
             {habits.map(hab=>(
               <div key={hab.id} className="dh-row">
                 <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
@@ -1180,24 +1188,8 @@ export default function App() {
           <span>{dayDone}</span>
           <span className="streak-unit">done today</span>
         </div>
-        <div style={{height:4,background:"#F3EAE1",borderRadius:2,overflow:"hidden",margin:"8px 0 12px"}}>
+        <div style={{height:4,background:"#F3EAE1",borderRadius:2,overflow:"hidden",margin:"8px 0 0"}}>
           <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"#B89576",borderRadius:2,transition:"width .6s"}}/>
-        </div>
-        <div className="streak-bars-row">
-          {DAYS.map((d,i)=>{
-            const habPct=habits.length>0?habits.filter(h=>h.days[i]).length/habits.length:0;
-            const cleanArr=cleaning[d]||[];
-            const cleanPct=cleanArr.length>0?cleanArr.filter(t=>t.done).length/cleanArr.length:0;
-            const mondayOffset=new Date(liveDate+"T12:00:00").getDay()===0?-6:1-new Date(liveDate+"T12:00:00").getDay();
-            const dayDate=new Date(new Date(liveDate+"T12:00:00").getTime()+(mondayOffset+i)*86400000).toISOString().split("T")[0];
-            const dayTodos=todos.filter(t=>t.date===dayDate);
-            const todoPct=dayTodos.length>0?dayTodos.filter(t=>t.done).length/dayTodos.length:0;
-            const cats=[habPct,cleanPct,todoPct].filter((_,j)=>[habits.length,cleanArr.length,dayTodos.length][j]>0);
-            const avg=cats.length>0?cats.reduce((s,v)=>s+v,0)/cats.length:0;
-            return(
-              <div key={d} className="streak-b" style={{height:`${Math.max(avg*44,8)}px`,background:avg>0.05?"#B89576":"#D9CFC6"}}/>
-            );
-          })}
         </div>
       </div>
     </div>
