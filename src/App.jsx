@@ -247,7 +247,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .streak-b{flex:1;border-radius:3px 3px 0 0;min-height:8px;transition:height .4s;}
 
 /* Bottom row: Upcoming + Goals */
-.dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;}
+.dash-bottom-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;}
 .upcoming-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
 .upcoming-date-block{display:flex;flex-direction:column;align-items:center;background:var(--parchment);border-radius:8px;padding:6px 12px;min-width:50px;flex-shrink:0;}
 .upcoming-month{font-size:9px;color:var(--ink-light);letter-spacing:.1em;text-transform:uppercase;}
@@ -370,14 +371,14 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pb:hover,.pb.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
 .pb.ton{background:var(--gold-pale);color:var(--gold-deep);border-color:var(--gold);}
 .tl{display:flex;flex-direction:column;gap:7px;}
-.ti{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--parchment);transition:all .18s;}
+.ti{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;border:1px solid rgba(26,20,16,.06);background:#f4f4f4;transition:all .18s;}
 .ti:hover{border-color:var(--gold);}
 .ti.dn{opacity:.4;}
 .tc{width:15px;height:15px;border-radius:50%;border:1.5px solid rgba(122,98,82,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;}
 .ti.dn .tc{background:var(--sage);border-color:var(--sage);}
 .ti.dn .tc::after{content:"✓";font-size:9px;color:white;}
 .tb2{flex:1;min-width:0;}
-.tt{font-size:12.5px;color:var(--ink);font-weight:300;cursor:pointer;text-align:left;}
+.tt{font-size:11.5px;color:var(--ink);font-weight:300;cursor:pointer;text-align:left;}
 .ti.dn .tt{text-decoration:line-through;}
 .tm{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;}
 .tdl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
@@ -1075,17 +1076,30 @@ export default function App() {
         ))}
       </div>
 
-      {/* Mid row: Priorities | Habits */}
-      <div className="dash-mid-sub">
-        {/* Today's priorities */}
-        <div className="dash-mid-card">
-          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-            <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
-            <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-          </div>
-          <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
-          <div className="tl" style={{marginBottom:12,flex:1,overflowY:"auto",minHeight:0}}>
-            {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map(todo=>(
+      {/* Today's priorities — full width */}
+      <div className="card" style={{display:"flex",flexDirection:"column"}}>
+        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+          <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
+          <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+        </div>
+        <div className="cs" style={{marginBottom:10}}>{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
+        {/* Top 3 always visible, rest scrollable */}
+        <div className="tl" style={{marginBottom:10}}>
+          {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).slice(0,3).map(todo=>(
+            <div key={todo.id} className="ti">
+              <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+              <div className="tb2">
+                <div className="tt">{todo.text}</div>
+                <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+              </div>
+            </div>
+          ))}
+          {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
+        </div>
+        {/* Overflow: items 4+ scrollable */}
+        {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).length>3&&(
+          <div className="tl" style={{maxHeight:100,overflowY:"auto",marginBottom:10}}>
+            {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).slice(3).map(todo=>(
               <div key={todo.id} className="ti">
                 <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
                 <div className="tb2">
@@ -1094,41 +1108,40 @@ export default function App() {
                 </div>
               </div>
             ))}
-            {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
           </div>
-          <div style={{borderTop:"1px solid var(--border)",paddingTop:10,flexShrink:0}}>
-            <div className="row">
-              <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
-              <button className="bp" onClick={addTodoDash}>Add</button>
-            </div>
+        )}
+        <div style={{borderTop:"1px solid var(--border)",paddingTop:10,marginTop:"auto"}}>
+          <div className="row">
+            <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
+            <button className="bp" onClick={addTodoDash}>Add</button>
           </div>
         </div>
+      </div>
 
-        {/* Habits */}
-        <div className="dash-mid-card">
-          <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-            <div className="ct" style={{marginBottom:0}}>Habits</div>
-            <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-          </div>
-          <div className="cs" style={{marginBottom:12}}>This week</div>
-          <div style={{display:"flex",flexDirection:"column",gap:8,flex:1,overflowY:"auto",minHeight:0}}>
-            {habits.map(hab=>(
-              <div key={hab.id} className="dh-row">
-                <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
-                <div className="dh-name">{hab.name}</div>
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
-                <div className="dh-dots">
-                  {hab.days.map((done,i)=><div key={i} className={`dh-dot${done?" on":""}`}/>)}
-                </div>
+      {/* Habits — full width below priorities */}
+      <div className="card">
+        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+          <div className="ct" style={{marginBottom:0}}>Habits</div>
+          <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+        </div>
+        <div className="cs" style={{marginBottom:12}}>This week</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:180,overflowY:"auto"}}>
+          {habits.map(hab=>(
+            <div key={hab.id} className="dh-row">
+              <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
+              <div className="dh-name">{hab.name}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
+              <div className="dh-dots">
+                {hab.days.map((done,i)=><div key={i} className={`dh-dot${done?" on":""}`}/>)}
               </div>
-            ))}
-            {habits.length===0&&<div className="emp">No habits yet ✦</div>}
-          </div>
+            </div>
+          ))}
+          {habits.length===0&&<div className="emp">No habits yet ✦</div>}
         </div>
       </div>
     </div>
 
-    {/* Right column: Focus Timer + Rituel + Streak stacked */}
+    {/* Right column: Focus Timer + Rituel */}
     <div className="dash-right-col">
       {/* Pomodoro timer */}
       <div className="act-card" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"12px 14px"}}>
@@ -1163,7 +1176,7 @@ export default function App() {
           <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
         </div>
         <div className="cs" style={{marginBottom:10}}>{TODAY_DAY}'s tasks</div>
-        <div style={{maxHeight:130,overflowY:"auto",display:"flex",flexDirection:"column",gap:6}}>
+        <div style={{maxHeight:160,overflowY:"auto",display:"flex",flexDirection:"column",gap:6}}>
           {cleaningTodayArr.map((task,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:8,paddingBottom:6,borderBottom:"1px solid var(--border)"}}>
               <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:14,height:14,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(122,98,82,.3)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,transition:"all .15s"}}/>
@@ -1173,32 +1186,13 @@ export default function App() {
           {cleaningTodayArr.length===0&&<div className="emp">Rest day ✦</div>}
         </div>
       </div>
-
-      {/* Daily streak */}
-      <div className="card">
-        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="12" fill="#F3EAE1"/>
-            <path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#B89576"/>
-            <path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FDFBF8"/>
-          </svg>
-          <div className="ct" style={{marginBottom:0}}>Daily streak</div>
-        </div>
-        <div className="streak-big">
-          <span>{dayDone}</span>
-          <span className="streak-unit">done today</span>
-        </div>
-        <div style={{height:4,background:"#F3EAE1",borderRadius:2,overflow:"hidden",margin:"8px 0 0"}}>
-          <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"#B89576",borderRadius:2,transition:"width .6s"}}/>
-        </div>
-      </div>
     </div>
   </div>
 
-  {/* Bottom row: Upcoming + Goals */}
+  {/* Bottom row: Upcoming + Goals — equal height */}
   <div className="dash-bottom-row">
     {/* Upcoming */}
-    <div className="card">
+    <div className="dash-bottom-card">
       <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
         <div className="ct" style={{marginBottom:0}}>Upcoming</div>
         <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
@@ -1227,7 +1221,7 @@ export default function App() {
     </div>
 
     {/* Goals */}
-    <div className="card">
+    <div className="dash-bottom-card">
       <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
         <div className="ct" style={{marginBottom:0}}>Goals</div>
         <button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
