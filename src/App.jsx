@@ -167,7 +167,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
 .dash-col{display:flex;flex-direction:column;gap:16px;}
-.dh-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--parchment);border-radius:10px;}
+.dh-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#E4E1DC;border-radius:10px;}
 .dh-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .dh-name{font-size:12px;color:var(--ink);flex:1;}
 .dh-streak{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);white-space:nowrap;}
@@ -372,7 +372,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pb:hover,.pb.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
 .pb.ton{background:var(--gold-pale);color:var(--gold-deep);border-color:var(--gold);}
 .tl{display:flex;flex-direction:column;gap:7px;}
-.ti{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;border:1px solid rgba(26,20,16,.06);background:#f4f4f4;transition:all .18s;}
+.ti{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;border:1px solid rgba(26,20,16,.06);background:#E4E1DC;transition:all .18s;}
 .ti:hover{border-color:var(--gold);}
 .ti.dn{opacity:.4;}
 .tc{width:15px;height:15px;border-radius:50%;border:1.5px solid rgba(122,98,82,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;}
@@ -845,7 +845,7 @@ export default function App() {
       if(g.progress>=50&&g.progress<100) wins.push({type:"goal",title:"Goal Progress",text:`${g.title} is now ${g.progress}% complete`});
     });
     if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Rituel Complete",text:`All ${TODAY_DAY} rituel tasks done ✦`});
-    return wins.slice(0,5);
+    return wins.slice(0,4);
   })();
 
   // Fitness rings
@@ -1208,31 +1208,29 @@ export default function App() {
           <div className="ct" style={{marginBottom:0}}>Recent Wins</div>
           <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)"}}>auto</span>
         </div>
-        {recentWins.length===0?(
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center",padding:"16px 0"}}>Complete tasks to unlock wins ✦</div>
-        ):(
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            {recentWins.map((w,i)=>{
-              const icons={
-                milestone:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12 4.5L13.7 9.2L18.7 9.4L14.8 12.5L16.2 17.3L12 14.6L7.8 17.3L9.2 12.5L5.3 9.4L10.3 9.2L12 4.5Z" fill="#B89576"/></svg>,
-                streak:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#B89576"/><path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FDFBF8"/></svg>,
-                gratitude:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M12 18.5C11.8 18.5 11.6 18.4 11.4 18.3C8.2 16.1 6 14.2 6 11.3C6 9.5 7.4 8.1 9.1 8.1C10.1 8.1 11.1 8.6 11.7 9.4C12.3 8.6 13.3 8.1 14.3 8.1C16 8.1 17.4 9.5 17.4 11.3C17.4 14.2 15.2 16.1 12 18.3Z" fill="#C99A8C"/></svg>,
-                productive:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M7 12.2L10.4 15.6L17.4 8.4" stroke="#A9B39F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-                rituel:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3F8"/><path d="M8 17.5H16" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 7H14L15 17H9L10 7Z" fill="#9BAFC7"/><path d="M9.5 7H14.5" stroke="#FDFBF8" strokeWidth="1.4" strokeLinecap="round"/></svg>,
-                goal:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><circle cx="12" cy="12" r="5.5" stroke="#A88B6F" strokeWidth="2"/><circle cx="12" cy="12" r="2" fill="#A88B6F"/><path d="M15.5 8.5L18 6" stroke="#A88B6F" strokeWidth="2" strokeLinecap="round"/></svg>,
-              };
-              return(
-                <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 10px",background:"var(--parchment)",borderRadius:10}}>
-                  <div style={{flexShrink:0,marginTop:1}}>{icons[w.type]||icons.productive}</div>
-                  <div>
-                    <div style={{fontSize:10,fontWeight:500,color:"var(--ink-light)",letterSpacing:".06em",textTransform:"uppercase",marginBottom:2}}>{w.title}</div>
-                    <div style={{fontSize:11.5,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.4}}>{w.text}</div>
-                  </div>
+        <div style={{maxHeight:180,overflowY:"auto",display:"flex",flexDirection:"column",gap:8}}>
+          {recentWins.length===0?(
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center",padding:"16px 0"}}>Complete tasks to unlock wins ✦</div>
+          ):recentWins.map((w,i)=>{
+            const icons={
+              milestone:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12 4.5L13.7 9.2L18.7 9.4L14.8 12.5L16.2 17.3L12 14.6L7.8 17.3L9.2 12.5L5.3 9.4L10.3 9.2L12 4.5Z" fill="#B89576"/></svg>,
+              streak:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#B89576"/><path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FDFBF8"/></svg>,
+              gratitude:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M12 18.5C11.8 18.5 11.6 18.4 11.4 18.3C8.2 16.1 6 14.2 6 11.3C6 9.5 7.4 8.1 9.1 8.1C10.1 8.1 11.1 8.6 11.7 9.4C12.3 8.6 13.3 8.1 14.3 8.1C16 8.1 17.4 9.5 17.4 11.3C17.4 14.2 15.2 16.1 12 18.3Z" fill="#C99A8C"/></svg>,
+              productive:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M7 12.2L10.4 15.6L17.4 8.4" stroke="#A9B39F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+              rituel:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3F8"/><path d="M8 17.5H16" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 7H14L15 17H9L10 7Z" fill="#9BAFC7"/><path d="M9.5 7H14.5" stroke="#FDFBF8" strokeWidth="1.4" strokeLinecap="round"/></svg>,
+              goal:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><circle cx="12" cy="12" r="5.5" stroke="#A88B6F" strokeWidth="2"/><circle cx="12" cy="12" r="2" fill="#A88B6F"/><path d="M15.5 8.5L18 6" stroke="#A88B6F" strokeWidth="2" strokeLinecap="round"/></svg>,
+            };
+            return(
+              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 10px",background:"#ffffff",borderRadius:10,border:"1px solid rgba(26,20,16,.06)"}}>
+                <div style={{flexShrink:0,marginTop:1}}>{icons[w.type]||icons.productive}</div>
+                <div>
+                  <div style={{fontSize:10,fontWeight:500,color:"var(--ink-light)",letterSpacing:".06em",textTransform:"uppercase",marginBottom:2}}>{w.title}</div>
+                  <div style={{fontSize:11.5,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.4}}>{w.text}</div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   </div>
