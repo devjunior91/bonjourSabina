@@ -161,7 +161,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:32px 5px 64px;min-height:100vh;position:relative;z-index:1;}
+.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -206,13 +206,13 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .qc-light-dash{width:24px;height:1.5px;background:var(--ink-light);margin-top:14px;opacity:.4;}
 
 /* Activity row */
-.dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;}
-.act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);overflow:hidden;position:relative;}
-.act-label{font-size:11px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:6px;}
-.act-icon{font-size:16px;margin-bottom:4px;}
-.act-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--ink);line-height:1;}
-.act-goal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
-.act-wave{position:absolute;bottom:0;left:0;right:0;opacity:.35;}
+.dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
+.act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:12px 14px 0;box-shadow:var(--shadow);overflow:hidden;position:relative;}
+.act-label{font-size:10px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase;}
+.act-icon{font-size:15px;margin-bottom:3px;}
+.act-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1;}
+.act-goal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10px;color:var(--ink-light);margin-top:2px;margin-bottom:4px;}
+.act-wave{position:absolute;bottom:0;left:0;right:0;opacity:.32;}
 
 /* Mini calendar */
 .cal-widget{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
@@ -556,6 +556,25 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
   .gg{grid-template-columns:1fr;}
 }
 @media(max-width:480px){.cg{grid-template-columns:1fr;}.gg{grid-template-columns:1fr;}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s;}
+  .main{margin-left:0;padding:20px 10px 80px;}
+  .dash-top-row{grid-template-columns:1fr;}
+  .dash-activity-row{grid-template-columns:1fr 1fr;}
+  .dash-mid-row{grid-template-columns:1fr 1fr;}
+  .dash-bottom-row{grid-template-columns:1fr;}
+  .prog-card{flex-wrap:wrap;}
+  .prog-center{min-width:200px;}
+}
+@media(max-width:600px){
+  .dash-activity-row{grid-template-columns:1fr 1fr;}
+  .dash-mid-row{grid-template-columns:1fr;}
+  .prog-bullets{flex-direction:row;flex-wrap:wrap;gap:8px;}
+  .dash-page-header{flex-direction:column;gap:12px;}
+  .dash-search{display:none;}
+}
 `;
 
 export default function App() {
@@ -1027,7 +1046,7 @@ export default function App() {
         <div className="act-icon">{s.icon}</div>
         <div className="act-val">{s.val!=null?s.val:"—"}</div>
         <div className="act-goal">/{s.goal}{s.unit}</div>
-        <svg className="act-wave" viewBox="0 0 180 50" preserveAspectRatio="none" height="42">
+        <svg className="act-wave" viewBox="0 0 180 50" preserveAspectRatio="none" height="28">
           <path d={s.wave} fill={s.color}/>
         </svg>
       </div>
@@ -1129,17 +1148,24 @@ export default function App() {
       </div>
     </div>
 
-    {/* Current streak — all categories */}
+    {/* Daily streak — all categories */}
     <div className="card">
-      <div className="ct" style={{marginBottom:2}}>Daily streak 🔥</div>
+      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="12" fill="#F3EAE1"/>
+          <path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#B89576"/>
+          <path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FDFBF8"/>
+        </svg>
+        <div className="ct" style={{marginBottom:0}}>Daily streak</div>
+      </div>
       <div className="streak-big">
         <span>{dayDone}</span>
         <span className="streak-unit">done today</span>
       </div>
-      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden",margin:"10px 0 14px"}}>
-        <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:2,transition:"width .6s"}}/>
+      <div style={{height:4,background:"#F3EAE1",borderRadius:2,overflow:"hidden",margin:"8px 0 12px"}}>
+        <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"#B89576",borderRadius:2,transition:"width .6s"}}/>
       </div>
-      <div className="streak-bars-row">
+      <div className="streak-bars-row" style={{alignItems:"flex-end"}}>
         {DAYS.map((d,i)=>{
           const habPct=habits.length>0?habits.filter(h=>h.days[i]).length/habits.length:0;
           const cleanArr=cleaning[d]||[];
@@ -1151,9 +1177,8 @@ export default function App() {
           const cats=[habPct,cleanPct,todoPct].filter((_,j)=>[habits.length,cleanArr.length,dayTodos.length][j]>0);
           const avg=cats.length>0?cats.reduce((s,v)=>s+v,0)/cats.length:0;
           return(
-            <div key={d} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,flex:1}}>
-              <div className="streak-b" style={{height:`${Math.max(avg*44,4)}px`,background:avg>0?"var(--gold)":"var(--parchment)"}}/>
-              <div style={{fontSize:9,color:"var(--ink-light)"}}>{d}</div>
+            <div key={d} style={{flex:1,display:"flex",justifyContent:"center"}}>
+              <div className="streak-b" style={{height:`${Math.max(avg*44,4)}px`,background:avg>0?"#B89576":"#F3EAE1"}}/>
             </div>
           );
         })}
@@ -1170,24 +1195,26 @@ export default function App() {
         <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
       {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-      {upcoming.slice(0,2).map(e=>{
-        const d=new Date(e.date+"T00:00:00");
-        return(
-          <div key={e.id} className="upcoming-item" onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer"}}>
-            <div className="upcoming-date-block">
-              <div className="upcoming-month">{MONTHS[d.getMonth()].slice(0,3).toUpperCase()}</div>
-              <div className="upcoming-day">{d.getDate()}</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {upcoming.slice(0,2).map(e=>{
+          const d=new Date(e.date+"T00:00:00");
+          return(
+            <div key={e.id} onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer",background:"var(--parchment)",borderRadius:10,padding:"12px 14px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+                <div style={{background:"var(--ivory)",borderRadius:6,padding:"4px 8px",textAlign:"center",flexShrink:0}}>
+                  <div style={{fontSize:8,color:"var(--ink-light)",letterSpacing:".1em",textTransform:"uppercase"}}>{MONTHS[d.getMonth()].slice(0,3)}</div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{d.getDate()}</div>
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:12,color:"var(--ink)",fontWeight:500,lineHeight:1.3,marginBottom:4}}>{e.title}</div>
+                  <span className={`tg ${e.tag||""}`}>{e.tag||"Event"}</span>
+                </div>
+              </div>
+              {!e.allDay&&e.time&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{e.time}</div>}
             </div>
-            <div className="upcoming-detail">
-              <div className="upcoming-title">{e.title}</div>
-              {e.allDay
-                ? <span className="tg">All day</span>
-                : e.time?<span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{e.time}</span>:null}
-              <div style={{marginTop:4}}><span className={`tg ${e.tag||""}`}>{e.tag||"Event"}</span></div>
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
 
     {/* Goals */}
@@ -1197,14 +1224,21 @@ export default function App() {
         <button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
       {allGoals.length===0&&<div className="emp">No goals yet ✦</div>}
-      <div className="goals-2col">
-        {allGoals.slice(0,2).map(g=>(
-          <div key={g.id} className="goal-mini-card">
-            <div className="goal-mini-name">{g.title}</div>
-            <div className="goal-mini-pct">{g.progress}%</div>
-            <div className="goal-mini-bar"><div className="goal-mini-fill" style={{width:`${g.progress}%`,background:g.color||"var(--gold)"}}/></div>
-          </div>
-        ))}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {allGoals.slice(0,2).map(g=>{
+          const msDone=g.milestones.filter(m=>m.done).length;
+          const msTotal=g.milestones.length;
+          return(
+            <div key={g.id} style={{background:"var(--parchment)",borderRadius:10,padding:"12px 14px"}}>
+              <div style={{fontSize:11.5,color:"var(--ink)",fontWeight:500,marginBottom:6,lineHeight:1.3}}>{g.title}</div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:g.color||"var(--gold-deep)",lineHeight:1,marginBottom:4}}>{g.progress}%</div>
+              <div style={{height:4,background:"rgba(0,0,0,.08)",borderRadius:2,overflow:"hidden",marginBottom:6}}>
+                <div style={{height:"100%",width:`${g.progress}%`,background:g.color||"var(--gold)",borderRadius:2,transition:"width .5s"}}/>
+              </div>
+              {msTotal>0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{msDone}/{msTotal} milestones</div>}
+            </div>
+          );
+        })}
       </div>
     </div>
   </div>
