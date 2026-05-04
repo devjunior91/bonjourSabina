@@ -149,16 +149,17 @@ const CSS=`
   --sidebar-w:220px;
 }
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#352e28 0%,#2d2520 100%);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
-.sb-brand{padding:28px 20px 8px;border-bottom:1px solid rgba(201,168,124,.1);margin-bottom:8px;}
-.sb-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--gold);letter-spacing:.18em;opacity:.85;margin-bottom:2px;}
-.sb-name{font-family:'Playfair Display',serif;font-size:18px;color:#f0e8dc;font-weight:600;}
-.sb-nav{display:flex;flex-direction:column;gap:2px;padding:8px 12px;flex:1;}
-.ni{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;cursor:pointer;transition:all .18s;color:rgba(240,232,220,.45);font-size:12.5px;white-space:nowrap;letter-spacing:.01em;}
-.ni:hover{background:rgba(201,168,124,.1);color:#f0e8dc;}
-.ni.on{background:rgba(201,168,124,.18);color:var(--gold);}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:#18140f;display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.sb-brand{padding:26px 20px 20px;margin-bottom:0;}
+.sb-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:rgba(240,232,220,.4);letter-spacing:.16em;margin-bottom:3px;}
+.sb-name{font-family:'Playfair Display',serif;font-size:17px;color:#f0e8dc;font-weight:600;letter-spacing:.01em;}
+.sb-section{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,232,220,.28);padding:14px 20px 6px;font-family:'DM Sans',sans-serif;font-weight:500;}
+.sb-nav{display:flex;flex-direction:column;gap:1px;padding:0 10px;flex:1;}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .15s;color:rgba(240,232,220,.42);font-size:12.5px;white-space:nowrap;letter-spacing:.01em;}
+.ni:hover{background:rgba(255,255,255,.05);color:rgba(240,232,220,.78);}
+.ni.on{background:rgba(255,255,255,.08);color:#f0e8dc;}
 .ni svg{flex-shrink:0;}
-.sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
+.sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(240,232,220,.22);border-top:1px solid rgba(255,255,255,.05);}
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
@@ -209,7 +210,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .dash-combined-row{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
 .dash-left-col{display:flex;flex-direction:column;gap:12px;}
 .dash-act-sub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-.dash-mid-sub{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;}
+.dash-mid-sub{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;}
 .dash-right-col{display:flex;flex-direction:column;gap:12px;}
 /* Activity row (kept for compat) */
 .dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;align-items:start;}
@@ -923,6 +924,7 @@ export default function App() {
           <div className="sb-eye">Welcome back</div>
           <div className="sb-name">Sabina ✦</div>
         </div>
+        <div className="sb-section">Menu</div>
         <div className="sb-nav">
           {NAV.map(n=>(
             <div key={n.id} className={`ni ${page===n.id?"on":""}`} onClick={()=>setPage(n.id)}>
@@ -1068,13 +1070,13 @@ export default function App() {
       {/* Mid row: Priorities | Habits */}
       <div className="dash-mid-sub">
         {/* Today's priorities */}
-        <div className="card">
+        <div className="card" style={{display:"flex",flexDirection:"column"}}>
           <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
             <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
             <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
           </div>
           <div className="cs">{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
-          <div className="tl" style={{marginBottom:12,maxHeight:200,overflowY:"auto"}}>
+          <div className="tl" style={{marginBottom:12,flex:1,overflowY:"auto"}}>
             {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map(todo=>(
               <div key={todo.id} className="ti">
                 <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
@@ -1095,13 +1097,13 @@ export default function App() {
         </div>
 
         {/* Habits */}
-        <div className="card">
+        <div className="card" style={{display:"flex",flexDirection:"column"}}>
           <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
             <div className="ct" style={{marginBottom:0}}>Habits</div>
             <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
           </div>
           <div className="cs" style={{marginBottom:12}}>This week</div>
-          <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:190,overflowY:"auto"}}>
+          <div style={{display:"flex",flexDirection:"column",gap:8,flex:1,overflowY:"auto"}}>
             {habits.map(hab=>(
               <div key={hab.id} className="dh-row">
                 <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
