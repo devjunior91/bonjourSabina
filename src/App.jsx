@@ -198,7 +198,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .prog-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:22px 26px;box-shadow:var(--shadow);display:flex;gap:24px;align-items:center;}
 .prog-ring-col{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .prog-center{flex:1;min-width:0;display:flex;flex-direction:column;}
-.prog-bullets{flex-shrink:0;display:flex;flex-direction:column;gap:10px;justify-content:center;align-items:flex-start;min-width:130px;}
+.prog-bullets{flex-shrink:0;display:flex;flex-direction:column;gap:10px;justify-content:center;width:152px;}
+.prog-bullet-row{display:grid;grid-template-columns:10px 1fr auto;align-items:center;gap:6px;}
 
 /* Quote card - light */
 .qc-light{background:#f0ebe3;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;justify-content:center;}
@@ -729,7 +730,7 @@ export default function App() {
   const pomoDash=POMO_CIRC*pomoProg;
   const pomoColor=pomoProg>0.5?"#c9a87c":pomoProg>0.25?"#c8887a":"#c05050";
 
-  const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
+  const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
   const pomoBegin=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[440,554.37,659.25].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.14);g.gain.linearRampToValueAtTime(.15,ctx.currentTime+i*.14+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.14+.35);o.start(ctx.currentTime+i*.14);o.stop(ctx.currentTime+i*.14+.35);});}catch(e){}};
   const pomoEnd=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[659.25,523.25,392].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.16);g.gain.linearRampToValueAtTime(.13,ctx.currentTime+i*.16+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.16+.4);o.start(ctx.currentTime+i*.16);o.stop(ctx.currentTime+i*.16+.4);});}catch(e){}};
   const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
@@ -791,6 +792,23 @@ export default function App() {
   const todosDone=todos.filter(t=>t.done&&t.date===TODAY).length;
   const allGoals=Object.values(goals).flat();
   const avgProg=allGoals.length?Math.round(allGoals.reduce((a,g)=>a+g.progress,0)/allGoals.length):0;
+
+  // Recent Wins — auto-generated from app activity
+  const recentWins=(()=>{
+    const wins=[];
+    // Productive day
+    if(dayTotal>0&&dayPct>=50) wins.push({type:"productive",title:"Productive Day",text:`Completed ${dayPct}% of today's tasks`});
+    // Habit streaks ≥3 days
+    habits.forEach(h=>{const s=streak(h.days);if(s>=3)wins.push({type:"streak",title:"Streak",text:`${h.name} — ${s} days in a row`});});
+    // Goals milestones completed
+    allGoals.forEach(g=>{
+      g.milestones.filter(m=>m.done).slice(0,1).forEach(m=>wins.push({type:"milestone",title:"New Milestone",text:`${m.text} in "${g.title}"`}));
+      if(g.progress>=50&&g.progress<100) wins.push({type:"goal",title:"Goal Progress",text:`${g.title} is now ${g.progress}% complete`});
+    });
+    // Rituel all done today
+    if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Rituel Complete",text:`All ${TODAY_DAY} rituel tasks done ✦`});
+    return wins.slice(0,5);
+  })();
   const upcoming=events.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(e=>({...e,away:Math.round((new Date(e.date+"T00:00:00")-new Date(TODAY+"T00:00:00"))/864e5)}));
   const graphData=DAYS.map((d,i)=>({day:d,count:habits.filter(h=>h.days[i]).length}));
   const maxBar=Math.max(...graphData.map(d=>d.count),1);
@@ -1035,10 +1053,10 @@ export default function App() {
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
           {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
         ].map(row=>(
-          <div key={row.label} style={{display:"flex",alignItems:"center",gap:7,width:"100%"}}>
-            <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
-            <div style={{fontSize:11,color:"var(--ink)",flex:1}}>{row.label}</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",textAlign:"right"}}>{row.done}/{row.total}</div>
+          <div key={row.label} className="prog-bullet-row">
+            <div style={{width:7,height:7,borderRadius:"50%",background:row.color}}/>
+            <div style={{fontSize:11,color:"var(--ink)"}}>{row.label}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)"}}>{row.done}/{row.total}</div>
           </div>
         ))}
       </div>
@@ -1185,6 +1203,39 @@ export default function App() {
           ))}
           {cleaningTodayArr.length===0&&<div className="emp">Rest day ✦</div>}
         </div>
+      </div>
+
+      {/* Recent Wins */}
+      <div className="card">
+        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
+          <div className="ct" style={{marginBottom:0}}>Recent Wins</div>
+          <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)"}}>auto</span>
+        </div>
+        {recentWins.length===0?(
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center",padding:"16px 0"}}>Complete tasks to unlock wins ✦</div>
+        ):(
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {recentWins.map((w,i)=>{
+              const icons={
+                milestone:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12 4.5L13.7 9.2L18.7 9.4L14.8 12.5L16.2 17.3L12 14.6L7.8 17.3L9.2 12.5L5.3 9.4L10.3 9.2L12 4.5Z" fill="#B89576"/></svg>,
+                streak:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#B89576"/><path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FDFBF8"/></svg>,
+                gratitude:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M12 18.5C11.8 18.5 11.6 18.4 11.4 18.3C8.2 16.1 6 14.2 6 11.3C6 9.5 7.4 8.1 9.1 8.1C10.1 8.1 11.1 8.6 11.7 9.4C12.3 8.6 13.3 8.1 14.3 8.1C16 8.1 17.4 9.5 17.4 11.3C17.4 14.2 15.2 16.1 12 18.3Z" fill="#C99A8C"/></svg>,
+                productive:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M7 12.2L10.4 15.6L17.4 8.4" stroke="#A9B39F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+                rituel:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3F8"/><path d="M8 17.5H16" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 7H14L15 17H9L10 7Z" fill="#9BAFC7"/><path d="M9.5 7H14.5" stroke="#FDFBF8" strokeWidth="1.4" strokeLinecap="round"/></svg>,
+                goal:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><circle cx="12" cy="12" r="5.5" stroke="#A88B6F" strokeWidth="2"/><circle cx="12" cy="12" r="2" fill="#A88B6F"/><path d="M15.5 8.5L18 6" stroke="#A88B6F" strokeWidth="2" strokeLinecap="round"/></svg>,
+              };
+              return(
+                <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 10px",background:"var(--parchment)",borderRadius:10}}>
+                  <div style={{flexShrink:0,marginTop:1}}>{icons[w.type]||icons.productive}</div>
+                  <div>
+                    <div style={{fontSize:10,fontWeight:500,color:"var(--ink-light)",letterSpacing:".06em",textTransform:"uppercase",marginBottom:2}}>{w.title}</div>
+                    <div style={{fontSize:11.5,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.4}}>{w.text}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   </div>
