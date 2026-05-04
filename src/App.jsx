@@ -161,7 +161,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:16px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(201,168,124,.35);border-top:1px solid rgba(201,168,124,.08);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:32px 8px 64px;min-height:100vh;position:relative;z-index:1;}
+.main{margin-left:var(--sidebar-w);padding:32px 5px 64px;min-height:100vh;position:relative;z-index:1;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -207,10 +207,10 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 
 /* Activity row */
 .dash-activity-row{display:grid;grid-template-columns:1fr 1fr 1fr 320px;gap:12px;margin-bottom:16px;}
-.act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);overflow:hidden;position:relative;}
-.act-label{font-size:11px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:10px;}
-.act-icon{font-size:18px;margin-bottom:6px;}
-.act-val{font-family:'Playfair Display',serif;font-size:34px;font-weight:600;color:var(--ink);line-height:1;}
+.act-card{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);overflow:hidden;position:relative;}
+.act-label{font-size:11px;color:var(--ink-light);letter-spacing:.08em;margin-bottom:6px;}
+.act-icon{font-size:16px;margin-bottom:4px;}
+.act-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--ink);line-height:1;}
 .act-goal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
 .act-wave{position:absolute;bottom:0;left:0;right:0;opacity:.35;}
 
@@ -866,18 +866,6 @@ export default function App() {
       <style>{CSS}</style>
       {praise&&<div className="pt">{praise}</div>}
 
-      {/* Eiffel Tower background */}
-      <svg viewBox="0 0 200 380" style={{position:"fixed",bottom:0,right:"5vw",height:"72vh",pointerEvents:"none",zIndex:0,fill:"#261d12",opacity:0.055}} aria-hidden="true">
-        <polygon points="99,5 101,5 102,26 98,26"/>
-        <polygon points="86,54 114,54 102,26 98,26"/>
-        <rect x="83" y="51" width="34" height="6"/>
-        <polygon points="72,116 128,116 114,57 86,57"/>
-        <rect x="70" y="113" width="60" height="6"/>
-        <polygon points="52,174 148,174 128,119 72,119"/>
-        <rect x="49" y="171" width="102" height="7"/>
-        <polygon points="52,178 80,178 68,380 5,380"/>
-        <polygon points="120,178 148,178 195,380 132,380"/>
-      </svg>
 
       {/* Event modal */}
       {evModal&&(
@@ -1182,7 +1170,7 @@ export default function App() {
         <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
       {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-      {upcoming.slice(0,3).map(e=>{
+      {upcoming.slice(0,2).map(e=>{
         const d=new Date(e.date+"T00:00:00");
         return(
           <div key={e.id} className="upcoming-item" onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer"}}>
@@ -1210,7 +1198,7 @@ export default function App() {
       </div>
       {allGoals.length===0&&<div className="emp">No goals yet ✦</div>}
       <div className="goals-2col">
-        {allGoals.slice(0,4).map(g=>(
+        {allGoals.slice(0,2).map(g=>(
           <div key={g.id} className="goal-mini-card">
             <div className="goal-mini-name">{g.title}</div>
             <div className="goal-mini-pct">{g.progress}%</div>
