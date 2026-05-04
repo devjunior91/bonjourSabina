@@ -368,11 +368,14 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb2:hover{background:var(--gold-pale);color:var(--gold-deep);}
 .sb2.d:hover{background:#fde8e8;color:#c05050;}
 .tb{display:flex;align-items:center;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
-.pb{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--ink-light);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.pb{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:#ffffff;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--ink-light);cursor:pointer;transition:all .18s;white-space:nowrap;box-shadow:0 1px 3px rgba(26,20,16,.06);}
 .pb:hover,.pb.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
 .pb.ton{background:var(--gold-pale);color:var(--gold-deep);border-color:var(--gold);}
 .tl{display:flex;flex-direction:column;gap:7px;}
 .ti{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;border:1px solid rgba(26,20,16,.06);background:#E4E1DC;transition:all .18s;}
+.todo-task-card{background:#ffffff;border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+.todo-task-card .ti{background:#ffffff;border-color:rgba(26,20,16,.07);}
+.todo-task-card .ti:hover{background:#fafafa;}
 .ti:hover{border-color:var(--gold);}
 .ti.dn{opacity:.4;}
 .tc{width:15px;height:15px;border-radius:50%;border:1.5px solid rgba(122,98,82,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;}
@@ -557,17 +560,14 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .adrow label{font-size:11px;color:var(--ink-light);letter-spacing:.05em;cursor:pointer;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,124,.3);border-radius:10px;}
 
-/* ── TODO 3-COLUMN LAYOUT ── */
-.todo-3col{display:grid;grid-template-columns:210px 1fr 270px;margin:-28px 0 -64px;min-height:calc(100vh - var(--sidebar-w));}
-.todo-isb{background:#faf7f3;border-right:1px solid rgba(26,20,16,.08);padding:28px 0 20px;display:flex;flex-direction:column;overflow-y:auto;}
-.todo-isb-section{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(26,20,16,.35);padding:12px 18px 5px;font-family:'DM Sans',sans-serif;font-weight:500;}
-.todo-isb-item{display:flex;align-items:center;gap:9px;padding:7px 18px;cursor:pointer;transition:background .13s;color:rgba(26,20,16,.5);font-size:12px;user-select:none;}
-.todo-isb-item:hover{background:rgba(26,20,16,.03);color:var(--ink);}
-.todo-isb-item.on{background:#ede8e1;color:var(--ink);}
-.todo-isb-count{margin-left:auto;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);}
-.todo-ma{padding:28px 28px 64px;overflow-y:auto;}
+/* ── TODO LAYOUT ── */
+.todo-3col{display:grid;grid-template-columns:1fr 260px;margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.todo-ma{padding:28px 20px 64px 20px;overflow-y:auto;}
 .todo-rsb{background:#faf7f3;border-left:1px solid rgba(26,20,16,.08);padding:28px 18px 64px;display:flex;flex-direction:column;gap:22px;overflow-y:auto;}
 .todo-prog-card{background:#ffffff;border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+/* Priority flag */
+.pflag{display:flex;align-items:center;gap:4px;flex-shrink:0;min-width:68px;}
+.pflag span{font-size:10px;font-weight:500;letter-spacing:.02em;}
 /* Sidebar quick add */
 .sb-quickadd{padding:12px 14px;border-top:1px solid rgba(26,20,16,.07);}
 .sb-qa-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(26,20,16,.35);margin-bottom:5px;font-family:'DM Sans',sans-serif;font-weight:500;}
@@ -578,8 +578,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-qa-inp::placeholder{color:rgba(26,20,16,.3);font-family:'Cormorant Garamond',serif;font-style:italic;}
 .sb-qa-btn{width:25px;height:25px;border-radius:7px;background:var(--ink);border:none;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
 .sb-qa-btn:hover{background:var(--gold-deep);}
-@media(max-width:1100px){.todo-3col{grid-template-columns:200px 1fr;}.todo-rsb{display:none;}}
-@media(max-width:800px){.todo-3col{grid-template-columns:1fr;}.todo-isb{display:none;}}
+@media(max-width:900px){.todo-3col{grid-template-columns:1fr;}.todo-rsb{display:none;}}
 
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
@@ -668,6 +667,7 @@ export default function App() {
   const [fitDate,setFitDate]=useDB("sab_fitness_date","");
   const [bilView,setBilView]=useState("week");
   const [todoView,setTodoView]=useState("today");
+  const [showMonths,setShowMonths]=useState({});
 
   // Pomodoro timer state
   const [pomoDur,setPomoDur]=useState(1500);
@@ -1329,54 +1329,26 @@ export default function App() {
 )}
 
         {/* ── TO-DO LISTS ── */}
-        {page==="todos"&&(
+        {page==="todos"&&(()=>{
+          // Priority flag helper
+          const pflag=(p)=>{
+            const cfg={high:{c:"#d93535",l:"High"},medium:{c:"#c9870a",l:"Medium"},low:{c:"#9a9a9a",l:"Low"}};
+            const {c,l}=cfg[p||"medium"];
+            return(
+              <div className="pflag">
+                <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+                  <line x1="1" y1="0" x2="1" y2="12" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M1 1.5 L9.5 4.5 L1 7.5Z" fill={c}/>
+                </svg>
+                <span style={{color:c}}>{l}</span>
+              </div>
+            );
+          };
+          // Past todos grouped by month
+          const pastTodos=todos.filter(t=>t.date!==TODAY&&t.date!==TOMORROW&&t.date<TODAY);
+          const pastMonths=[...new Set(pastTodos.map(t=>t.date.slice(0,7)))].sort((a,b)=>b.localeCompare(a));
+          return(
         <div className="todo-3col">
-
-          {/* ── Inner left sidebar ── */}
-          <div className="todo-isb">
-            <div style={{padding:"0 18px 18px"}}>
-              <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:400,color:"var(--ink)"}}>To-Do <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Lists</em></div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10.5,color:"var(--ink-light)",marginTop:2}}>Stay organised ✦</div>
-            </div>
-
-            <div className="todo-isb-section">Overview</div>
-            {[
-              {label:"Today",count:todos.filter(t=>t.date===TODAY).length,view:"today",icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>},
-              {label:"Upcoming",count:todos.filter(t=>t.date>TODAY&&!t.done).length,view:"upcoming",icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>},
-              {label:"Completed",count:todos.filter(t=>t.done&&t.date===TODAY).length,view:"completed",icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><polyline points="20 6 9 17 4 12"/></svg>},
-              {label:"All Tasks",count:todos.length,view:"all",icon:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>},
-            ].map(item=>(
-              <div key={item.view} className={`todo-isb-item ${todoView===item.view?"on":""}`} onClick={()=>setTodoView(item.view)}>
-                <span style={{opacity:.65}}>{item.icon}</span>
-                <span>{item.label}</span>
-                <span className="todo-isb-count">{item.count}</span>
-              </div>
-            ))}
-
-            <div className="todo-isb-section" style={{marginTop:6}}>My Lists</div>
-            {tags.map(tag=>{
-              const active=todos.filter(t=>t.tag===tag&&!t.done).length;
-              const dotColors={"Personal":"#c9a87c","Work":"#5a8ab0","Fitness":"#5a8a6a","Health":"#8a5070","Creative":"#8a7040"};
-              return(
-                <div key={tag} className={`todo-isb-item ${todoView===tag?"on":""}`} onClick={()=>setTodoView(tag)}>
-                  <div style={{width:7,height:7,borderRadius:2,background:dotColors[tag]||"var(--gold)",flexShrink:0}}/>
-                  <span>{tag}</span>
-                  <span className="todo-isb-count">{active}</span>
-                </div>
-              );
-            })}
-
-            {/* Quick add at bottom of inner sidebar */}
-            <div style={{marginTop:"auto",padding:"14px",borderTop:"1px solid rgba(26,20,16,.07)"}}>
-              <div className="todo-isb-section" style={{padding:"0 0 6px"}}>Quick Add</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10.5,color:"rgba(26,20,16,.4)",marginBottom:6}}>Add a task quickly</div>
-              <div style={{display:"flex",gap:5}}>
-                <input placeholder="What needs to be done?" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}
-                  style={{flex:1,padding:"6px 9px",border:"1px solid rgba(26,20,16,.1)",borderRadius:8,background:"rgba(26,20,16,.03)",fontFamily:"'DM Sans',sans-serif",fontSize:10.5,color:"var(--ink)",outline:"none"}}/>
-                <button onClick={addTodo} style={{width:26,height:26,borderRadius:7,background:"var(--ink)",border:"none",color:"white",cursor:"pointer",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>+</button>
-              </div>
-            </div>
-          </div>
 
           {/* ── Main content ── */}
           <div className="todo-ma">
@@ -1386,9 +1358,7 @@ export default function App() {
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>To-Do <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Lists</em></div>
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Stay organised, focus on what matters.</div>
               </div>
-              <button style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginTop:4}}>
-                + New Task
-              </button>
+              <button style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginTop:4}}>+ New Task</button>
             </div>
 
             {/* Today progress card */}
@@ -1448,19 +1418,22 @@ export default function App() {
                     <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Today's Tasks</span>
                     <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{viewTodos.length}</span>
                   </div>
-                  <div className="tl">
-                    {viewTodos.map(todo=>(
-                      <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                        <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                        <div className="tb2">
-                          {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
-                          <div className="tm">{todo.priority==="high"&&!todo.done&&<span className="pri high">high</span>}{todo.priority==="low"&&<span className="pri low">low</span>}<span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                  <div className="todo-task-card">
+                    <div className="tl">
+                      {viewTodos.map(todo=>(
+                        <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                          <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                          <div className="tb2">
+                            {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
+                            <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                          </div>
+                          {!todo.done&&pflag(todo.priority)}
+                          <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
+                          <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
                         </div>
-                        <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
-                        <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
-                      </div>
-                    ))}
-                    {viewTodos.length===0&&<div className="emp">Nothing here ✦</div>}
+                      ))}
+                      {viewTodos.length===0&&<div className="emp">Nothing here ✦</div>}
+                    </div>
                   </div>
                   <div style={{marginTop:12}}>
                     <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
@@ -1479,44 +1452,39 @@ export default function App() {
                     <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Upcoming</span>
                     <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{upTodos.length}</span>
                   </div>}
-                  {/* Tomorrow collapsible */}
                   <div style={{marginBottom:12}}>
                     <div className="ht" style={{borderRadius:8,marginBottom:showTomorrow?8:0}} onClick={()=>setShowTomorrow(s=>!s)}>
                       <div><div className="hl">Tomorrow · {new Date(TOMORROW+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div></div>
                       <div style={{display:"flex",alignItems:"center",gap:8}}><span className="hc">{tomorrowTodos.length} tasks</span><span className={`hav ${showTomorrow?"op":""}`}>▼</span></div>
                     </div>
                     {showTomorrow&&<>
-                      <div className="tl" style={{marginBottom:10}}>
-                        {byPri(tomorrowTodos).map(todo=>(
-                          <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                            <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                            <div className="tb2">
-                              {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
-                              <div className="tm">{todo.priority==="high"&&!todo.done&&<span className="pri high">high</span>}{todo.priority==="low"&&<span className="pri low">low</span>}<span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                      <div className="todo-task-card" style={{marginBottom:10}}>
+                        <div className="tl">
+                          {byPri(tomorrowTodos).map(todo=>(
+                            <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                              <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                              <div className="tb2">
+                                {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
+                                <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                              </div>
+                              {!todo.done&&pflag(todo.priority)}
+                              <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
+                              <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
                             </div>
-                            <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
-                            <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
-                          </div>
-                        ))}
-                        {tomorrowTodos.length===0&&<div className="emp">Nothing planned yet ✦</div>}
+                          ))}
+                          {tomorrowTodos.length===0&&<div className="emp">Nothing planned yet ✦</div>}
+                        </div>
                       </div>
                       <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
                       <div className="row"><input className="inp" placeholder="New task for tomorrow…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TOMORROW,priority:newTodoPriority}]);setNewTodo("")}}}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TOMORROW,priority:newTodoPriority}]);setNewTodo("");}}>+ Add</button></div>
                     </>}
                   </div>
-                  {/* Future dates */}
                   {[...new Set(upTodos.filter(t=>t.date!==TOMORROW).map(t=>t.date))].sort().map(date=>{
-                    const items=upTodos.filter(t=>t.date===date);
-                    const open=showHist[date];
-                    return(
-                      <div key={date} className="hg">
-                        <div className="ht" style={{borderRadius:8}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
-                          <span className="hl">{fd(date)}</span>
-                          <div style={{display:"flex",alignItems:"center",gap:8}}><span className="hc">{items.length} tasks</span><span className={`hav ${open?"op":""}`}>▼</span></div>
-                        </div>
-                        {open&&<div className="his tl">{items.map(todo=><div key={todo.id} className={`ti ${todo.done?"dn":""}`}><div className="tc" onClick={()=>toggleTodo(todo.id)}/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div><button className="te" onClick={()=>startEditTodo(todo)}>✎</button><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>)}</div>}
-                      </div>
-                    );
+                    const items=upTodos.filter(t=>t.date===date);const open=showHist[date];
+                    return(<div key={date} className="hg"><div className="ht" style={{borderRadius:8}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
+                      <span className="hl">{fd(date)}</span><div style={{display:"flex",alignItems:"center",gap:8}}><span className="hc">{items.length} tasks</span><span className={`hav ${open?"op":""}`}>▼</span></div></div>
+                      {open&&<div className="his tl">{items.map(todo=><div key={todo.id} className={`ti ${todo.done?"dn":""}`}><div className="tc" onClick={()=>toggleTodo(todo.id)}/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>{!todo.done&&pflag(todo.priority)}<button className="te" onClick={()=>startEditTodo(todo)}>✎</button><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>)}</div>}
+                    </div>);
                   })}
                 </div>
               );
@@ -1525,73 +1493,92 @@ export default function App() {
             {/* COMPLETED section */}
             {todoView==="completed"&&(()=>{
               const dTodos=todos.filter(t=>t.done&&t.date===TODAY&&(tagFilter==="all"||t.tag===tagFilter));
-              return(
-                <div>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                    <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Completed Today</span>
-                    <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{dTodos.length}</span>
-                  </div>
+              return(<div>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                  <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Completed Today</span>
+                  <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{dTodos.length}</span>
+                </div>
+                <div className="todo-task-card">
                   <div className="tl">
-                    {dTodos.map(todo=>(
-                      <div key={todo.id} className="ti dn">
-                        <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                        <div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>
-                        <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
-                      </div>
-                    ))}
+                    {dTodos.map(todo=>(<div key={todo.id} className="ti dn"><div className="tc" onClick={()=>toggleTodo(todo.id)}/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>))}
                     {dTodos.length===0&&<div className="emp">Nothing completed yet today ✦</div>}
                   </div>
                 </div>
-              );
+              </div>);
             })()}
 
             {/* LIST / TAG view */}
             {!["today","upcoming","completed","all"].includes(todoView)&&(()=>{
               const listTodos=byPri(todos.filter(t=>t.tag===todoView&&(tFilter==="all"||(tFilter==="active"?!t.done:t.done))));
-              return(
-                <div>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                    <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>{todoView}</span>
-                    <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{listTodos.length}</span>
-                  </div>
-                  <div className="tl">
-                    {listTodos.map(todo=>(
-                      <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                        <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                        <div className="tb2">
-                          {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
-                          <div className="tm">{todo.priority==="high"&&!todo.done&&<span className="pri high">high</span>}{todo.priority==="low"&&<span className="pri low">low</span>}<span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
-                        </div>
-                        <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
-                        <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
-                      </div>
-                    ))}
-                    {listTodos.length===0&&<div className="emp">No tasks in this list ✦</div>}
-                  </div>
-                  <div style={{marginTop:12}}>
-                    <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
-                    <div className="row"><input className="inp" placeholder={`New ${todoView} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:todoView,date:TODAY,priority:newTodoPriority}]);setNewTodo("")}}}/><button className="bp" onClick={()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:todoView,date:TODAY,priority:newTodoPriority}]);setNewTodo("");}}>+ Add</button></div>
-                  </div>
+              return(<div>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                  <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>{todoView}</span>
+                  <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{listTodos.length}</span>
                 </div>
-              );
+                <div className="tl">
+                  {listTodos.map(todo=>(<div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                    <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
+                    <div className="tb2">
+                      {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
+                      <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                    </div>
+                    {!todo.done&&pflag(todo.priority)}
+                    <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
+                    <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
+                  </div>))}
+                  {listTodos.length===0&&<div className="emp">No tasks in this list ✦</div>}
+                </div>
+                <div style={{marginTop:12}}>
+                  <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
+                  <div className="row"><input className="inp" placeholder={`New ${todoView} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:todoView,date:TODAY,priority:newTodoPriority}]);setNewTodo("")}}}/><button className="bp" onClick={()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:todoView,date:TODAY,priority:newTodoPriority}]);setNewTodo("");}}>+ Add</button></div>
+                </div>
+              </div>);
             })()}
 
-            {/* Previous lists — shown in "all" and "today" views */}
-            {(todoView==="all"||todoView==="today")&&pastDates.length>0&&(
+            {/* Previous lists — grouped by month, collapsed by default */}
+            {(todoView==="all"||todoView==="today")&&pastMonths.length>0&&(
               <div style={{marginTop:4}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
                   <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Previous Lists</span>
                 </div>
-                {pastDates.map(date=>{
-                  const items=todos.filter(t=>t.date===date);
-                  const open=showHist[date];
+                {pastMonths.map(month=>{
+                  const [yr,mo]=month.split("-");
+                  const monthLabel=`${MONTHS[parseInt(mo)-1]} ${yr}`;
+                  const monthItems=pastTodos.filter(t=>t.date.startsWith(month));
+                  const monthOpen=showMonths[month];
+                  const doneCount=monthItems.filter(t=>t.done).length;
+                  const monthDates=[...new Set(monthItems.map(t=>t.date))].sort((a,b)=>b.localeCompare(a));
                   return(
-                    <div key={date} className="hg">
-                      <div className="ht" style={{borderRadius:8}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
-                        <span className="hl">{fd(date)}</span>
-                        <div style={{display:"flex",alignItems:"center",gap:8}}><span className="hc">{items.filter(t=>t.done).length}/{items.length} done</span><span className={`hav ${open?"op":""}`}>▼</span></div>
+                    <div key={month} style={{marginBottom:5}}>
+                      <div className="ht" style={{borderRadius:8}} onClick={()=>setShowMonths(s=>({...s,[month]:!s[month]}))}>
+                        <span className="hl">{monthLabel}</span>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <span className="hc">{doneCount}/{monthItems.length} done</span>
+                          <span className={`hav ${monthOpen?"op":""}`}>▼</span>
+                        </div>
                       </div>
-                      {open&&<div className="his">{items.map(todo=><div key={todo.id} className={`ti ${todo.done?"dn":""}`}><div className="tc"/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>)}</div>}
+                      {monthOpen&&monthDates.map(date=>{
+                        const dayItems=monthItems.filter(t=>t.date===date);
+                        const dayOpen=showHist[date];
+                        return(
+                          <div key={date} style={{paddingLeft:14,marginTop:3}}>
+                            <div className="ht" style={{borderRadius:7,background:"rgba(26,20,16,.02)"}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
+                              <span style={{fontSize:12,color:"var(--ink-light)"}}>{fd(date)}</span>
+                              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                                <span className="hc">{dayItems.filter(t=>t.done).length}/{dayItems.length}</span>
+                                <span className={`hav ${dayOpen?"op":""}`}>▼</span>
+                              </div>
+                            </div>
+                            {dayOpen&&<div className="his">{dayItems.map(todo=>(
+                              <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                                <div className="tc"/>
+                                <div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>
+                                <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
+                              </div>
+                            ))}</div>}
+                          </div>
+                        );
+                      })}
                     </div>
                   );
                 })}
@@ -1609,30 +1596,6 @@ export default function App() {
                 <input className="inp" style={{fontSize:11,flex:1}} placeholder="New tag…" value={newTag} onChange={e=>setNewTag(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTag()}/>
                 <button className="bp" style={{padding:"7px 12px",fontSize:11}} onClick={addTag}>+ Add</button>
               </div>
-            </div>
-
-            {/* Upcoming events */}
-            <div>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-                <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,color:"var(--ink)"}}>Upcoming</div>
-                <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-              </div>
-              {upcoming.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>No upcoming events ✦</div>}
-              {upcoming.map(e=>{
-                const d=new Date(e.date+"T00:00:00");
-                return(
-                  <div key={e.id} style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:8,padding:"8px 10px",background:"var(--parchment)",borderRadius:10}}>
-                    <div style={{background:"rgba(255,255,255,.6)",borderRadius:6,padding:"3px 7px",textAlign:"center",flexShrink:0,minWidth:34}}>
-                      <div style={{fontSize:7.5,color:"var(--ink-light)",letterSpacing:".1em",textTransform:"uppercase"}}>{MONTHS[d.getMonth()].slice(0,3)}</div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{d.getDate()}</div>
-                    </div>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:11.5,color:"var(--ink)",fontWeight:300,lineHeight:1.3}}>{e.title}</div>
-                      {!e.allDay&&e.time&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10.5,color:"var(--ink-light)",marginTop:2}}>{e.time}</div>}
-                    </div>
-                  </div>
-                );
-              })}
             </div>
 
             {/* Completed Today */}
@@ -1654,7 +1617,7 @@ export default function App() {
           </div>
 
         </div>
-        )}
+        );})()}
 
         {/* ── BILAN ── */}
         {page==="bilan"&&<>
