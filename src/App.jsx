@@ -591,6 +591,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .tr2-dot{width:28px;height:28px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;}
 .tr2-dot:hover{background:var(--parchment);color:var(--ink);}
 .tmenu{position:absolute;right:4px;top:40px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.13);z-index:150;min-width:178px;overflow:hidden;}
+.tmenu.up{top:auto;bottom:40px;}
 .tmi{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12.5px;color:var(--ink);cursor:pointer;transition:background .1s;white-space:nowrap;}
 .tmi:hover{background:var(--parchment);}
 .tmi.del{color:#d93535;}
@@ -710,6 +711,7 @@ export default function App() {
   const [showMonths,setShowMonths]=useState({});
   const [viewDayOffset,setViewDayOffset]=useState(0);
   const [showTaskMenu,setShowTaskMenu]=useState(null);
+  const [editModal,setEditModal]=useState(null);
   const [showNewModal,setShowNewModal]=useState(false);
   const [newModalText,setNewModalText]=useState("");
   const [newModalPri,setNewModalPri]=useState("medium");
@@ -1436,6 +1438,31 @@ export default function App() {
             </div>
           )}
 
+          {/* ── Edit Task Modal ── */}
+          {editModal&&(
+            <div className="mov" onClick={()=>setEditModal(null)}>
+              <div className="mbox" onClick={e=>e.stopPropagation()}>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:20}}>Edit Task</div>
+                <label className="mlbl">Task</label>
+                <input className="minp" style={{marginBottom:14}} value={editModal.text} onChange={e=>setEditModal(m=>({...m,text:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&(()=>{if(!editModal.text.trim())return;setTodos(ts=>ts.map(t=>t.id===editModal.id?{...t,...editModal}:t));setEditModal(null);})()} autoFocus/>
+                <label className="mlbl">Priority</label>
+                <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
+                  {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
+                    <button key={p} className="mpri" style={editModal.priority===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setEditModal(m=>({...m,priority:p}))}>{p}</button>
+                  ))}
+                </div>
+                <label className="mlbl">Tag</label>
+                <select className="msel" style={{marginBottom:22}} value={editModal.tag} onChange={e=>setEditModal(m=>({...m,tag:e.target.value}))}>
+                  {tags.map(tag=><option key={tag}>{tag}</option>)}
+                </select>
+                <div style={{display:"flex",gap:8}}>
+                  <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setEditModal(null)}>Cancel</button>
+                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={()=>{if(!editModal.text.trim())return;setTodos(ts=>ts.map(t=>t.id===editModal.id?{...t,...editModal}:t));setEditModal(null);}}>Save changes</button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ── Header ── */}
           <div className="todo-top">
             <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:0}}>
@@ -1511,30 +1538,29 @@ export default function App() {
                 </div>
 
                 {/* Task rows */}
-                {viewTodos.map(todo=>(
+                {viewTodos.map((todo,idx)=>{
+                  const menuUp=idx>=viewTodos.length-2;
+                  return(
                   <div key={todo.id} className="tr2">
                     <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
                       {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
                     </div>
                     <div className="tr2-body">
-                      {editTodoId===todo.id
-                        ?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"2px 6px",height:"auto",width:"100%"}}/>
-                        :<div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>
-                      }
+                      <div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>
                       <span className="tr2-tg">{todo.tag}</span>
                     </div>
                     <div className="tr2-pri">{pflag(todo.priority)}</div>
                     <button className="tr2-dot" onClick={e=>{e.stopPropagation();setShowTaskMenu(showTaskMenu===todo.id?null:todo.id);}}>⋮</button>
                     {showTaskMenu===todo.id&&(
-                      <div className="tmenu" onClick={e=>e.stopPropagation()}>
-                        <div className="tmi" onClick={()=>{startEditTodo(todo);setShowTaskMenu(null);}}>✎ &nbsp;Edit task</div>
-                        <div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TOMORROW}:t));setShowTaskMenu(null);}}>→ &nbsp;Move to Tomorrow</div>
+                      <div className={`tmenu${menuUp?" up":""}`} onClick={e=>e.stopPropagation()}>
+                        <div className="tmi" onClick={()=>{setEditModal({...todo});setShowTaskMenu(null);}}>✎ &nbsp;Edit task</div>
+                        {viewDayOffset===0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TOMORROW}:t));setShowTaskMenu(null);}}>→ &nbsp;Move to Tomorrow</div>}
                         {viewDayOffset>0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TODAY}:t));setShowTaskMenu(null);}}>← &nbsp;Move to Today</div>}
                         <div className="tmi del" onClick={()=>{delTodo(todo.id);setShowTaskMenu(null);}}>✕ &nbsp;Delete</div>
                       </div>
                     )}
                   </div>
-                ))}
+                );})}
                 {viewTodos.length===0&&<div className="emp" style={{padding:"24px 18px"}}>Nothing planned for {VIEW_LBL.toLowerCase()} ✦</div>}
 
                 {/* Inline add task */}
