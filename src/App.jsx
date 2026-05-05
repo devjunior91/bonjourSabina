@@ -50,6 +50,23 @@ const MONTHS=["January","February","March","April","May","June","July","August",
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const HCOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#a89080","#c8887a","#8cb87a","#c8b87a","#a0b0c8","#c8a0b0"];
 const HICONS=["○","□","△","▽","◇","☆","♡","♢","◎","⊙","⊕","◈","⊞","⊟","◉","✦","✧","✤","✱","✳","✎","☼","☽","♪","✐","∞","⊗","◁","▷","⊣","⊢","⋄","◊","❖","✦"];
+const HABIT_ICON_SVGS={
+  run:(c)=>`<path d="M6 5C6 14 10 18 19 18" stroke="${c}" stroke-width="2" stroke-linecap="round"/><circle cx="7" cy="6" r="2" fill="${c}"/><circle cx="18" cy="17" r="2" fill="${c}"/>`,
+  book:(c)=>`<path d="M4 6C6 5 8 5 10 6V18C8 17 6 17 4 18V6Z" fill="${c}"/><path d="M20 6C18 5 16 5 14 6V18C16 17 18 17 20 18V6Z" fill="${c}"/>`,
+  workout:(c)=>`<path d="M6 10V14M18 10V14M4 12H20" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  person:(c)=>`<circle cx="12" cy="10" r="4" stroke="${c}" stroke-width="2"/><path d="M8 18C9.5 16 14.5 16 16 18" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  sleep:(c)=>`<rect x="4" y="10" width="16" height="6" rx="2" fill="${c}"/><rect x="4" y="8" width="6" height="3" rx="1" fill="${c}"/>`,
+  leaf:(c)=>`<circle cx="12" cy="7" r="2" fill="${c}"/><path d="M7 18C8.5 14 15.5 14 17 18" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  water:(c)=>`<path d="M12 3C12 3 7 10 7 13C7 16 9 18 12 18C15 18 17 16 17 13C17 10 12 3 12 3Z" fill="${c}"/>`,
+  clock:(c)=>`<circle cx="12" cy="12" r="8" stroke="${c}" stroke-width="2"/><path d="M12 8V12L15 15" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  heart:(c)=>`<path d="M12 21C12 21 4 14 4 9C4 6.5 6 4 9 4C10.5 4 12 5.5 12 5.5C12 5.5 13.5 4 15 4C18 4 20 6.5 20 9C20 14 12 21 12 21Z" fill="${c}"/>`,
+  meditation:(c)=>`<circle cx="12" cy="13" r="5" stroke="${c}" stroke-width="2"/><path d="M12 8V5" stroke="${c}" stroke-width="2" stroke-linecap="round"/><path d="M9 6L15 6" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  journal:(c)=>`<path d="M6 4H18V20H6V4Z" stroke="${c}" stroke-width="2"/><path d="M9 9H15M9 13H15M9 17H12" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/>`,
+  balance:(c)=>`<path d="M4 12H20" stroke="${c}" stroke-width="2" stroke-linecap="round"/><path d="M6 10V14" stroke="${c}" stroke-width="2" stroke-linecap="round"/><path d="M18 10V14" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  food:(c)=>`<path d="M6 4V10C6 12 8 14 12 14C16 14 18 12 18 10V4" stroke="${c}" stroke-width="2" stroke-linecap="round"/><path d="M12 14V20" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`,
+  star:(c)=>`<path d="M12 3L14.5 8.5L21 9.3L16.5 13.7L17.8 20L12 16.9L6.2 20L7.5 13.7L3 9.3L9.5 8.5L12 3Z" fill="${c}"/>`,
+};
+const HABIT_ICON_LIST=["run","book","workout","person","sleep","leaf","water","clock","heart","meditation","journal","balance","food","star"];
 const ECOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#c8887a","#8cb87a","#a89080","#c8b87a"];
 const QUOTES=[
   {text:"She is clothed in strength and dignity.",attr:"Proverbs 31:25"},
@@ -67,7 +84,13 @@ const QUOTES=[
 ];
 const PRAISE=["Magnifique, Sabina! ✨","Ooh la la — done!","You're on fire! 🔥","That's our girl! 💫","One step closer to greatness! 🏆","Chef's kiss! 👌","Absolutely radiant work! ✦","Sabina strikes again! ⚡","Pure elegance under pressure! 🥂","The universe approves! 🌙"];
 const DEF_CLEAN_TASKS={Mon:["Vacuum living room","Wipe kitchen surfaces","Clean bathroom sink"],Tue:["Mop floors","Clean mirrors","Tidy bedroom"],Wed:["Deep clean oven","Wipe appliances","Change hand towels"],Thu:["Clean toilets","Dust shelves","Wipe skirting boards"],Fri:["Wash bedding","Clean fridge","Take out bins"],Sat:["Deep clean bathroom","Organise pantry","Wipe windows"],Sun:["Rest and reset","Light tidy","Prep for the week ahead"]};
-const DEF_HABITS=[{id:1,name:"Morning pages",icon:"✎",color:"#c9a87c",days:Array(7).fill(false)},{id:2,name:"Walk 30 min",icon:"◎",color:"#a89080",days:Array(7).fill(false)},{id:3,name:"Read",icon:"□",color:"#7a9070",days:Array(7).fill(false)},{id:4,name:"Meditate",icon:"○",color:"#b098c0",days:Array(7).fill(false)},{id:5,name:"Drink 2L water",icon:"◇",color:"#7090a8",days:Array(7).fill(false)}];
+const DEF_HABITS=[
+  {id:1,name:"Morning pages",icon:"journal",color:"#c9a87c",days:Array(7).fill(false)},
+  {id:2,name:"Walk 30 min",icon:"run",color:"#a89080",days:Array(7).fill(false)},
+  {id:3,name:"Read",icon:"book",color:"#7a9070",days:Array(7).fill(false)},
+  {id:4,name:"Meditate",icon:"meditation",color:"#b098c0",days:Array(7).fill(false)},
+  {id:5,name:"Drink 2L water",icon:"water",color:"#7090a8",days:Array(7).fill(false)},
+];
 const DEF_TAGS=["Personal","Work","Fitness","Health","Creative"];
 const DEF_CLEANING=Object.fromEntries(DAYS.map(d=>[d,DEF_CLEAN_TASKS[d].map(t=>({text:t,done:false}))]));
 const DEF_PACK={
@@ -325,6 +348,67 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pomo-btn.pause:hover{background:var(--gold-pale);}
 .pomo-btn.stop{background:transparent;color:var(--ink-light);border:1px solid var(--border);}
 .pomo-btn.stop:hover{background:#fde8e8;color:#c05050;border-color:#fde8e8;}
+
+/* Habits page redesign */
+.hab-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.hab-top{padding:24px 24px 0;}
+.hab-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.hab-nav{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 10px;box-shadow:var(--shadow);}
+.hab-nav-arrow{background:none;border:none;cursor:pointer;color:var(--ink);font-size:16px;padding:2px 4px;border-radius:4px;line-height:1;transition:background .12s;}
+.hab-nav-arrow:hover{background:var(--parchment);}
+.hab-nav-arrow:disabled{opacity:.3;cursor:default;}
+.hab-nav-lbl{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);white-space:nowrap;min-width:130px;text-align:center;}
+.hab-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.hab-stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:flex-start;}
+.hab-stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hab-stat-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--ink);line-height:1.1;}
+.hab-stat-lbl{font-size:10px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;}
+.hab-stat-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
+.hab-body{display:grid;grid-template-columns:1fr 280px;align-items:start;}
+.hab-main{padding:0 24px 64px;}
+.hab-side{padding:14px 20px 64px;border-left:1px solid rgba(26,20,16,.08);background:#faf7f3;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 280px);}
+.hab-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.hab-card-hd{padding:14px 18px 10px;border-bottom:1px solid rgba(26,20,16,.06);}
+.hab-card-ttl{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
+.hab-card-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:1px;}
+/* Grid header */
+.hab-grid-hd{display:grid;grid-template-columns:160px repeat(7,1fr) 60px 36px;gap:4px;padding:8px 18px;border-bottom:1px solid rgba(26,20,16,.04);}
+.hab-grid-dl{font-size:10px;font-weight:600;color:var(--ink-light);text-align:center;letter-spacing:.04em;}
+/* Habit row */
+.hab-row{display:grid;grid-template-columns:160px repeat(7,1fr) 60px 36px;gap:4px;padding:8px 18px;align-items:center;border-bottom:1px solid rgba(26,20,16,.03);transition:background .12s;}
+.hab-row:hover{background:#fafafa;}
+.hab-row:last-of-type{border-bottom:none;}
+.hab-ri{display:flex;align-items:center;gap:8px;min-width:0;}
+.hab-icon-btn{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .12s;}
+.hab-icon-btn:hover{opacity:.8;}
+.hab-rname{font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hab-check{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;margin:0 auto;}
+.hab-check.ck{border:none;}
+.hab-week-ct{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;}
+/* Icon picker */
+.hab-ip{position:absolute;top:calc(100% + 6px);left:0;z-index:600;background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);display:grid;grid-template-columns:repeat(7,1fr);gap:5px;width:252px;}
+.hab-ip-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
+.hab-ip-ico:hover{background:var(--parchment);}
+.hab-ip-ico.sel{border-color:var(--gold);}
+/* Add habit row */
+.hab-add-row{padding:12px 18px;display:flex;gap:8px;border-top:1px solid rgba(26,20,16,.06);}
+/* Streaks side card */
+.streak-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(26,20,16,.04);}
+.streak-row:last-child{border-bottom:none;}
+.streak-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.streak-name{font-size:12px;color:var(--ink);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.streak-days{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);font-weight:500;}
+.streak-days-lbl{font-size:9px;color:var(--ink-light);}
+/* Donut chart */
+.donut-wrap{position:relative;width:80px;height:80px;flex-shrink:0;}
+.donut-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--ink);}
+/* Notification */
+.notif-panel{position:absolute;right:0;top:calc(100% + 8px);width:280px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);z-index:500;overflow:hidden;}
+.notif-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.notif-item{padding:10px 16px;border-bottom:1px solid rgba(26,20,16,.04);font-size:12px;color:var(--ink);line-height:1.4;}
+.notif-item.unread{background:#fdf9f5;}
+.notif-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#d93535;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600;}
+@media(max-width:900px){.hab-body{grid-template-columns:1fr;}.hab-side{display:none;}.hab-stat-row{grid-template-columns:repeat(2,1fr);}}
 
 /* ── HABITS ── */
 .hr{display:flex;align-items:center;padding:4px 6px;border-radius:10px;transition:background .15s;gap:4px;}
@@ -709,6 +793,10 @@ export default function App() {
   const [bilView,setBilView]=useState("week");
   const [todoView,setTodoView]=useState("today");
   const [showMonths,setShowMonths]=useState({});
+  const [habitViewWeek,setHabitViewWeek]=useState(0); // 0=this week, 1=last week, etc.
+  const [notifications,setNotifications]=useDB("sab_notifs",[]);
+  const [showNotifs,setShowNotifs]=useState(false);
+  const [notifDismissed,setNotifDismissed]=useState(false);
   const [viewDayOffset,setViewDayOffset]=useState(0);
   const [showTaskMenu,setShowTaskMenu]=useState(null);
   const [editModal,setEditModal]=useState(null);
@@ -783,6 +871,25 @@ export default function App() {
     }
     if(!cleanWeekKey||cleanWeekKey!==wk)setCleanWeekKey(wk);
   },[TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Habit notification check — if after 8pm and habits unchecked, add notification
+  useEffect(()=>{
+    const check=()=>{
+      const hr=new Date().getHours();
+      if(hr<20)return;
+      const unchecked=habits.filter(h=>!h.days[todayDayIndex]);
+      if(unchecked.length===0)return;
+      const today=TODAY;
+      setNotifications(ns=>{
+        const already=ns.some(n=>n.date===today&&n.type==="habit");
+        if(already)return ns;
+        return[...ns,{id:Date.now(),type:"habit",date:today,text:`You have ${unchecked.length} habit${unchecked.length>1?"s":""} not yet completed today.`,read:false}];
+      });
+    };
+    check();
+    const t=setInterval(check,60000);
+    return()=>clearInterval(t);
+  },[habits,TODAY,todayDayIndex]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Pomodoro controls
   const pomoStart=()=>{
@@ -936,6 +1043,77 @@ export default function App() {
     {r:24,color:"#7D5A44",label:"Stand",val:standHrs,goal:standGoal,unit:"hrs",pct:standPct},
   ];
 
+  // Habits page stats
+  const habitWeekDays = habitViewWeek===0
+    ? habits
+    : (() => {
+        const d=new Date(TODAY+"T12:00:00");
+        d.setDate(d.getDate()-7*habitViewWeek);
+        const wk=isoWeekKey(_ld(d));
+        const arch=habitsArchive[wk];
+        if(!arch)return habits.map(h=>({...h,days:Array(7).fill(false)}));
+        return habits.map(h=>{const a=arch.find(a=>a.id===h.id);return{...h,days:a?a.days:Array(7).fill(false)};});
+      })();
+  const habitWeekTotal=habitWeekDays.reduce((s,h)=>s+h.days.filter(Boolean).length,0);
+  const habitWeekPossible=habitWeekDays.length*7;
+  const habitWeekPct=habitWeekPossible?Math.round(habitWeekTotal/habitWeekPossible*100):0;
+  const habitBestDay=(()=>{
+    const counts=DAYS.map((d,i)=>habitWeekDays.reduce((s,h)=>s+(h.days[i]?1:0),0));
+    const max=Math.max(...counts);
+    if(max===0)return"—";
+    return DAYS[counts.indexOf(max)];
+  })();
+  // Cross-week streaks
+  const fullHabitStreak=(habId)=>{
+    const hab=habits.find(h=>h.id===habId);
+    if(!hab)return 0;
+    let s=0;
+    const todayIdx=DAYS.indexOf(TODAY_DAY);
+    let di=todayIdx;
+    while(di>=0&&hab.days[di]){s++;di--;}
+    if(di>=0)return s;
+    let wo=1;
+    while(wo<=26){
+      const dd=new Date(TODAY+"T12:00:00");dd.setDate(dd.getDate()-7*wo);
+      const wk=isoWeekKey(_ld(dd));
+      const arch=habitsArchive[wk];
+      if(!arch)break;
+      const ah=arch.find(h=>h.id===habId);
+      if(!ah)break;
+      let pi=6;
+      while(pi>=0&&ah.days[pi]){s++;pi--;}
+      if(pi>=0)break;
+      wo++;
+    }
+    return s;
+  };
+  const longestStreaks=[...habits].map(h=>({...h,str:fullHabitStreak(h.id)})).sort((a,b)=>b.str-a.str).slice(0,5);
+  const overallCurrentStreak=longestStreaks.length?longestStreaks[0].str:0;
+  // Completion rate categories (for current view week)
+  const habitDoneCount=habitWeekDays.reduce((s,h)=>s+h.days.filter(Boolean).length,0);
+  const habitMissCount=habitWeekDays.reduce((s,h)=>s+h.days.filter(v=>!v).length,0);
+  const habitDonePct=habitWeekPossible?Math.round(habitDoneCount/habitWeekPossible*100):0;
+  const habitMissPct=habitWeekPossible?Math.round(habitMissCount/habitWeekPossible*100):0;
+  const habitPartPct=Math.max(0,100-habitDonePct-habitMissPct);
+  // Week label for navigation
+  const habitViewWeekLabel=(()=>{
+    if(habitViewWeek===0)return"This week";
+    const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-7*habitViewWeek);
+    const mon=new Date(d);mon.setDate(d.getDate()-((d.getDay()||7)-1));
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    return`${mon.getDate()} ${MONTHS[mon.getMonth()]} – ${sun.getDate()} ${MONTHS[sun.getMonth()]}`;
+  })();
+  // Insight text
+  const habitInsight=(()=>{
+    if(habits.length===0)return"Add your first habit to get started!";
+    const best=longestStreaks[0];
+    const pct=habitWeekPct;
+    if(pct>=80)return`You're crushing it this week — ${pct}% completion! Keep that momentum going.`;
+    if(pct>=50)return`Good progress at ${pct}%! ${best&&best.str>=3?`${best.name} is on a ${best.str}-day streak.`:"Consistency is key — keep going!"}`;
+    return`${best&&best.str>=2?`${best.name} has a ${best.str}-day streak — don't break it!`:"Every habit checked is a win. Start small and build momentum."}`;
+  })();
+  const unreadNotifs=notifications.filter(n=>!n.read).length;
+
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
   const NAV=[
     {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
@@ -1045,33 +1223,232 @@ export default function App() {
       <main className="main">
 
         {/* ── HABITS ── */}
-        {page==="habits"&&<>
-          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>This week</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Habit <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Tracker</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click an icon to change it · click a name to rename · hover for actions</p></div>
-          <div className="card"><div className="ct">Weekly check-in</div><div className="cs">Tick each day you complete a habit</div>
-            <div className="dh"><div className="dsp"/><div className="dls">{DAYS.map((d,i)=><div key={i} className="dl">{d}</div>)}</div></div>
-            <div style={{display:"flex",flexDirection:"column",gap:2}}>
-              {habits.map(hab=>(
-                <div key={hab.id} className="hr">
-                  <div className="hi">
-                    <div className="ip-wrap" onClick={e=>e.stopPropagation()}>
-                      <div className="hib" style={{background:hab.color+"22"}} onClick={()=>setIconFor(iconFor===hab.id?null:hab.id)}>{hab.icon}</div>
-                      {iconFor===hab.id&&<div className="ip">{HICONS.map(ico=><div key={ico} className={`io ${hab.icon===ico?"sel":""}`} onClick={()=>setIcon(hab.id,ico)}>{ico}</div>)}</div>}
-                    </div>
-                    {editHabit===hab.id?<input className="ii" autoFocus value={editHName} onChange={e=>setEditHName(e.target.value)} onBlur={()=>saveEH(hab.id)} onKeyDown={e=>e.key==="Enter"&&saveEH(hab.id)}/>:<span className="hn" onClick={()=>startEH(hab)}>{hab.name}</span>}
-                  </div>
-                  <div className="hd">{hab.days.map((ck,i)=><div key={i} className={`hday ${ck?"ck":""}`} style={ck?{background:hab.color}:{}} onClick={()=>toggleDay(hab.id,i)}/>)}</div>
-                  <div className="hst">{streak(hab.days)}/7</div>
-                  <div className="ha"><button className="sb2" onClick={()=>startEH(hab)}>✏️</button><button className="sb2 d" onClick={()=>delHabit(hab.id)}>×</button></div>
-                </div>
-              ))}
-              {habits.length===0&&<div className="emp">No habits yet ✦</div>}
-            </div>
-            <div className="ar"><div className="row"><input className="inp" placeholder="New habit…" value={newHabit} onChange={e=>setNewHabit(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addHabit()}/><button className="bp" onClick={addHabit}>+ Add habit</button></div></div>
-            <div className="gs"><div className="gt">Habits completed per day this week</div>
-              <div className="bc">{graphData.map((d,i)=><div key={i} className="bcol"><div className="bv">{d.count>0?d.count:""}</div><div className="bar" style={{height:`${(d.count/maxBar)*90}px`,background:d.count>0?"linear-gradient(to top,#a8865a,#c9a87c)":"var(--parchment)"}}/><div className="bl">{d.day}</div></div>)}</div>
+        {page==="habits"&&(()=>{
+  // Icon renderer
+  const HI=(id,color,size=18)=>{
+    const fn=HABIT_ICON_SVGS[id];
+    if(fn){
+      return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" dangerouslySetInnerHTML={{__html:fn(color||"#888")}}/>;
+    }
+    return <span style={{fontSize:size*0.75,lineHeight:1}}>{id}</span>;
+  };
+  const viewHabs=habitWeekDays;
+  return(
+  <div className="hab-wrap">
+    {/* Header */}
+    <div className="hab-top">
+      <div className="hab-hd-row">
+        <div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Habits</div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Small daily steps, big life changes.</div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div className="hab-nav">
+            <button className="hab-nav-arrow" onClick={()=>setHabitViewWeek(w=>w+1)}>‹</button>
+            <span className="hab-nav-lbl">{habitViewWeekLabel}</span>
+            <button className="hab-nav-arrow" disabled={habitViewWeek===0} onClick={()=>setHabitViewWeek(w=>w-1)}>›</button>
+          </div>
+          <button onClick={()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HABIT_ICON_LIST[idx%HABIT_ICON_LIST.length],color:HCOLORS[idx],days:Array(7).fill(false)}]);setNewHabit("");}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New habit</button>
+        </div>
+      </div>
+
+      {/* Stat cards */}
+      <div className="hab-stat-row">
+        {[
+          {lbl:"Overall completion",val:`${habitWeekPct}%`,sub:`${habitWeekTotal} of ${habitWeekPossible} completed`,icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 14 4 9C4 6.5 6 4 9 4C10.5 4 12 5.5 12 5.5C12 5.5 13.5 4 15 4C18 4 20 6.5 20 9C20 14 12 21 12 21Z" fill="#C47C6A"/></svg>,bg:"#fdf1ee"},
+          {lbl:"Current streak",val:`${overallCurrentStreak}`,sub:overallCurrentStreak>0?"Keep it going! 🔥":"Start your streak today",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 5C6 14 10 18 19 18" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/><circle cx="7" cy="6" r="2" fill="#B89576"/><circle cx="18" cy="17" r="2" fill="#B89576"/></svg>,bg:"#fdf7f0"},
+          {lbl:"Best day",val:habitBestDay,sub:`Most habits completed`,icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3L14.5 8.5L21 9.3L16.5 13.7L17.8 20L12 16.9L6.2 20L7.5 13.7L3 9.3L9.5 8.5L12 3Z" fill="#C9A87C"/></svg>,bg:"#fdf9f0"},
+          {lbl:"Total this week",val:`${habitWeekTotal}`,sub:habitViewWeek===0&&habitWeekTotal>0?`+${Math.max(0,habitWeekTotal-(habitsArchive[Object.keys(habitsArchive).sort().slice(-1)[0]]||[]).reduce((s,h)=>s+h.days.filter(Boolean).length,0))} from last week`:"habit completions",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="5" stroke="#7FA37A" strokeWidth="2"/><path d="M12 8V5" stroke="#7FA37A" strokeWidth="2" strokeLinecap="round"/></svg>,bg:"#eef5ee"},
+        ].map(s=>(
+          <div key={s.lbl} className="hab-stat">
+            <div className="hab-stat-icon" style={{background:s.bg}}>{s.icon}</div>
+            <div>
+              <div className="hab-stat-lbl">{s.lbl}</div>
+              <div className="hab-stat-val">{s.val}</div>
+              <div className="hab-stat-sub">{s.sub}</div>
             </div>
           </div>
-        </>}
+        ))}
+      </div>
+    </div>
+
+    {/* Body */}
+    <div className="hab-body">
+      {/* Main: weekly grid */}
+      <div className="hab-main">
+        <div className="hab-card">
+          <div className="hab-card-hd">
+            <div className="hab-card-ttl">Weekly check-in</div>
+            <div className="hab-card-sub">Tick each day you complete a habit</div>
+          </div>
+          {/* Column headers */}
+          <div className="hab-grid-hd">
+            <div/>
+            {DAYS.map(d=><div key={d} className="hab-grid-dl" style={d===TODAY_DAY&&habitViewWeek===0?{color:"var(--gold-deep)"}:{}}>{d}</div>)}
+            <div className="hab-grid-dl">Week</div>
+            <div/>
+          </div>
+          {/* Habit rows */}
+          {viewHabs.length===0&&<div className="emp" style={{padding:"20px 18px"}}>No habits yet ✦</div>}
+          {viewHabs.map(hab=>{
+            const wkCount=hab.days.filter(Boolean).length;
+            return(
+              <div key={hab.id} className="hab-row">
+                {/* Name + icon */}
+                <div className="hab-ri">
+                  <div className="ip-wrap" style={{position:"relative"}} onClick={e=>e.stopPropagation()}>
+                    <div className="hab-icon-btn" style={{background:hab.color+"22"}} onClick={()=>setIconFor(iconFor===hab.id?null:hab.id)}>
+                      {HI(hab.icon,hab.color,16)}
+                    </div>
+                    {iconFor===hab.id&&(
+                      <div className="hab-ip">
+                        {HABIT_ICON_LIST.map(ico=>(
+                          <div key={ico} className={`hab-ip-ico ${hab.icon===ico?"sel":""}`} style={{background:hab.color+"15"}} onClick={()=>{setHabits(h=>h.map(hh=>hh.id===hab.id?{...hh,icon:ico}:hh));setIconFor(null);}}>
+                            {HI(ico,hab.color,14)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {editHabit===hab.id
+                    ?<input className="ii" autoFocus value={editHName} onChange={e=>setEditHName(e.target.value)} onBlur={()=>saveEH(hab.id)} onKeyDown={e=>e.key==="Enter"&&saveEH(hab.id)} style={{fontSize:12,flex:1,minWidth:0}}/>
+                    :<span className="hab-rname" onClick={()=>startEH(hab)}>{hab.name}</span>
+                  }
+                </div>
+                {/* Day checkboxes */}
+                {hab.days.map((ck,i)=>(
+                  <div key={i} className={`hab-check ${ck?"ck":""}`}
+                    style={ck?{background:hab.color}:{}}
+                    onClick={()=>habitViewWeek===0&&toggleDay(hab.id,i)}>
+                    {ck&&<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                  </div>
+                ))}
+                {/* Week count */}
+                <div className="hab-week-ct">{wkCount}/7</div>
+                {/* Actions */}
+                <div style={{display:"flex",gap:2,opacity:0}} className="ha">
+                  <button className="sb2" onClick={()=>startEH(hab)}>✏️</button>
+                  <button className="sb2 d" onClick={()=>delHabit(hab.id)}>×</button>
+                </div>
+              </div>
+            );
+          })}
+          {/* Add habit */}
+          {habitViewWeek===0&&(
+            <div className="hab-add-row">
+              <input className="inp" style={{flex:1,fontSize:12}} placeholder="Add a new habit…" value={newHabit} onChange={e=>setNewHabit(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addHabit()}/>
+              <button className="bp" onClick={addHabit} style={{fontSize:12,padding:"7px 14px"}}>+ Add habit</button>
+            </div>
+          )}
+        </div>
+
+        {/* Bar chart */}
+        {habitViewWeek===0&&(
+          <div className="hab-card" style={{marginTop:16,padding:"16px 18px"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+              <div>
+                <div className="hab-card-ttl" style={{fontSize:13}}>Habits completed per day</div>
+                <div className="hab-card-sub">This week</div>
+              </div>
+            </div>
+            <div className="bc" style={{gap:12}}>
+              {graphData.map((d,i)=>(
+                <div key={i} className="bcol">
+                  <div className="bv" style={{fontSize:11}}>{d.count>0?d.count:""}</div>
+                  <div className="bar" style={{height:`${(d.count/maxBar)*80}px`,background:d.count>0?`linear-gradient(to top,${HCOLORS[i%HCOLORS.length]},${HCOLORS[(i+1)%HCOLORS.length]})`:"var(--parchment)",borderRadius:"4px 4px 0 0",minHeight:4}}/>
+                  <div className="bl" style={{fontSize:10,color:d.day===TODAY_DAY?"var(--gold-deep)":"var(--ink-light)",fontWeight:d.day===TODAY_DAY?600:400}}>{d.day}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginTop:16,paddingTop:14,borderTop:"1px solid var(--border)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 14 4 9C4 6.5 6 4 9 4C10.5 4 12 5.5 12 5.5C12 5.5 13.5 4 15 4C18 4 20 6.5 20 9C20 14 12 21 12 21Z" fill="#C47C6A"/></svg>
+              Consistency is progress. You're building a beautiful routine. Keep going!
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{marginLeft:"auto"}}><path d="M12 21C12 21 4 14 4 9C4 6.5 6 4 9 4C10.5 4 12 5.5 12 5.5C12 5.5 13.5 4 15 4C18 4 20 6.5 20 9C20 14 12 21 12 21Z" stroke="#C47C6A" strokeWidth="1.5" fill="none"/></svg>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Right sidebar */}
+      <div className="hab-side">
+        {/* Longest streaks */}
+        <div className="side-card">
+          <div className="side-ttl" style={{marginBottom:12}}>Longest Streaks</div>
+          {longestStreaks.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Complete habits to build streaks ✦</div>}
+          {longestStreaks.map((h,i)=>(
+            <div key={h.id} className="streak-row">
+              <div className="streak-icon" style={{background:h.color+"22"}}>
+                {HI(h.icon,h.color,16)}
+              </div>
+              <div className="streak-name">{h.name}</div>
+              <div style={{textAlign:"right",flexShrink:0}}>
+                <div className="streak-days">{h.str}</div>
+                <div className="streak-days-lbl">days</div>
+              </div>
+            </div>
+          ))}
+          {longestStreaks.length>0&&<button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer",marginTop:8,width:"100%",textAlign:"right"}}>View all habits →</button>}
+        </div>
+
+        {/* Completion rate donut */}
+        <div className="side-card">
+          <div className="side-ttl" style={{marginBottom:12}}>Habit completion rate</div>
+          <div style={{display:"flex",alignItems:"center",gap:16}}>
+            <div className="donut-wrap">
+              {(()=>{
+                const r=32,cir=2*Math.PI*r;
+                const done=habitDonePct/100*cir;
+                const part=habitPartPct/100*cir;
+                const miss=habitMissPct/100*cir;
+                return(
+                  <svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r={r} fill="none" stroke="#e8e2db" strokeWidth="10"/>
+                    <circle cx="40" cy="40" r={r} fill="none" stroke="#7a9070" strokeWidth="10"
+                      strokeDasharray={`${done} ${cir-done}`} strokeDashoffset={cir*0.25} strokeLinecap="butt" transform="rotate(-90 40 40)"/>
+                    <circle cx="40" cy="40" r={r} fill="none" stroke="#c9a87c" strokeWidth="10"
+                      strokeDasharray={`${part} ${cir-part}`} strokeDashoffset={cir*0.25-done} strokeLinecap="butt" transform="rotate(-90 40 40)"/>
+                  </svg>
+                );
+              })()}
+              <div className="donut-val">{habitDonePct}%</div>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:7,flex:1}}>
+              {[{label:"Completed",pct:habitDonePct,c:"#7a9070"},{label:"Partially",pct:habitPartPct,c:"#c9a87c"},{label:"Missed",pct:habitMissPct,c:"#d4cdc6"}].map(r=>(
+                <div key={r.label} style={{display:"flex",alignItems:"center",gap:6}}>
+                  <div style={{width:10,height:10,borderRadius:"50%",background:r.c,flexShrink:0}}/>
+                  <span style={{fontSize:11,color:"var(--ink)",flex:1}}>{r.label}</span>
+                  <span style={{fontSize:11,fontWeight:600,color:"var(--ink)"}}>{r.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* This week's insight */}
+        <div className="side-card">
+          <div className="side-ttl" style={{marginBottom:10}}>This week's insight</div>
+          <div style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:12}}>
+            <div style={{width:28,height:28,borderRadius:8,background:"#f0f0e8",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 5C6 14 10 18 19 18" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/><circle cx="7" cy="6" r="2" fill="#B89576"/><circle cx="18" cy="17" r="2" fill="#B89576"/></svg>
+            </div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink)",lineHeight:1.5}}>{habitInsight}</div>
+          </div>
+          {longestStreaks[0]&&longestStreaks[0].str>=3&&(
+            <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+              <div style={{width:28,height:28,borderRadius:8,background:"#fdf7f0",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C12 3 7 10 7 13C7 16 9 18 12 18C15 18 17 16 17 13C17 10 12 3 12 3Z" fill="#c9870a"/></svg>
+              </div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink)",lineHeight:1.5}}>
+                Try stacking '{longestStreaks[0].name}' with your morning routine to make it stick.
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+  );
+})()}
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
@@ -1088,7 +1465,25 @@ export default function App() {
         Search anything…
         <span style={{marginLeft:"auto",fontSize:10,color:"var(--border)",border:"1px solid var(--border)",borderRadius:4,padding:"1px 5px"}}>⌘K</span>
       </div>
-      <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
+        {showNotifs&&(
+          <div className="notif-panel" onClick={e=>e.stopPropagation()}>
+            <div className="notif-hd">
+              <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
+              {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
+            </div>
+            {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
+            {[...notifications].reverse().slice(0,5).map(n=>(
+              <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
+                <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
+                <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
     </div>
   </div>
