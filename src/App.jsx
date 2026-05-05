@@ -1117,6 +1117,13 @@ export default function App() {
   })();
   const unreadNotifs=notifications.filter(n=>!n.read).length;
 
+  // Habit icon renderer — available across all pages
+  const HI=(id,color,size=18)=>{
+    const fn=HABIT_ICON_SVGS[id];
+    if(fn)return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" dangerouslySetInnerHTML={{__html:fn(color||"#888")}}/>;
+    return <span style={{fontSize:size*0.75,lineHeight:1}}>{id}</span>;
+  };
+
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
   const NAV=[
     {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
@@ -1227,14 +1234,6 @@ export default function App() {
 
         {/* ── HABITS ── */}
         {page==="habits"&&(()=>{
-  // Icon renderer
-  const HI=(id,color,size=18)=>{
-    const fn=HABIT_ICON_SVGS[id];
-    if(fn){
-      return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" dangerouslySetInnerHTML={{__html:fn(color||"#888")}}/>;
-    }
-    return <span style={{fontSize:size*0.75,lineHeight:1}}>{id}</span>;
-  };
   const viewHabs=habitWeekDays;
   return(
   <div className="hab-wrap">
@@ -1623,7 +1622,7 @@ export default function App() {
         <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:180,overflowY:"auto"}}>
           {habits.map(hab=>(
             <div key={hab.id} className="dh-row">
-              <div className="dh-icon" style={{background:hab.color+"22"}}>{hab.icon}</div>
+              <div className="dh-icon" style={{background:hab.color+"22"}}>{HI(hab.icon,hab.color,16)}</div>
               <div className="dh-name">{hab.name}</div>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
               <div className="dh-dots">
