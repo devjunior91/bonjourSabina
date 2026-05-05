@@ -561,10 +561,50 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,124,.3);border-radius:10px;}
 
 /* ── TODO LAYOUT ── */
-.todo-3col{display:grid;grid-template-columns:1fr 260px;margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
-.todo-ma{padding:28px 20px 64px 20px;overflow-y:auto;}
-.todo-rsb{background:#faf7f3;border-left:1px solid rgba(26,20,16,.08);padding:28px 18px 64px;display:flex;flex-direction:column;gap:22px;overflow-y:auto;}
-.todo-prog-card{background:#ffffff;border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.todo-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.todo-top{padding:24px 24px 0;}
+.todo-prog-full{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-top:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.todo-navrow{display:flex;align-items:center;gap:10px;padding:14px 24px 10px;}
+.tdnav{background:#fff;border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--ink);transition:all .15s;line-height:1;padding:0;}
+.tdnav:disabled{opacity:.3;cursor:default;}
+.tdnav:hover:not(:disabled){background:var(--parchment);}
+.tdnlbl{flex:1;text-align:center;font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);}
+.tdnback{background:var(--ink);color:#f4ede3;border:none;border-radius:20px;padding:5px 14px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;}
+.todo-fbar{padding:0 24px 14px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.todo-body{display:grid;grid-template-columns:1fr 260px;align-items:start;}
+.todo-main{padding:0 24px 64px;}
+.todo-side{padding:14px 18px 64px;border-left:1px solid rgba(26,20,16,.08);background:#faf7f3;display:flex;flex-direction:column;gap:14px;min-height:calc(100vh - 56px);}
+.todo-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.todo-chd{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(26,20,16,.06);}
+.todo-cpri{width:90px;font-size:10px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;text-align:center;flex-shrink:0;}
+.todo-ctime{width:60px;font-size:10px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;text-align:center;flex-shrink:0;}
+.tr2{display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid rgba(26,20,16,.04);position:relative;transition:background .12s;}
+.tr2:hover{background:#fafafa;}
+.tr2-ck{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.tr2-ck.done{background:var(--sage);border-color:var(--sage);}
+.tr2-body{flex:1;min-width:0;}
+.tr2-txt{font-size:13px;color:var(--ink);line-height:1.4;}
+.tr2-txt.done{text-decoration:line-through;color:var(--ink-light);opacity:.7;}
+.tr2-tg{display:inline-block;font-size:10px;color:var(--ink-light);background:var(--parchment);border-radius:5px;padding:1px 7px;margin-top:3px;}
+.tr2-pri{width:90px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tr2-time{width:60px;font-size:11.5px;color:var(--ink-light);text-align:center;flex-shrink:0;}
+.tr2-dot{width:28px;height:28px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;}
+.tr2-dot:hover{background:var(--parchment);color:var(--ink);}
+.tmenu{position:absolute;right:4px;top:40px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.13);z-index:150;min-width:178px;overflow:hidden;}
+.tmi{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12.5px;color:var(--ink);cursor:pointer;transition:background .1s;white-space:nowrap;}
+.tmi:hover{background:var(--parchment);}
+.tmi.del{color:#d93535;}
+.todo-add{display:flex;align-items:center;gap:6px;padding:12px 18px;color:var(--ink-light);font-size:12.5px;cursor:pointer;border-top:1px solid rgba(26,20,16,.06);transition:background .12s;}
+.todo-add:hover{background:#fafafa;color:var(--ink);}
+.side-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.side-ttl{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);margin-bottom:10px;}
+.mov{position:fixed;inset:0;background:rgba(26,20,16,.4);z-index:300;display:flex;align-items:center;justify-content:center;}
+.mbox{background:#fff;border-radius:18px;padding:28px;width:440px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,.18);}
+.mlbl{font-size:11px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;display:block;}
+.minp{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;box-sizing:border-box;background:#fff;}
+.minp:focus{border-color:var(--gold);}
+.msel{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;background:#fff;box-sizing:border-box;}
+.mpri{flex:1;padding:8px 4px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;text-transform:capitalize;}
 /* Priority flag */
 .pflag{display:flex;align-items:center;gap:4px;flex-shrink:0;min-width:68px;}
 .pflag span{font-size:10px;font-weight:500;letter-spacing:.02em;}
@@ -578,7 +618,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-qa-inp::placeholder{color:rgba(26,20,16,.3);font-family:'Cormorant Garamond',serif;font-style:italic;}
 .sb-qa-btn{width:25px;height:25px;border-radius:7px;background:var(--ink);border:none;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
 .sb-qa-btn:hover{background:var(--gold-deep);}
-@media(max-width:900px){.todo-3col{grid-template-columns:1fr;}.todo-rsb{display:none;}}
+@media(max-width:900px){.todo-body{grid-template-columns:1fr;}.todo-side{display:none;}}
 
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
@@ -668,6 +708,13 @@ export default function App() {
   const [bilView,setBilView]=useState("week");
   const [todoView,setTodoView]=useState("today");
   const [showMonths,setShowMonths]=useState({});
+  const [viewDayOffset,setViewDayOffset]=useState(0);
+  const [showTaskMenu,setShowTaskMenu]=useState(null);
+  const [showNewModal,setShowNewModal]=useState(false);
+  const [newModalText,setNewModalText]=useState("");
+  const [newModalPri,setNewModalPri]=useState("medium");
+  const [newModalTag,setNewModalTag]=useState("Personal");
+  const [newModalTime,setNewModalTime]=useState("");
 
   // Pomodoro timer state
   const [pomoDur,setPomoDur]=useState(1500);
@@ -680,6 +727,7 @@ export default function App() {
   const ac=useRef(null);
 
   useEffect(()=>{const h=()=>setIconFor(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
+  useEffect(()=>{const h=()=>setShowTaskMenu(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
   useEffect(()=>()=>clearInterval(pomoInterval.current),[]);
   // Snap pomo time when tab becomes visible again (avoids throttled intervals)
   useEffect(()=>{
@@ -1330,292 +1378,261 @@ export default function App() {
 
         {/* ── TO-DO LISTS ── */}
         {page==="todos"&&(()=>{
-          // Priority flag helper
+          // Helpers
+          const addDays=(dateStr,n)=>{const d=new Date(dateStr+"T00:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);};
+          const viewDate=addDays(TODAY,viewDayOffset);
+          const VIEW_LBL=viewDayOffset===0?"Today":viewDayOffset===1?"Tomorrow":new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long"});
+          const VIEW_FULL=new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+          // Priority flag
           const pflag=(p)=>{
             const cfg={high:{c:"#d93535",l:"High"},medium:{c:"#c9870a",l:"Medium"},low:{c:"#9a9a9a",l:"Low"}};
             const {c,l}=cfg[p||"medium"];
-            return(
-              <div className="pflag">
-                <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
-                  <line x1="1" y1="0" x2="1" y2="12" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
-                  <path d="M1 1.5 L9.5 4.5 L1 7.5Z" fill={c}/>
-                </svg>
-                <span style={{color:c}}>{l}</span>
-              </div>
-            );
+            return(<div className="pflag"><svg width="10" height="12" viewBox="0 0 10 12" fill="none"><line x1="1" y1="0" x2="1" y2="12" stroke={c} strokeWidth="1.8" strokeLinecap="round"/><path d="M1 1.5 L9.5 4.5 L1 7.5Z" fill={c}/></svg><span style={{color:c}}>{l}</span></div>);
           };
-          // Past todos grouped by month
-          const pastTodos=todos.filter(t=>t.date!==TODAY&&t.date!==TOMORROW&&t.date<TODAY);
+          // Data
+          const pastTodos=todos.filter(t=>t.date<TODAY);
           const pastMonths=[...new Set(pastTodos.map(t=>t.date.slice(0,7)))].sort((a,b)=>b.localeCompare(a));
+          const tTotal=todos.filter(t=>t.date===viewDate).length;
+          const tDone=todos.filter(t=>t.done&&t.date===viewDate).length;
+          const pct=tTotal?Math.round(tDone/tTotal*100):0;
+          const viewTodos=byPri(todos.filter(t=>{
+            const md=t.date===viewDate;
+            const mf=tFilter==="all"||(tFilter==="active"?!t.done:t.done);
+            const mt=tagFilter==="all"||t.tag===tagFilter;
+            return md&&mf&&mt;
+          }));
+          // Modal add
+          const handleModalAdd=()=>{
+            if(!newModalText.trim())return;
+            setTodos(ts=>[...ts,{id:Date.now(),text:newModalText,done:false,tag:newModalTag,date:viewDate,priority:newModalPri,time:newModalTime}]);
+            setNewModalText("");setNewModalTime("");setNewModalPri("medium");setShowNewModal(false);
+          };
           return(
-        <div className="todo-3col">
+        <div className="todo-wrap">
 
-          {/* ── Main content ── */}
-          <div className="todo-ma">
-            {/* Page header */}
-            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:22}}>
+
+          {/* ── New Task Modal ── */}
+          {showNewModal&&(
+            <div className="mov" onClick={()=>setShowNewModal(false)}>
+              <div className="mbox" onClick={e=>e.stopPropagation()}>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:3}}>Add Task</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to {VIEW_LBL} · {new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
+                <label className="mlbl">Task</label>
+                <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={newModalText} onChange={e=>setNewModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleModalAdd()} autoFocus/>
+                <div style={{display:"flex",gap:12,marginBottom:14}}>
+                  <div style={{flex:1}}>
+                    <label className="mlbl">Priority</label>
+                    <div style={{display:"flex",gap:5,marginTop:5}}>
+                      {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
+                        <button key={p} className="mpri" style={newModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setNewModalPri(p)}>{p}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{flex:1}}>
+                    <label className="mlbl">Time</label>
+                    <input className="minp" style={{marginTop:5}} type="time" value={newModalTime} onChange={e=>setNewModalTime(e.target.value)}/>
+                  </div>
+                </div>
+                <label className="mlbl">Tag</label>
+                <select className="msel" style={{marginBottom:22}} value={newModalTag} onChange={e=>setNewModalTag(e.target.value)}>
+                  {tags.map(tag=><option key={tag}>{tag}</option>)}
+                </select>
+                <div style={{display:"flex",gap:8}}>
+                  <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowNewModal(false)}>Cancel</button>
+                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={handleModalAdd}>Add Task</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Header ── */}
+          <div className="todo-top">
+            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:0}}>
               <div>
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>To-Do <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Lists</em></div>
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Stay organised, focus on what matters.</div>
               </div>
-              <button style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginTop:4}}>+ New Task</button>
+              <button onClick={()=>setShowNewModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginTop:6}}>+ New Task</button>
             </div>
-
-            {/* Today progress card */}
-            {(todoView==="today"||todoView==="all")&&(()=>{
-              const tTotal=todos.filter(t=>t.date===TODAY).length;
-              const tDone=todos.filter(t=>t.done&&t.date===TODAY).length;
-              const pct=tTotal?Math.round(tDone/tTotal*100):0;
-              return(
-                <div className="todo-prog-card">
-                  <div style={{display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
-                    <div style={{width:42,height:42,borderRadius:10,background:"#f3ede6",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                    <div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Today</div>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
-                    </div>
-                  </div>
-                  <div style={{display:"flex",alignItems:"baseline",gap:4,flexShrink:0}}>
-                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:600,color:"var(--ink)"}}>{tTotal}</span>
-                    <span style={{fontSize:11,color:"var(--ink-light)"}}>tasks</span>
-                  </div>
-                  <div style={{flex:1,minWidth:160}}>
-                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
-                      <span style={{fontSize:11,fontWeight:500,color:"var(--ink-light)"}}>Progress</span>
-                      <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{tDone} of {tTotal} tasks completed</span>
-                    </div>
-                    <div style={{display:"flex",alignItems:"center",gap:10}}>
-                      <div style={{flex:1,height:6,background:"var(--parchment)",borderRadius:3,overflow:"hidden"}}>
-                        <div style={{height:"100%",width:`${pct}%`,background:"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:3,transition:"width .5s"}}/>
-                      </div>
-                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)",flexShrink:0}}>{pct}%</span>
-                    </div>
-                  </div>
+            {/* Progress card — full width */}
+            <div className="todo-prog-full">
+              <div style={{display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
+                <div style={{width:44,height:44,borderRadius:10,background:"#f3ede6",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 </div>
-              );
-            })()}
-
-            {/* Filters */}
-            <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:16,flexWrap:"wrap"}}>
-              {["all","active","done"].map(f=><button key={f} className={`pb ${tFilter===f?"on":""}`} onClick={()=>setTFilter(f)}>{f==="all"?"All":f==="active"?"To Do":"Completed"}</button>)}
-              <div style={{width:1,height:16,background:"var(--border)",margin:"0 3px"}}/>
-              <button className={`pb ${tagFilter==="all"?"on":""}`} onClick={()=>setTagFilter("all")}>All tags</button>
-              {tags.map(tag=><button key={tag} className={`pb ${tagFilter===tag?"ton":""}`} onClick={()=>setTagFilter(tag)}>{tag}</button>)}
-            </div>
-
-            {/* TODAY section */}
-            {(todoView==="today"||todoView==="all")&&(()=>{
-              const viewTodos=byPri(todayTodos.filter(t=>{
-                const s=tFilter==="all"||(tFilter==="active"?!t.done:t.done);
-                const tg=tagFilter==="all"||t.tag===tagFilter;
-                return s&&tg;
-              }));
-              return(
-                <div style={{marginBottom:22}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                    <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Today's Tasks</span>
-                    <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{viewTodos.length}</span>
+                <div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{VIEW_LBL}</div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{VIEW_FULL}</div>
+                </div>
+              </div>
+              <div style={{display:"flex",alignItems:"baseline",gap:4,flexShrink:0}}>
+                <span style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:600,color:"var(--ink)"}}>{tTotal}</span>
+                <span style={{fontSize:11,color:"var(--ink-light)"}}>tasks</span>
+              </div>
+              <div style={{flex:1,minWidth:160}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+                  <span style={{fontSize:11,fontWeight:500,color:"var(--ink-light)"}}>Progress</span>
+                  <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{tDone} of {tTotal} done</span>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <div style={{flex:1,height:6,background:"var(--parchment)",borderRadius:3,overflow:"hidden"}}>
+                    <div style={{height:"100%",width:`${pct}%`,background:"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:3,transition:"width .5s"}}/>
                   </div>
-                  <div className="todo-task-card">
-                    <div className="tl">
-                      {viewTodos.map(todo=>(
-                        <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                          <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                          <div className="tb2">
-                            {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
-                            <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)",flexShrink:0}}>{pct}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Day Navigation ── */}
+          <div className="todo-navrow">
+            <button className="tdnav" disabled={viewDayOffset===0} onClick={()=>setViewDayOffset(o=>o-1)}>‹</button>
+            <div className="tdnlbl">
+              <span style={{fontWeight:600}}>{VIEW_LBL}</span>
+              <span style={{fontSize:11,color:"var(--ink-light)",marginLeft:8,fontFamily:"'DM Sans',sans-serif"}}>{new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>
+            </div>
+            <button className="tdnav" disabled={viewDayOffset>=6} onClick={()=>setViewDayOffset(o=>o+1)}>›</button>
+            {viewDayOffset>0&&<button className="tdnback" onClick={()=>setViewDayOffset(0)}>← Today</button>}
+          </div>
+
+          {/* ── Filters ── */}
+          <div className="todo-fbar">
+            {["all","active","done"].map(f=><button key={f} className={`pb ${tFilter===f?"on":""}`} onClick={()=>setTFilter(f)}>{f==="all"?"All":f==="active"?"To Do":"Completed"}</button>)}
+            <div style={{width:1,height:16,background:"var(--border)",margin:"0 3px"}}/>
+            <button className={`pb ${tagFilter==="all"?"on":""}`} onClick={()=>setTagFilter("all")}>All tags</button>
+            {tags.map(tag=><button key={tag} className={`pb ${tagFilter===tag?"ton":""}`} onClick={()=>setTagFilter(tag)}>{tag}</button>)}
+          </div>
+
+          {/* ── Body grid ── */}
+          <div className="todo-body">
+
+            {/* Main task list */}
+            <div className="todo-main">
+              <div className="todo-card">
+                {/* Card header with column labels */}
+                <div className="todo-chd">
+                  <div style={{flex:1,fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)",display:"flex",alignItems:"center",gap:8}}>
+                    {VIEW_LBL}'s Tasks
+                    <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{viewTodos.length}</span>
+                  </div>
+                  <div className="todo-cpri">Priority</div>
+                  <div className="todo-ctime">Time</div>
+                  <div style={{width:28}}/>
+                </div>
+
+                {/* Task rows */}
+                {viewTodos.map(todo=>(
+                  <div key={todo.id} className="tr2">
+                    <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
+                      {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
+                    </div>
+                    <div className="tr2-body">
+                      {editTodoId===todo.id
+                        ?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"2px 6px",height:"auto",width:"100%"}}/>
+                        :<div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>
+                      }
+                      <span className="tr2-tg">{todo.tag}</span>
+                    </div>
+                    <div className="tr2-pri">{pflag(todo.priority)}</div>
+                    <div className="tr2-time">{todo.time||"—"}</div>
+                    <button className="tr2-dot" onClick={e=>{e.stopPropagation();setShowTaskMenu(showTaskMenu===todo.id?null:todo.id);}}>⋮</button>
+                    {showTaskMenu===todo.id&&(
+                      <div className="tmenu" onClick={e=>e.stopPropagation()}>
+                        <div className="tmi" onClick={()=>{startEditTodo(todo);setShowTaskMenu(null);}}>✎ &nbsp;Edit task</div>
+                        <div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TOMORROW}:t));setShowTaskMenu(null);}}>→ &nbsp;Move to Tomorrow</div>
+                        {viewDayOffset>0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TODAY}:t));setShowTaskMenu(null);}}>← &nbsp;Move to Today</div>}
+                        <div className="tmi del" onClick={()=>{delTodo(todo.id);setShowTaskMenu(null);}}>✕ &nbsp;Delete</div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {viewTodos.length===0&&<div className="emp" style={{padding:"24px 18px"}}>Nothing planned for {VIEW_LBL.toLowerCase()} ✦</div>}
+
+                {/* Inline add task */}
+                <div className="todo-add" onClick={()=>setShowNewModal(true)}>
+                  <span style={{fontSize:16,lineHeight:1,marginRight:2}}>+</span> Add Task
+                </div>
+              </div>
+
+              {/* Previous Lists — only on today view */}
+              {viewDayOffset===0&&pastMonths.length>0&&(
+                <div style={{marginTop:20}}>
+                  <div style={{fontSize:12,fontWeight:500,color:"var(--ink-light)",marginBottom:10}}>Previous Lists</div>
+                  {pastMonths.map(month=>{
+                    const [yr,mo]=month.split("-");
+                    const monthLabel=`${MONTHS[parseInt(mo)-1]} ${yr}`;
+                    const monthItems=pastTodos.filter(t=>t.date.startsWith(month));
+                    const monthOpen=showMonths[month];
+                    const doneCount=monthItems.filter(t=>t.done).length;
+                    const monthDates=[...new Set(monthItems.map(t=>t.date))].sort((a,b)=>b.localeCompare(a));
+                    return(
+                      <div key={month} style={{marginBottom:5}}>
+                        <div className="ht" style={{borderRadius:8}} onClick={()=>setShowMonths(s=>({...s,[month]:!s[month]}))}>
+                          <span className="hl">{monthLabel}</span>
+                          <div style={{display:"flex",alignItems:"center",gap:8}}>
+                            <span className="hc">{doneCount}/{monthItems.length} done</span>
+                            <span className={`hav ${monthOpen?"op":""}`}>▼</span>
                           </div>
-                          {!todo.done&&pflag(todo.priority)}
-                          <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
-                          <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
                         </div>
-                      ))}
-                      {viewTodos.length===0&&<div className="emp">Nothing here ✦</div>}
-                    </div>
-                  </div>
-                  <div style={{marginTop:12}}>
-                    <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
-                    <div className="row"><input className="inp" placeholder="New task for today…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={addTodo}>+ Add</button></div>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* UPCOMING section */}
-            {(todoView==="upcoming"||todoView==="all")&&(()=>{
-              const upTodos=byPri(todos.filter(t=>t.date>TODAY&&(tagFilter==="all"||t.tag===tagFilter)&&(tFilter==="all"||(tFilter==="active"?!t.done:t.done))));
-              return(
-                <div style={{marginBottom:22}}>
-                  {todoView==="upcoming"&&<div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                    <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Upcoming</span>
-                    <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{upTodos.length}</span>
-                  </div>}
-                  <div style={{marginBottom:12}}>
-                    <div className="ht" style={{borderRadius:8,marginBottom:showTomorrow?8:0}} onClick={()=>setShowTomorrow(s=>!s)}>
-                      <div><div className="hl">Tomorrow · {new Date(TOMORROW+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div></div>
-                      <div style={{display:"flex",alignItems:"center",gap:8}}><span className="hc">{tomorrowTodos.length} tasks</span><span className={`hav ${showTomorrow?"op":""}`}>▼</span></div>
-                    </div>
-                    {showTomorrow&&<>
-                      <div className="todo-task-card" style={{marginBottom:10}}>
-                        <div className="tl">
-                          {byPri(tomorrowTodos).map(todo=>(
-                            <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                              <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                              <div className="tb2">
-                                {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
-                                <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+                        {monthOpen&&monthDates.map(date=>{
+                          const dayItems=monthItems.filter(t=>t.date===date);
+                          const dayOpen=showHist[date];
+                          return(
+                            <div key={date} style={{paddingLeft:14,marginTop:3}}>
+                              <div className="ht" style={{borderRadius:7,background:"rgba(26,20,16,.02)"}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
+                                <span style={{fontSize:12,color:"var(--ink-light)"}}>{fd(date)}</span>
+                                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                                  <span className="hc">{dayItems.filter(t=>t.done).length}/{dayItems.length}</span>
+                                  <span className={`hav ${dayOpen?"op":""}`}>▼</span>
+                                </div>
                               </div>
-                              {!todo.done&&pflag(todo.priority)}
-                              <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
-                              <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
+                              {dayOpen&&<div className="his">{dayItems.map(todo=>(
+                                <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
+                                  <div className="tc"/>
+                                  <div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>
+                                  <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
+                                </div>
+                              ))}</div>}
                             </div>
-                          ))}
-                          {tomorrowTodos.length===0&&<div className="emp">Nothing planned yet ✦</div>}
-                        </div>
+                          );
+                        })}
                       </div>
-                      <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
-                      <div className="row"><input className="inp" placeholder="New task for tomorrow…" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TOMORROW,priority:newTodoPriority}]);setNewTodo("")}}}/><select className="sel" value={newTodoTag} onChange={e=>setNewTodoTag(e.target.value)}>{tags.map(tag=><option key={tag}>{tag}</option>)}</select><button className="bp" onClick={()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date:TOMORROW,priority:newTodoPriority}]);setNewTodo("");}}>+ Add</button></div>
-                    </>}
-                  </div>
-                  {[...new Set(upTodos.filter(t=>t.date!==TOMORROW).map(t=>t.date))].sort().map(date=>{
-                    const items=upTodos.filter(t=>t.date===date);const open=showHist[date];
-                    return(<div key={date} className="hg"><div className="ht" style={{borderRadius:8}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
-                      <span className="hl">{fd(date)}</span><div style={{display:"flex",alignItems:"center",gap:8}}><span className="hc">{items.length} tasks</span><span className={`hav ${open?"op":""}`}>▼</span></div></div>
-                      {open&&<div className="his tl">{items.map(todo=><div key={todo.id} className={`ti ${todo.done?"dn":""}`}><div className="tc" onClick={()=>toggleTodo(todo.id)}/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>{!todo.done&&pflag(todo.priority)}<button className="te" onClick={()=>startEditTodo(todo)}>✎</button><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>)}</div>}
-                    </div>);
+                    );
                   })}
                 </div>
-              );
-            })()}
+              )}
+            </div>
 
-            {/* COMPLETED section */}
-            {todoView==="completed"&&(()=>{
-              const dTodos=todos.filter(t=>t.done&&t.date===TODAY&&(tagFilter==="all"||t.tag===tagFilter));
-              return(<div>
-                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                  <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Completed Today</span>
-                  <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{dTodos.length}</span>
+            {/* ── Right sidebar ── */}
+            <div className="todo-side">
+              {/* My Tags */}
+              <div className="side-card">
+                <div className="side-ttl">My Tags</div>
+                <div className="tr">{tags.map(tag=><div key={tag} className="tch">{tag}<button className="tcd" onClick={()=>delTag(tag)}>×</button></div>)}</div>
+                <div style={{display:"flex",gap:5,marginTop:10}}>
+                  <input className="inp" style={{fontSize:11,flex:1}} placeholder="New tag…" value={newTag} onChange={e=>setNewTag(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTag()}/>
+                  <button className="bp" style={{padding:"7px 12px",fontSize:11}} onClick={addTag}>+ Add</button>
                 </div>
-                <div className="todo-task-card">
-                  <div className="tl">
-                    {dTodos.map(todo=>(<div key={todo.id} className="ti dn"><div className="tc" onClick={()=>toggleTodo(todo.id)}/><div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div><button className="td" onClick={()=>delTodo(todo.id)}>×</button></div>))}
-                    {dTodos.length===0&&<div className="emp">Nothing completed yet today ✦</div>}
-                  </div>
-                </div>
-              </div>);
-            })()}
-
-            {/* LIST / TAG view */}
-            {!["today","upcoming","completed","all"].includes(todoView)&&(()=>{
-              const listTodos=byPri(todos.filter(t=>t.tag===todoView&&(tFilter==="all"||(tFilter==="active"?!t.done:t.done))));
-              return(<div>
-                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                  <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>{todoView}</span>
-                  <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{listTodos.length}</span>
-                </div>
-                <div className="tl">
-                  {listTodos.map(todo=>(<div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                    <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                    <div className="tb2">
-                      {editTodoId===todo.id?<input className="inp" autoFocus value={editTodoTxt} onChange={e=>setEditTodoTxt(e.target.value)} onBlur={saveEditTodo} onKeyDown={e=>e.key==="Enter"&&saveEditTodo()} style={{fontSize:13,padding:"4px 8px",height:"auto"}}/>:<div className="tt" onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>}
-                      <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
-                    </div>
-                    {!todo.done&&pflag(todo.priority)}
-                    <button className="te" onClick={()=>startEditTodo(todo)}>✎</button>
-                    <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
-                  </div>))}
-                  {listTodos.length===0&&<div className="emp">No tasks in this list ✦</div>}
-                </div>
-                <div style={{marginTop:12}}>
-                  <div className="pri-row"><span className="pri-lbl">Priority:</span>{["high","medium","low"].map(p=>(<button key={p} className={`pri-btn ${newTodoPriority===p?"on":""}`} style={newTodoPriority===p?{background:PCOLS[p]}:{}} onClick={()=>setNewTodoPriority(p)}>{p}</button>))}</div>
-                  <div className="row"><input className="inp" placeholder={`New ${todoView} task…`} value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:todoView,date:TODAY,priority:newTodoPriority}]);setNewTodo("")}}}/><button className="bp" onClick={()=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:todoView,date:TODAY,priority:newTodoPriority}]);setNewTodo("");}}>+ Add</button></div>
-                </div>
-              </div>);
-            })()}
-
-            {/* Previous lists — grouped by month, collapsed by default */}
-            {(todoView==="all"||todoView==="today")&&pastMonths.length>0&&(
-              <div style={{marginTop:4}}>
-                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                  <span style={{fontSize:12,fontWeight:500,color:"var(--ink-light)"}}>Previous Lists</span>
-                </div>
-                {pastMonths.map(month=>{
-                  const [yr,mo]=month.split("-");
-                  const monthLabel=`${MONTHS[parseInt(mo)-1]} ${yr}`;
-                  const monthItems=pastTodos.filter(t=>t.date.startsWith(month));
-                  const monthOpen=showMonths[month];
-                  const doneCount=monthItems.filter(t=>t.done).length;
-                  const monthDates=[...new Set(monthItems.map(t=>t.date))].sort((a,b)=>b.localeCompare(a));
-                  return(
-                    <div key={month} style={{marginBottom:5}}>
-                      <div className="ht" style={{borderRadius:8}} onClick={()=>setShowMonths(s=>({...s,[month]:!s[month]}))}>
-                        <span className="hl">{monthLabel}</span>
-                        <div style={{display:"flex",alignItems:"center",gap:8}}>
-                          <span className="hc">{doneCount}/{monthItems.length} done</span>
-                          <span className={`hav ${monthOpen?"op":""}`}>▼</span>
-                        </div>
-                      </div>
-                      {monthOpen&&monthDates.map(date=>{
-                        const dayItems=monthItems.filter(t=>t.date===date);
-                        const dayOpen=showHist[date];
-                        return(
-                          <div key={date} style={{paddingLeft:14,marginTop:3}}>
-                            <div className="ht" style={{borderRadius:7,background:"rgba(26,20,16,.02)"}} onClick={()=>setShowHist(h=>({...h,[date]:!h[date]}))}>
-                              <span style={{fontSize:12,color:"var(--ink-light)"}}>{fd(date)}</span>
-                              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                                <span className="hc">{dayItems.filter(t=>t.done).length}/{dayItems.length}</span>
-                                <span className={`hav ${dayOpen?"op":""}`}>▼</span>
-                              </div>
-                            </div>
-                            {dayOpen&&<div className="his">{dayItems.map(todo=>(
-                              <div key={todo.id} className={`ti ${todo.done?"dn":""}`}>
-                                <div className="tc"/>
-                                <div className="tb2"><div className="tt">{todo.text}</div><div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div></div>
-                                <button className="td" onClick={()=>delTodo(todo.id)}>×</button>
-                              </div>
-                            ))}</div>}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
               </div>
-            )}
-          </div>
-
-          {/* ── Right sidebar ── */}
-          <div className="todo-rsb">
-            {/* My Tags */}
-            <div>
-              <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,color:"var(--ink)",marginBottom:10}}>My Tags</div>
-              <div className="tr">{tags.map(tag=><div key={tag} className="tch">{tag}<button className="tcd" onClick={()=>delTag(tag)}>×</button></div>)}</div>
-              <div style={{display:"flex",gap:5,marginTop:8}}>
-                <input className="inp" style={{fontSize:11,flex:1}} placeholder="New tag…" value={newTag} onChange={e=>setNewTag(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTag()}/>
-                <button className="bp" style={{padding:"7px 12px",fontSize:11}} onClick={addTag}>+ Add</button>
+              {/* Completed Today */}
+              <div className="side-card">
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                  <div className="side-ttl" style={{marginBottom:0}}>Completed Today</div>
+                  <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 7px",fontSize:10,color:"var(--ink-light)"}}>{todos.filter(t=>t.done&&t.date===TODAY).length}</span>
+                </div>
+                {todos.filter(t=>t.done&&t.date===TODAY).length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>No tasks completed yet ✦</div>}
+                {todos.filter(t=>t.done&&t.date===TODAY).map(todo=>(
+                  <div key={todo.id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:7,cursor:"pointer"}} onClick={()=>toggleTodo(todo.id)}>
+                    <div style={{width:14,height:14,borderRadius:"50%",background:"var(--sage)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                      <span style={{fontSize:8,color:"white"}}>✓</span>
+                    </div>
+                    <span style={{fontSize:11.5,color:"var(--ink-light)",textDecoration:"line-through",flex:1}}>{todo.text}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Completed Today */}
-            <div>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,color:"var(--ink)"}}>Completed Today</div>
-                <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 7px",fontSize:10,color:"var(--ink-light)"}}>{todos.filter(t=>t.done&&t.date===TODAY).length}</span>
-              </div>
-              {todos.filter(t=>t.done&&t.date===TODAY).length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>No tasks completed yet ✦</div>}
-              {todos.filter(t=>t.done&&t.date===TODAY).map(todo=>(
-                <div key={todo.id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:7,cursor:"pointer"}} onClick={()=>toggleTodo(todo.id)}>
-                  <div style={{width:14,height:14,borderRadius:"50%",background:"var(--sage)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    <span style={{fontSize:8,color:"white"}}>✓</span>
-                  </div>
-                  <span style={{fontSize:11.5,color:"var(--ink-light)",textDecoration:"line-through",flex:1}}>{todo.text}</span>
-                </div>
-              ))}
-            </div>
           </div>
-
         </div>
         );})()}
 
