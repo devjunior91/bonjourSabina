@@ -117,8 +117,10 @@ const DEF_PACK={
 };
 
 const NOW=new Date();
-const TODAY=NOW.toISOString().split("T")[0];
-const TOMORROW=new Date(NOW.getTime()+86400000).toISOString().split("T")[0];
+const _ld=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const TODAY=_ld(NOW);
+const _tmr=new Date(NOW);_tmr.setDate(NOW.getDate()+1);
+const TOMORROW=_ld(_tmr);
 const TODAY_DAY=DAYS[NOW.getDay()===0?6:NOW.getDay()-1];
 const QUOTE=QUOTES[NOW.getDate()%QUOTES.length];
 const PRIORITY_ORD={high:0,medium:1,low:2};
@@ -577,17 +579,15 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .todo-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
 .todo-chd{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(26,20,16,.06);}
 .todo-cpri{width:90px;font-size:10px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;text-align:center;flex-shrink:0;}
-.todo-ctime{width:60px;font-size:10px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;text-align:center;flex-shrink:0;}
 .tr2{display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid rgba(26,20,16,.04);position:relative;transition:background .12s;}
 .tr2:hover{background:#fafafa;}
 .tr2-ck{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .tr2-ck.done{background:var(--sage);border-color:var(--sage);}
-.tr2-body{flex:1;min-width:0;}
-.tr2-txt{font-size:13px;color:var(--ink);line-height:1.4;}
+.tr2-body{flex:1;min-width:0;text-align:left;}
+.tr2-txt{font-size:13px;color:var(--ink);line-height:1.4;text-align:left;}
 .tr2-txt.done{text-decoration:line-through;color:var(--ink-light);opacity:.7;}
 .tr2-tg{display:inline-block;font-size:10px;color:var(--ink-light);background:var(--parchment);border-radius:5px;padding:1px 7px;margin-top:3px;}
 .tr2-pri{width:90px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.tr2-time{width:60px;font-size:11.5px;color:var(--ink-light);text-align:center;flex-shrink:0;}
 .tr2-dot{width:28px;height:28px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;}
 .tr2-dot:hover{background:var(--parchment);color:var(--ink);}
 .tmenu{position:absolute;right:4px;top:40px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.13);z-index:150;min-width:178px;overflow:hidden;}
@@ -682,7 +682,7 @@ export default function App() {
   const [showTomorrow,setShowTomorrow]=useState(false);
   const [editTodoId,setEditTodoId]=useState(null);
   const [editTodoTxt,setEditTodoTxt]=useState("");
-  const [liveDate,setLiveDate]=useState(()=>new Date().toISOString().split("T")[0]);
+  const [liveDate,setLiveDate]=useState(()=>_ld(new Date()));
   const [newTag,setNewTag]=useState("");
   const [vMonth,setVMonth]=useState(MK);
   const [goalForm,setGoalForm]=useState(null);
@@ -714,7 +714,6 @@ export default function App() {
   const [newModalText,setNewModalText]=useState("");
   const [newModalPri,setNewModalPri]=useState("medium");
   const [newModalTag,setNewModalTag]=useState("Personal");
-  const [newModalTime,setNewModalTime]=useState("");
 
   // Pomodoro timer state
   const [pomoDur,setPomoDur]=useState(1500);
@@ -760,7 +759,7 @@ export default function App() {
   },[]);
   // Shadow module-level date constants with live reactive versions
   const TODAY=liveDate;
-  const TOMORROW=new Date(new Date(liveDate+"T12:00:00").getTime()+86400000).toISOString().split("T")[0];
+  const TOMORROW=(()=>{const d=new Date(liveDate+"T12:00:00");d.setDate(d.getDate()+1);return _ld(d);})();
   const TODAY_DAY=DAYS[new Date(liveDate+"T12:00:00").getDay()===0?6:new Date(liveDate+"T12:00:00").getDay()-1];
 
   // Weekly habit reset — archive last week, reset days to false
@@ -1379,7 +1378,7 @@ export default function App() {
         {/* ── TO-DO LISTS ── */}
         {page==="todos"&&(()=>{
           // Helpers
-          const addDays=(dateStr,n)=>{const d=new Date(dateStr+"T00:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);};
+          const addDays=(dateStr,n)=>{const d=new Date(dateStr+"T12:00:00");d.setDate(d.getDate()+n);return _ld(d);};
           const viewDate=addDays(TODAY,viewDayOffset);
           const VIEW_LBL=viewDayOffset===0?"Today":viewDayOffset===1?"Tomorrow":new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long"});
           const VIEW_FULL=new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
@@ -1404,8 +1403,8 @@ export default function App() {
           // Modal add
           const handleModalAdd=()=>{
             if(!newModalText.trim())return;
-            setTodos(ts=>[...ts,{id:Date.now(),text:newModalText,done:false,tag:newModalTag,date:viewDate,priority:newModalPri,time:newModalTime}]);
-            setNewModalText("");setNewModalTime("");setNewModalPri("medium");setShowNewModal(false);
+            setTodos(ts=>[...ts,{id:Date.now(),text:newModalText,done:false,tag:newModalTag,date:viewDate,priority:newModalPri}]);
+            setNewModalText("");setNewModalPri("medium");setShowNewModal(false);
           };
           return(
         <div className="todo-wrap">
@@ -1419,19 +1418,11 @@ export default function App() {
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to {VIEW_LBL} · {new Date(viewDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
                 <label className="mlbl">Task</label>
                 <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={newModalText} onChange={e=>setNewModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleModalAdd()} autoFocus/>
-                <div style={{display:"flex",gap:12,marginBottom:14}}>
-                  <div style={{flex:1}}>
-                    <label className="mlbl">Priority</label>
-                    <div style={{display:"flex",gap:5,marginTop:5}}>
-                      {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
-                        <button key={p} className="mpri" style={newModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setNewModalPri(p)}>{p}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{flex:1}}>
-                    <label className="mlbl">Time</label>
-                    <input className="minp" style={{marginTop:5}} type="time" value={newModalTime} onChange={e=>setNewModalTime(e.target.value)}/>
-                  </div>
+                <label className="mlbl">Priority</label>
+                <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
+                  {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
+                    <button key={p} className="mpri" style={newModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setNewModalPri(p)}>{p}</button>
+                  ))}
                 </div>
                 <label className="mlbl">Tag</label>
                 <select className="msel" style={{marginBottom:22}} value={newModalTag} onChange={e=>setNewModalTag(e.target.value)}>
@@ -1516,7 +1507,6 @@ export default function App() {
                     <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{viewTodos.length}</span>
                   </div>
                   <div className="todo-cpri">Priority</div>
-                  <div className="todo-ctime">Time</div>
                   <div style={{width:28}}/>
                 </div>
 
@@ -1534,7 +1524,6 @@ export default function App() {
                       <span className="tr2-tg">{todo.tag}</span>
                     </div>
                     <div className="tr2-pri">{pflag(todo.priority)}</div>
-                    <div className="tr2-time">{todo.time||"—"}</div>
                     <button className="tr2-dot" onClick={e=>{e.stopPropagation();setShowTaskMenu(showTaskMenu===todo.id?null:todo.id);}}>⋮</button>
                     {showTaskMenu===todo.id&&(
                       <div className="tmenu" onClick={e=>e.stopPropagation()}>
