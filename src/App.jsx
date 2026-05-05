@@ -659,7 +659,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .todo-fbar{padding:0 24px 14px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 .todo-body{display:grid;grid-template-columns:1fr 260px;align-items:start;}
 .todo-main{padding:0 24px 64px;}
-.todo-side{padding:14px 18px 64px;border-left:1px solid rgba(26,20,16,.08);background:#faf7f3;display:flex;flex-direction:column;gap:14px;min-height:calc(100vh - 56px);}
+.todo-side{padding:0 18px 64px;display:flex;flex-direction:column;gap:14px;}
 .todo-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
 .todo-chd{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(26,20,16,.06);}
 .todo-cpri{width:90px;font-size:10px;font-weight:600;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;text-align:center;flex-shrink:0;}
@@ -672,6 +672,9 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .tr2-txt.done{text-decoration:line-through;color:var(--ink-light);opacity:.7;}
 .tr2-tg{display:inline-block;font-size:10px;color:var(--ink-light);background:var(--parchment);border-radius:5px;padding:1px 7px;margin-top:3px;}
 .tr2-pri{width:90px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tr2-edit{width:26px;height:26px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .15s,background .15s;}
+.tr2:hover .tr2-edit{opacity:1;}
+.tr2-edit:hover{background:var(--parchment);color:var(--gold-deep);}
 .tr2-dot{width:28px;height:28px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;}
 .tr2-dot:hover{background:var(--parchment);color:var(--ink);}
 .tmenu{position:absolute;right:4px;top:40px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.13);z-index:150;min-width:178px;overflow:hidden;}
@@ -851,6 +854,7 @@ export default function App() {
   const TODAY=liveDate;
   const TOMORROW=(()=>{const d=new Date(liveDate+"T12:00:00");d.setDate(d.getDate()+1);return _ld(d);})();
   const TODAY_DAY=DAYS[new Date(liveDate+"T12:00:00").getDay()===0?6:new Date(liveDate+"T12:00:00").getDay()-1];
+  const todayDayIndex=DAYS.indexOf(TODAY_DAY);
 
   // Weekly habit reset — archive last week, reset days to false
   useEffect(()=>{
@@ -999,7 +1003,6 @@ export default function App() {
   const maxChartPct=Math.max(...weeklyChart.map(w=>w.pct),1);
 
   // Daily progress
-  const todayDayIndex=DAYS.indexOf(TODAY_DAY);
   const habitsDoneToday=habits.filter(h=>h.days[todayDayIndex]).length;
   const habitsTotal=habits.length;
   const todosDoneToday=todos.filter(t=>t.done&&t.date===TODAY).length;
@@ -1945,6 +1948,9 @@ export default function App() {
                       <span className="tr2-tg">{todo.tag}</span>
                     </div>
                     <div className="tr2-pri">{pflag(todo.priority)}</div>
+                    <button className="tr2-edit" onClick={e=>{e.stopPropagation();setEditModal({...todo});}} title="Edit task">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
                     <button className="tr2-dot" onClick={e=>{e.stopPropagation();setShowTaskMenu(showTaskMenu===todo.id?null:todo.id);}}>⋮</button>
                     {showTaskMenu===todo.id&&(
                       <div className={`tmenu${menuUp?" up":""}`} onClick={e=>e.stopPropagation()}>
