@@ -1068,6 +1068,8 @@ export default function App() {
   // Bilan computed values
   const bilWeekKey=isoWeekKey(TODAY);
   const bilWeekDates=weekDatesOf(bilWeekKey);
+  const gratWeekEntries=bilWeekDates.reduce((s,d)=>s+(gratitude[d]||[]).length,0);
+  const gratWeekAvg=gratWeekEntries>0?(gratWeekEntries/7).toFixed(1):"0.0";
   const bilWeekTodos=todos.filter(t=>bilWeekDates.includes(t.date));
   const bilWeekDone=bilWeekTodos.filter(t=>t.done).length;
   const bilWeekTotal=bilWeekTodos.length;
@@ -1098,6 +1100,39 @@ export default function App() {
   const monthGoalsAvgPct=monthGoalsArr.length?Math.round(monthGoalsArr.reduce((s,g)=>s+g.progress,0)/monthGoalsArr.length):0;
   const goalWeightV=monthGoalsArr.length>0?1:0;
   const goalDoneV=monthGoalsArr.length>0?monthGoalsAvgPct/100:0;
+  // Gratitude computed — must be before dayTotal
+  const GRAT_TARGET=5;
+  const todayGrat=gratitude[TODAY]||[];
+  const gratDoneRaw=Math.min(todayGrat.length/GRAT_TARGET,1);
+  const gratStreak=(()=>{
+    let s=0;
+    for(let i=0;i<365;i++){
+      const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-i);
+      const k=_ld(d);
+      if((gratitude[k]||[]).length>=GRAT_TARGET)s++;else break;
+    }
+    return s;
+  })();
+  const longestGratStreak=(()=>{
+    const dates=Object.keys(gratitude).filter(d=>(gratitude[d]||[]).length>=GRAT_TARGET).sort();
+    if(!dates.length)return 0;
+    let max=1,cur=1;
+    for(let i=1;i<dates.length;i++){
+      const diff=(new Date(dates[i]+"T12:00:00")-new Date(dates[i-1]+"T12:00:00"))/86400000;
+      if(diff===1){cur++;if(cur>max)max=cur;}else cur=1;
+    }
+    return max;
+  })();
+  const gratTotal=Object.values(gratitude).reduce((s,arr)=>s+arr.length,0);
+  const addGrat=()=>{
+    if(!gratInput.trim())return;
+    const now=new Date();
+    const time=now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    setGratitude(g=>({...g,[TODAY]:[...(g[TODAY]||[]),{id:Date.now(),text:gratInput.trim(),time}]}));
+    setGratInput("");
+    chime();
+  };
+  const delGrat=(date,id)=>setGratitude(g=>({...g,[date]:(g[date]||[]).filter(e=>e.id!==id)}));
   const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday+goalWeightV+1;
   const dayDoneRaw=habitsDoneToday+todosDoneToday+cleaningDoneToday+goalDoneV+gratDoneRaw;
   const dayDone=Math.round(dayDoneRaw);
@@ -1200,42 +1235,6 @@ export default function App() {
     return`${best&&best.str>=2?`${best.name} has a ${best.str}-day streak — don't break it!`:"Every habit checked is a win. Start small and build momentum."}`;
   })();
   const unreadNotifs=notifications.filter(n=>!n.read).length;
-
-  // Gratitude computed
-  const GRAT_TARGET=5;
-  const todayGrat=gratitude[TODAY]||[];
-  const gratDoneRaw=Math.min(todayGrat.length/GRAT_TARGET,1);
-  const gratStreak=(()=>{
-    let s=0;
-    for(let i=0;i<365;i++){
-      const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-i);
-      const k=_ld(d);
-      if((gratitude[k]||[]).length>=GRAT_TARGET)s++;else break;
-    }
-    return s;
-  })();
-  const longestGratStreak=(()=>{
-    const dates=Object.keys(gratitude).filter(d=>(gratitude[d]||[]).length>=GRAT_TARGET).sort();
-    if(!dates.length)return 0;
-    let max=1,cur=1;
-    for(let i=1;i<dates.length;i++){
-      const diff=(new Date(dates[i]+"T12:00:00")-new Date(dates[i-1]+"T12:00:00"))/86400000;
-      if(diff===1){cur++;if(cur>max)max=cur;}else cur=1;
-    }
-    return max;
-  })();
-  const gratTotal=Object.values(gratitude).reduce((s,arr)=>s+arr.length,0);
-  const gratWeekEntries=bilWeekDates.reduce((s,d)=>s+(gratitude[d]||[]).length,0);
-  const gratWeekAvg=gratWeekEntries>0?(gratWeekEntries/7).toFixed(1):"0.0";
-  const addGrat=()=>{
-    if(!gratInput.trim())return;
-    const now=new Date();
-    const time=now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
-    setGratitude(g=>({...g,[TODAY]:[...(g[TODAY]||[]),{id:Date.now(),text:gratInput.trim(),time}]}));
-    setGratInput("");
-    chime();
-  };
-  const delGrat=(date,id)=>setGratitude(g=>({...g,[date]:(g[date]||[]).filter(e=>e.id!==id)}));
 
   // Habit icon renderer — available across all pages
   const HI=(id,color,size=18)=>{
