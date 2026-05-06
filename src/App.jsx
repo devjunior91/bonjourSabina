@@ -610,6 +610,57 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pack-total{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);margin-left:auto;text-align:right;}
 @media(max-width:900px){.pack-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:600px){.pack-grid{grid-template-columns:1fr;}}
+/* ── GRATITUDE ── */
+.grat-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.grat-top{padding:24px 24px 0;}
+.grat-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.grat-body{display:grid;grid-template-columns:1fr 280px;gap:20px;padding:0 24px 64px;align-items:start;}
+.grat-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);}
+.grat-prog-dots{display:flex;align-items:center;gap:0;margin:16px 0 12px;position:relative;}
+.grat-dot-line{position:absolute;top:50%;left:0;right:0;height:2px;background:var(--parchment);z-index:0;transform:translateY(-50%);}
+.grat-dot-fill{position:absolute;top:50%;left:0;height:2px;background:var(--gold);z-index:1;transform:translateY(-50%);transition:width .5s;}
+.grat-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--parchment);background:#fff;z-index:2;flex-shrink:0;transition:all .3s;cursor:default;}
+.grat-dot.ck{background:var(--gold);border-color:var(--gold);}
+.grat-dots-row{display:flex;justify-content:space-between;width:100%;position:relative;}
+.grat-input-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--shadow);}
+.grat-input-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.grat-inp{width:100%;border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;background:#faf8f5;resize:none;min-height:52px;transition:border-color .2s;box-sizing:border-box;}
+.grat-inp:focus{border-color:var(--gold);}
+.grat-inp::placeholder{color:rgba(26,20,16,.35);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;}
+.grat-add-btn{display:flex;align-items:center;gap:6px;padding:"10px 20px";background:var(--ink);color:#f4ede3;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.grat-add-btn:hover{background:var(--gold-deep);}
+.grat-list-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.grat-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(26,20,16,.05);position:relative;}
+.grat-item:last-child{border-bottom:none;}
+.grat-num{width:24px;height:24px;border-radius:50%;background:var(--parchment);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--ink-light);flex-shrink:0;}
+.grat-num.base{background:var(--gold-pale);color:var(--gold-deep);}
+.grat-text{flex:1;font-size:13px;color:var(--ink);line-height:1.4;}
+.grat-time{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);flex-shrink:0;min-width:36px;text-align:right;}
+.grat-dot-menu{width:26px;height:26px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:16px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
+.grat-item:hover .grat-dot-menu{opacity:1;}
+.grat-dot-menu:hover{background:var(--parchment);}
+.grat-imenu{position:absolute;right:0;top:36px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:200;min-width:120px;overflow:hidden;}
+.grat-imenu-item{padding:9px 14px;font-size:12px;color:var(--ink);cursor:pointer;transition:background .1s;white-space:nowrap;}
+.grat-imenu-item:hover{background:var(--parchment);}
+.grat-imenu-item.del{color:#d93535;}
+/* Streak bar chart */
+.grat-streak-bars{display:flex;align-items:flex-end;gap:5px;height:52px;}
+.grat-sbar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.grat-sbar{width:100%;border-radius:4px 4px 0 0;min-height:3px;transition:height .4s;}
+.grat-sbar-lbl{font-size:9px;color:var(--ink-light);}
+/* Week stats table */
+.grat-stat-row-tbl{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(26,20,16,.05);}
+.grat-stat-row-tbl:last-child{border-bottom:none;}
+.grat-stat-lbl{font-size:12.5px;color:var(--ink);}
+.grat-stat-val{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);font-weight:500;}
+/* Reminder toggle */
+.grat-rem-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(26,20,16,.05);}
+.grat-rem-row:last-of-type{border-bottom:none;}
+.grat-toggle{width:40px;height:22px;border-radius:11px;cursor:pointer;border:none;padding:2px;transition:background .2s;flex-shrink:0;display:flex;align-items:center;}
+.grat-toggle.on{background:var(--ink);justify-content:flex-end;}
+.grat-toggle.off{background:var(--border);justify-content:flex-start;}
+.grat-toggle-knob{width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+@media(max-width:900px){.grat-body{grid-template-columns:1fr;}}
 .bil-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .bil-score{font-family:'Playfair Display',serif;font-size:68px;font-weight:600;line-height:1;}
 .bil-bar{height:7px;background:var(--parchment);border-radius:8px;overflow:hidden;margin:5px 0 2px;}
@@ -753,8 +804,6 @@ export default function App() {
   const [todos,setTodos]=useDB("sab_todos",[]);
   const [goals,setGoals]=useDB("sab_goals",{});
   const [cleaning,setCleaning]=useDB("sab_clean",DEF_CLEANING);
-  const [pack,setPack]=useDB("sab_pack",DEF_PACK);
-  const [packInputs,setPackInputs]=useState({});
   const [events,setEvents]=useDB("sab_events",[]);
   const [newHabit,setNewHabit]=useState("");
   const [editHabit,setEditHabit]=useState(null);
@@ -799,6 +848,10 @@ export default function App() {
   const [habitViewWeek,setHabitViewWeek]=useState(0); // 0=this week, 1=last week, etc.
   const [notifications,setNotifications]=useDB("sab_notifs",[]);
   const [showNotifs,setShowNotifs]=useState(false);
+  const [gratitude,setGratitude]=useDB("sab_gratitude",{});
+  const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
+  const [gratInput,setGratInput]=useState("");
+  const [gratMenuId,setGratMenuId]=useState(null);
   const [notifDismissed,setNotifDismissed]=useState(false);
   const [viewDayOffset,setViewDayOffset]=useState(0);
   const [showTaskMenu,setShowTaskMenu]=useState(null);
@@ -894,6 +947,37 @@ export default function App() {
     const t=setInterval(check,60000);
     return()=>clearInterval(t);
   },[habits,TODAY,todayDayIndex]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Gratitude reminder notifications
+  useEffect(()=>{
+    const check=()=>{
+      const now=new Date();
+      const hr=now.getHours();const mn=now.getMinutes();
+      const today=TODAY;
+      const todayCount=(gratitude[today]||[]).length;
+      if(gratReminders.morning){
+        const[mh,mm]=gratReminders.morningTime.split(":").map(Number);
+        if(hr===mh&&mn===mm){
+          setNotifications(ns=>{
+            if(ns.some(n=>n.date===today&&n.type==="grat-morning"))return ns;
+            return[...ns,{id:Date.now(),type:"grat-morning",date:today,text:"Good morning! Take a moment for your gratitude reflection ✦",read:false}];
+          });
+        }
+      }
+      if(gratReminders.evening){
+        const[eh,em]=gratReminders.eveningTime.split(":").map(Number);
+        if(hr===eh&&mn===em&&todayCount<5){
+          setNotifications(ns=>{
+            if(ns.some(n=>n.date===today&&n.type==="grat-evening"))return ns;
+            return[...ns,{id:Date.now(),type:"grat-evening",date:today,text:`You've logged ${todayCount}/5 gratitude entries today — take a quiet moment to reflect ✦`,read:false}];
+          });
+        }
+      }
+    };
+    check();
+    const t=setInterval(check,60000);
+    return()=>clearInterval(t);
+  },[gratReminders,gratitude,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Pomodoro controls
   const pomoStart=()=>{
@@ -1014,8 +1098,8 @@ export default function App() {
   const monthGoalsAvgPct=monthGoalsArr.length?Math.round(monthGoalsArr.reduce((s,g)=>s+g.progress,0)/monthGoalsArr.length):0;
   const goalWeightV=monthGoalsArr.length>0?1:0;
   const goalDoneV=monthGoalsArr.length>0?monthGoalsAvgPct/100:0;
-  const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday+goalWeightV;
-  const dayDoneRaw=habitsDoneToday+todosDoneToday+cleaningDoneToday+goalDoneV;
+  const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday+goalWeightV+1;
+  const dayDoneRaw=habitsDoneToday+todosDoneToday+cleaningDoneToday+goalDoneV+gratDoneRaw;
   const dayDone=Math.round(dayDoneRaw);
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
 
@@ -1117,6 +1201,42 @@ export default function App() {
   })();
   const unreadNotifs=notifications.filter(n=>!n.read).length;
 
+  // Gratitude computed
+  const GRAT_TARGET=5;
+  const todayGrat=gratitude[TODAY]||[];
+  const gratDoneRaw=Math.min(todayGrat.length/GRAT_TARGET,1);
+  const gratStreak=(()=>{
+    let s=0;
+    for(let i=0;i<365;i++){
+      const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-i);
+      const k=_ld(d);
+      if((gratitude[k]||[]).length>=GRAT_TARGET)s++;else break;
+    }
+    return s;
+  })();
+  const longestGratStreak=(()=>{
+    const dates=Object.keys(gratitude).filter(d=>(gratitude[d]||[]).length>=GRAT_TARGET).sort();
+    if(!dates.length)return 0;
+    let max=1,cur=1;
+    for(let i=1;i<dates.length;i++){
+      const diff=(new Date(dates[i]+"T12:00:00")-new Date(dates[i-1]+"T12:00:00"))/86400000;
+      if(diff===1){cur++;if(cur>max)max=cur;}else cur=1;
+    }
+    return max;
+  })();
+  const gratTotal=Object.values(gratitude).reduce((s,arr)=>s+arr.length,0);
+  const gratWeekEntries=bilWeekDates.reduce((s,d)=>s+(gratitude[d]||[]).length,0);
+  const gratWeekAvg=gratWeekEntries>0?(gratWeekEntries/7).toFixed(1):"0.0";
+  const addGrat=()=>{
+    if(!gratInput.trim())return;
+    const now=new Date();
+    const time=now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    setGratitude(g=>({...g,[TODAY]:[...(g[TODAY]||[]),{id:Date.now(),text:gratInput.trim(),time}]}));
+    setGratInput("");
+    chime();
+  };
+  const delGrat=(date,id)=>setGratitude(g=>({...g,[date]:(g[date]||[]).filter(e=>e.id!==id)}));
+
   // Habit icon renderer — available across all pages
   const HI=(id,color,size=18)=>{
     const fn=HABIT_ICON_SVGS[id];
@@ -1133,7 +1253,7 @@ export default function App() {
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
     {id:"cleaning",label:"Rituel",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
     {id:"bilan",label:"Bilan",icon:<S><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></S>},
-    {id:"packing",label:"Packing",icon:<S><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></S>},
+    {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
   ];
 
   // ── PASSWORD GATE ──
@@ -2264,64 +2384,193 @@ export default function App() {
           </div>
         </>}
 
-        {page==="packing"&&(()=>{
-          const totalItems=pack.categories.reduce((a,c)=>a+c.items.length,0);
-          const doneItems=pack.categories.reduce((a,c)=>a+c.items.filter(i=>i.done).length,0);
-          const pct=totalItems?Math.round(doneItems/totalItems*100):0;
-          const toggleItem=(catId,itemId)=>setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:c.items.map(i=>i.id===itemId?{...i,done:!i.done}:i)}:c)}));
-          const delItem=(catId,itemId)=>setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:c.items.filter(i=>i.id!==itemId)}:c)}));
-          const addItem=(catId,text)=>{if(!text.trim())return;const newId=Date.now();setPack(p=>({...p,categories:p.categories.map(c=>c.id===catId?{...c,items:[...c.items,{id:newId,text:text.trim(),done:false}]}:c)}));};
-          return(<>
-            <div style={{marginBottom:28}}>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Bon voyage, Sabina</div>
-              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Packing <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>List</em></h1>
-              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Tick items as you pack them · add or remove anything you need</p>
-            </div>
-
-            {/* Trip header */}
-            <div className="pack-trip-hd">
-              <div style={{fontSize:28}}>✈️</div>
-              <div>
-                <div className="pack-trip-dest">🇬🇧 {pack.trip.destination}</div>
-                <div className="pack-trip-meta">Departing {pack.trip.from} · {pack.trip.nights} nights</div>
-              </div>
-              <div className="pack-total">
-                <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink)",fontWeight:400}}>{doneItems}<span style={{fontSize:14,color:"var(--ink-light)"}}>/{totalItems}</span></div>
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:pct===100?"var(--sage)":"var(--ink-light)"}}>{pct===100?"All packed ✦":`${pct}% packed`}</div>
-                <div style={{height:4,borderRadius:2,background:"var(--parchment)",marginTop:6,width:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:2,background:"var(--sage)",width:`${pct}%`,transition:"width .4s"}}/></div>
+        {/* ── GRATITUDE ── */}
+        {page==="gratitude"&&(()=>{
+          const PROMPTS=["I'm grateful for that moment when…","Something small that made me smile today…","A little thing I almost didn't notice…","Something that could've gone wrong but didn't…","A tiny comfort I appreciated today…"];
+          const promptIdx=todayGrat.length%PROMPTS.length;
+          const weekBarData=DAYS.map((d,i)=>{
+            const date=bilWeekDates[i];
+            const count=(gratitude[date]||[]).length;
+            return{d,count,pct:Math.min(count/GRAT_TARGET,1)};
+          });
+          const maxBar=Math.max(...weekBarData.map(b=>b.count),1);
+          return(
+          <div className="grat-wrap">
+            {/* Header */}
+            <div className="grat-top">
+              <div className="grat-hd-row">
+                <div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Gratitude</div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Focus on the good, and watch your life grow.</div>
+                </div>
+                <button onClick={()=>{document.getElementById("grat-input-field")?.focus();}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
               </div>
             </div>
 
-            {/* Categories grid */}
-            <div className="pack-grid">
-              {pack.categories.map(cat=>{
-                const catDone=cat.items.filter(i=>i.done).length;
-                const catTotal=cat.items.length;
-                const catPct=catTotal?catDone/catTotal:0;
-                return(
-                  <div key={cat.id} className="pack-cat">
-                    <div className="pack-cat-hd">
-                      <span className="pack-cat-icon">{cat.icon}</span>
-                      <span className="pack-cat-lbl">{cat.label}</span>
-                      <span className="pack-cat-count">{catDone}/{catTotal}</span>
-                    </div>
-                    <div className="pack-prog"><div className="pack-prog-fill" style={{width:`${catPct*100}%`}}/></div>
-                    {cat.items.map(item=>(
-                      <div key={item.id} className="pack-item">
-                        <div className={`pack-check${item.done?" done":""}`} onClick={()=>toggleItem(cat.id,item.id)}/>
-                        <span className={`pack-txt${item.done?" done":""}`}>{item.text}</span>
-                        <button className="pack-del" onClick={()=>delItem(cat.id,item.id)}>×</button>
+            {/* Body */}
+            <div className="grat-body">
+              {/* LEFT COLUMN */}
+              <div style={{display:"flex",flexDirection:"column",gap:16}}>
+
+                {/* Today progress card */}
+                <div className="grat-card">
+                  <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16}}>
+                    {/* Left: dots progress */}
+                    <div style={{flex:1}}>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Today · {new Date(TODAY+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                      <div style={{fontSize:11.5,color:"var(--ink-light)",marginTop:2}}>{Math.min(todayGrat.length,GRAT_TARGET)} of {GRAT_TARGET} baseline</div>
+                      {/* Progress dots */}
+                      <div style={{position:"relative",display:"flex",alignItems:"center",margin:"18px 0 10px"}}>
+                        <div style={{position:"absolute",top:"50%",left:10,right:10,height:2,background:"var(--parchment)",transform:"translateY(-50%)",zIndex:0}}/>
+                        <div style={{position:"absolute",top:"50%",left:10,height:2,width:`${todayGrat.length>=GRAT_TARGET?100:Math.max(0,((Math.min(todayGrat.length,GRAT_TARGET)-1)/(GRAT_TARGET-1))*100)}%`,background:"var(--gold)",transform:"translateY(-50%)",zIndex:1,transition:"width .5s",maxWidth:"calc(100% - 20px)"}}/>
+                        <div style={{display:"flex",justifyContent:"space-between",width:"100%",position:"relative",zIndex:2}}>
+                          {Array.from({length:GRAT_TARGET},(_,i)=>(
+                            <div key={i} style={{width:22,height:22,borderRadius:"50%",background:i<todayGrat.length?"var(--gold)":"#fff",border:`2px solid ${i<todayGrat.length?"var(--gold)":"var(--parchment)"}`,transition:"all .3s",boxShadow:i<todayGrat.length?"0 0 0 3px rgba(201,168,124,.2)":"none"}}/>
+                          ))}
+                        </div>
                       </div>
-                    ))}
-                    <div className="pack-add">
-                      <input className="inp" style={{flex:1,fontSize:11,padding:"5px 10px"}} placeholder="Add item…" value={packInputs[cat.id]||""} onChange={e=>setPackInputs(p=>({...p,[cat.id]:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){addItem(cat.id,packInputs[cat.id]||"");setPackInputs(p=>({...p,[cat.id]:""}));}}}/>
-                      <button className="bp" style={{fontSize:12,padding:"5px 12px"}} onClick={()=>{addItem(cat.id,packInputs[cat.id]||"");setPackInputs(p=>({...p,[cat.id]:""}));}}>+</button>
+                      {todayGrat.length>=GRAT_TARGET
+                        ?<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)"}}>You've reached your baseline. Well done! ✨</div>
+                        :<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{GRAT_TARGET-todayGrat.length} more to reach your baseline</div>
+                      }
+                    </div>
+                    {/* Right: Why gratitude */}
+                    <div style={{width:240,background:"#faf8f5",borderRadius:12,padding:"16px 18px",flexShrink:0}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                        <span style={{fontSize:16}}>🌱</span>
+                        <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Why gratitude?</span>
+                      </div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:13,color:"var(--ink-light)",lineHeight:1.6}}>Practising gratitude rewires your brain to notice the positive, improving happiness, sleep, and overall wellbeing.</div>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+
+                {/* Input card */}
+                <div className="grat-input-card">
+                  <div className="grat-input-hd">
+                    <div>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)"}}>What are you grateful for?</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginTop:2}}>Take a moment to reflect and add your wins.</div>
+                    </div>
+                    <div style={{textAlign:"right",flexShrink:0}}>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:600,color:todayGrat.length>=GRAT_TARGET?"var(--sage)":"var(--gold-deep)"}}>{Math.min(todayGrat.length,GRAT_TARGET)}/{GRAT_TARGET}</div>
+                      <div style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".06em"}}>Baseline</div>
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:10,alignItems:"flex-end"}}>
+                    <input id="grat-input-field" className="grat-inp" placeholder={PROMPTS[promptIdx]} value={gratInput} onChange={e=>setGratInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addGrat()}/>
+                    <button style={{display:"flex",alignItems:"center",gap:6,padding:"13px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}} onClick={addGrat}>+ Add</button>
+                  </div>
+                </div>
+
+                {/* Today's list */}
+                <div className="grat-card">
+                  <div className="grat-list-hd">
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Today's Gratitude</span>
+                      <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{todayGrat.length}</span>
+                    </div>
+                  </div>
+                  {todayGrat.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"12px 0"}}>Nothing yet today — what small moment are you grateful for? ✦</div>}
+                  {todayGrat.map((entry,i)=>(
+                    <div key={entry.id} className="grat-item">
+                      <div className={`grat-num ${i<GRAT_TARGET?"base":""}`}>{i+1}</div>
+                      <div className="grat-text">{entry.text}</div>
+                      <div className="grat-time">{entry.time}</div>
+                      <button className="grat-dot-menu" onClick={e=>{e.stopPropagation();setGratMenuId(gratMenuId===entry.id?null:entry.id);}}>⋮</button>
+                      {gratMenuId===entry.id&&(
+                        <div className="grat-imenu" onClick={e=>e.stopPropagation()}>
+                          <div className="grat-imenu-item del" onClick={()=>{delGrat(TODAY,entry.id);setGratMenuId(null);}}>✕ &nbsp;Delete</div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {todayGrat.length>0&&(
+                    <div style={{textAlign:"center",paddingTop:14,borderTop:"1px solid rgba(26,20,16,.05)",marginTop:4}}>
+                      <button style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold-deep)",cursor:"pointer"}} onClick={()=>document.getElementById("grat-input-field")?.focus()}>+ Add another</button>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+
+              {/* RIGHT SIDEBAR */}
+              <div style={{display:"flex",flexDirection:"column",gap:14}}>
+
+                {/* Current Streak */}
+                <div className="side-card">
+                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+                    <div className="side-ttl" style={{marginBottom:0}}>Current Streak</div>
+                    <span style={{fontSize:14}}>🔥</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",gap:12}}>
+                    <div>
+                      <div style={{display:"flex",alignItems:"baseline",gap:6}}>
+                        <span style={{fontFamily:"'Playfair Display',serif",fontSize:42,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{gratStreak}</span>
+                        <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--ink-light)"}}>days</span>
+                      </div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginTop:4}}>{gratStreak>0?"Keep it going!":"Start your streak today"}</div>
+                    </div>
+                    {/* 7-day bar chart */}
+                    <div className="grat-streak-bars">
+                      {weekBarData.map((b,i)=>(
+                        <div key={i} className="grat-sbar-col">
+                          <div className="grat-sbar" style={{height:`${Math.max(b.count/maxBar*44,3)}px`,background:b.count>=GRAT_TARGET?"var(--gold)":b.count>0?"var(--gold-pale)":"var(--parchment)",borderRadius:"3px 3px 0 0"}}/>
+                          <div className="grat-sbar-lbl">{b.d[0]}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* This Week stats */}
+                <div className="side-card">
+                  <div className="side-ttl" style={{marginBottom:12}}>This Week</div>
+                  {[
+                    {label:"Gratitude Entries",val:gratWeekEntries},
+                    {label:"Daily Average",val:gratWeekAvg},
+                    {label:"Longest Streak",val:`${longestGratStreak} days`},
+                    {label:"Total Entries",val:gratTotal},
+                  ].map(r=>(
+                    <div key={r.label} className="grat-stat-row-tbl">
+                      <span className="grat-stat-lbl">{r.label}</span>
+                      <span className="grat-stat-val">{r.val}</span>
+                    </div>
+                  ))}
+                  <button style={{width:"100%",textAlign:"right",background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer",marginTop:10}}>View all insights →</button>
+                </div>
+
+                {/* Reminders */}
+                <div className="side-card">
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <div className="side-ttl" style={{marginBottom:0}}>Gratitude Reminders</div>
+                  </div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:14}}>Gentle reminders to pause and reflect.</div>
+                  <div className="grat-rem-row">
+                    <div>
+                      <div style={{fontSize:12.5,color:"var(--ink)"}}>Morning reminder</div>
+                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:1}}>{gratReminders.morningTime}</div>
+                    </div>
+                    <button className={`grat-toggle ${gratReminders.morning?"on":"off"}`} onClick={()=>setGratReminders(r=>({...r,morning:!r.morning}))}>
+                      <div className="grat-toggle-knob"/>
+                    </button>
+                  </div>
+                  <div className="grat-rem-row">
+                    <div>
+                      <div style={{fontSize:12.5,color:"var(--ink)"}}>Evening reminder</div>
+                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:1}}>{gratReminders.eveningTime}</div>
+                    </div>
+                    <button className={`grat-toggle ${gratReminders.evening?"on":"off"}`} onClick={()=>setGratReminders(r=>({...r,evening:!r.evening}))}>
+                      <div className="grat-toggle-knob"/>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
             </div>
-          </>);
+          </div>
+          );
         })()}
 
       </main>
