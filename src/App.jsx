@@ -2467,7 +2467,7 @@ export default function App() {
                     </div>
                     <div style={{width:220,background:"#faf8f5",borderRadius:12,padding:"16px 18px",flexShrink:0}}>
                       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                        <span style={{fontSize:16}}>🌱</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12 7L12.8 9.2L15 10L12.8 10.8L12 13L11.2 10.8L9 10L11.2 9.2L12 7Z" fill="#B89576"/><path d="M16.5 5.5L16.9 6.6L18 7L16.9 7.4L16.5 8.5L16.1 7.4L15 7L16.1 6.6L16.5 5.5Z" fill="#B89576"/><path d="M8.5 14C9.4 15.2 10.7 16 12.2 16C14.8 16 17 13.8 17 11.2" stroke="#B89576" strokeWidth="1.8" strokeLinecap="round"/></svg>
                         <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Why gratitude?</span>
                       </div>
                       <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:13,color:"var(--ink-light)",lineHeight:1.6}}>Practising gratitude rewires your brain to notice the positive, improving happiness, sleep, and overall wellbeing.</div>
@@ -2541,7 +2541,7 @@ export default function App() {
                 <div className="side-card">
                   <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
                     <div className="side-ttl" style={{marginBottom:0}}>Current Streak</div>
-                    <span style={{fontSize:14}}>🔥</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F6EEE5"/><path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#C49A6C"/><path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FFFDF9"/></svg>
                   </div>
                   <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",gap:12}}>
                     <div>
