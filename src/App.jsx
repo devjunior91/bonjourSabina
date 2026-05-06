@@ -187,8 +187,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);border-top:1px solid rgba(26,20,16,.07);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:0 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
-.global-topbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:14px 24px;position:sticky;top:0;z-index:200;background:var(--cream);border-bottom:1px solid rgba(26,20,16,.05);margin-bottom:8px;}
+.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -351,7 +350,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pomo-btn.stop:hover{background:#fde8e8;color:#c05050;border-color:#fde8e8;}
 
 /* Habits page redesign */
-.hab-wrap{margin:0 0 -64px;min-height:calc(100vh - 56px);}
+.hab-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
 .hab-top{padding:24px 24px 0;}
 .hab-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
 .hab-nav{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 10px;box-shadow:var(--shadow);}
@@ -621,7 +620,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @media(max-width:900px){.pack-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:600px){.pack-grid{grid-template-columns:1fr;}}
 /* ── GRATITUDE ── */
-.grat-wrap{margin:0 0 -64px;min-height:calc(100vh - 56px);}
+.grat-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
 .grat-top{padding:24px 24px 0;}
 .grat-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
 .grat-body{display:grid;grid-template-columns:1fr 280px;gap:20px;padding:0 24px 64px;align-items:start;}
@@ -715,7 +714,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,124,.3);border-radius:10px;}
 
 /* ── TODO LAYOUT ── */
-.todo-wrap{margin:0 0 -64px;min-height:calc(100vh - 56px);}
+.todo-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
 .todo-top{padding:24px 24px 0;}
 .todo-prog-full{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-top:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
 .todo-navrow{display:flex;align-items:center;gap:10px;padding:14px 24px 10px;}
@@ -1305,6 +1304,32 @@ export default function App() {
     {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
   ];
 
+  // ── HEADER ICONS (bell + settings, reused in every page header) ──
+  const headerIcons=(
+    <div style={{display:"flex",gap:8,alignItems:"center",flexShrink:0}}>
+      <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
+        {showNotifs&&(
+          <div className="notif-panel" onClick={e=>e.stopPropagation()}>
+            <div className="notif-hd">
+              <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
+              {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
+            </div>
+            {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
+            {[...notifications].reverse().slice(0,5).map(n=>(
+              <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
+                <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
+                <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+    </div>
+  );
+
   // ── PASSWORD GATE ──
   const [unlocked,setUnlocked]=useState(()=>sessionStorage.getItem("sab_auth")==="1");
   const [pwInput,setPwInput]=useState("");
@@ -1401,30 +1426,6 @@ export default function App() {
 
       <main className="main">
 
-        {/* ── GLOBAL TOP BAR: bell + settings always top-right ── */}
-        <div className="global-topbar">
-          <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
-            {showNotifs&&(
-              <div className="notif-panel" onClick={e=>e.stopPropagation()}>
-                <div className="notif-hd">
-                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
-                  {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
-                </div>
-                {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
-                {[...notifications].reverse().slice(0,5).map(n=>(
-                  <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
-                    <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
-                    <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-        </div>
-
         {/* ── HABITS ── */}
         {page==="habits"&&(()=>{
   const viewHabs=habitWeekDays;
@@ -1444,6 +1445,7 @@ export default function App() {
             <button className="hab-nav-arrow" disabled={habitViewWeek===0} onClick={()=>setHabitViewWeek(w=>w-1)}>›</button>
           </div>
           <button onClick={()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HABIT_ICON_LIST[idx%HABIT_ICON_LIST.length],color:HCOLORS[idx],days:Array(7).fill(false)}]);setNewHabit("");}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New habit</button>
+          {headerIcons}
         </div>
       </div>
 
@@ -1665,7 +1667,7 @@ export default function App() {
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
-<div style={{padding:"20px 8px 0"}}>
+<div style={{padding:"0 8px"}}>
   {/* Page header */}
   <div className="dash-page-header">
     <div>
@@ -1678,6 +1680,7 @@ export default function App() {
         Search anything…
         <span style={{marginLeft:"auto",fontSize:10,color:"var(--border)",border:"1px solid var(--border)",borderRadius:4,padding:"1px 5px"}}>⌘K</span>
       </div>
+      {headerIcons}
     </div>
   </div>
 
@@ -2058,7 +2061,10 @@ export default function App() {
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>To-Do <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Lists</em></div>
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Stay organised, focus on what matters.</div>
               </div>
-              <button onClick={()=>setShowNewModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginTop:6}}>+ New Task</button>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
+                <button onClick={()=>setShowNewModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New Task</button>
+                {headerIcons}
+              </div>
             </div>
             {/* Progress card — full width */}
             <div className="todo-prog-full">
@@ -2244,7 +2250,7 @@ export default function App() {
 
         {/* ── BILAN ── */}
         {page==="bilan"&&<>
-          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your personal review</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Bilan <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>✦</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>A weekly and monthly look at your progress, habits, and achievements</p></div>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your personal review</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Bilan <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>✦</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>A weekly and monthly look at your progress, habits, and achievements</p></div>{headerIcons}</div>
           <div className="bil-tabs">
             {[["week","This Week"],["month","This Month"],["trends","Trends"]].map(([v,l])=><button key={v} className={`bil-tab ${bilView===v?"on":""}`} onClick={()=>setBilView(v)}>{l}</button>)}
           </div>
@@ -2389,7 +2395,7 @@ export default function App() {
 
         {/* ── GOALS ── */}
         {page==="goals"&&<>
-          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Vision and ambition</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Monthly <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Goals</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Set, edit and track goals month by month</p></div>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Vision and ambition</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Monthly <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Goals</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Set, edit and track goals month by month</p></div>{headerIcons}</div>
           <div className="card">
             <div className="gmh"><div className="gml">{vmLabel}</div><div style={{display:"flex",gap:8}}><button className="mnb" onClick={pmG}>← Prev</button><button className="mnb" onClick={()=>setVMonth(MK)}>This month</button><button className="mnb" onClick={nmG} disabled={vMonth>=MK}>Next →</button></div></div>
             <div className="gg">
@@ -2415,7 +2421,7 @@ export default function App() {
 
         {/* ── CALENDAR ── */}
         {page==="calendar"&&<>
-          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>My <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Calendar</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click any day to add an event · click an event to edit or delete</p></div>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>My <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Calendar</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click any day to add an event · click an event to edit or delete</p></div>{headerIcons}</div>
           <div className="card">
             <div className="cah"><div className="caml">{calLabel}</div><div style={{display:"flex",gap:8}}><button className="cnb" onClick={prevCal}>← Prev</button><button className="cnb" onClick={()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());}}>Today</button><button className="cnb" onClick={nextCal}>Next →</button></div></div>
             <div className="cagd">
@@ -2434,7 +2440,7 @@ export default function App() {
 
         {/* ── CLEANING SCHEDULE ── */}
         {page==="cleaning"&&<>
-          <div style={{marginBottom:32}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Une maison propre, un esprit clair</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Rituel de <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Maison</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Add, edit or remove tasks for any day · today is highlighted</p></div>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Une maison propre, un esprit clair</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Rituel de <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Maison</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Add, edit or remove tasks for any day · today is highlighted</p></div>{headerIcons}</div>
           <div className="card"><div className="ct">Routine hebdomadaire</div><div className="cs">Today is {TODAY_DAY} ✦</div>
             <div className="cg">
               {DAYS.map(day=>(
@@ -2484,7 +2490,10 @@ export default function App() {
                   <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Gratitude</div>
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Focus on the good, and watch your life grow.</div>
                 </div>
-                <button onClick={()=>{setGratViewOffset(0);setTimeout(()=>document.getElementById("grat-input-field")?.focus(),50);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <button onClick={()=>{setGratViewOffset(0);setTimeout(()=>document.getElementById("grat-input-field")?.focus(),50);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
+                  {headerIcons}
+                </div>
               </div>
             </div>
 
