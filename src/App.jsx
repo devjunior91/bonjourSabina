@@ -650,7 +650,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .grat-nav-btn{background:#fff;border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--ink);transition:all .15s;line-height:1;padding:0;}
 .grat-nav-btn:disabled{opacity:.3;cursor:default;}
 .grat-nav-btn:hover:not(:disabled){background:var(--parchment);}
-.grat-nav-lbl{flex:1;text-align:center;font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);}
+.grat-nav-lbl{flex:1;text-align:left;font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);}
 .grat-time{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);flex-shrink:0;min-width:36px;text-align:right;}
 .grat-dot-menu{width:26px;height:26px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:16px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
 .grat-item:hover .grat-dot-menu{opacity:1;}
@@ -1587,7 +1587,7 @@ export default function App() {
       {/* Right sidebar */}
       <div className="hab-side">
         {/* Longest streaks */}
-        <div className="side-card">
+        <div style={{padding:"4px 0"}}>
           <div className="side-ttl" style={{marginBottom:12}}>Longest Streaks</div>
           {longestStreaks.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Complete habits to build streaks ✦</div>}
           {longestStreaks.map((h,i)=>(
