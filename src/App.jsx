@@ -367,7 +367,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hab-body{display:grid;grid-template-columns:1fr 280px;align-items:start;}
 .hab-main{padding:0 24px 64px;}
 .hab-side{padding:14px 20px 64px;border-left:1px solid rgba(26,20,16,.08);background:#faf7f3;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 280px);}
-.hab-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.hab-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:visible;box-shadow:var(--shadow);}
 .hab-card-hd{padding:14px 18px 10px;border-bottom:1px solid rgba(26,20,16,.06);}
 .hab-card-ttl{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
 .hab-card-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:1px;}
@@ -375,7 +375,16 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hab-grid-hd{display:grid;grid-template-columns:160px repeat(7,1fr) 60px 36px;gap:4px;padding:8px 18px;border-bottom:1px solid rgba(26,20,16,.04);}
 .hab-grid-dl{font-size:10px;font-weight:600;color:var(--ink-light);text-align:center;letter-spacing:.04em;}
 /* Habit row */
-.hab-row{display:grid;grid-template-columns:160px repeat(7,1fr) 60px 36px;gap:4px;padding:8px 18px;align-items:center;border-bottom:1px solid rgba(26,20,16,.03);transition:background .12s;}
+.hab-row{display:grid;grid-template-columns:160px repeat(7,1fr) 60px 28px;gap:4px;padding:8px 18px;align-items:center;border-bottom:1px solid rgba(26,20,16,.03);transition:background .12s;}
+.hab-row.dragging{opacity:.4;}
+.hab-row.drag-over{border-top:2px solid var(--gold);}
+.hab-menu-btn{width:24px;height:24px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s,background .15s;font-size:14px;line-height:1;padding:0;}
+.hab-row:hover .hab-menu-btn{opacity:1;}
+.hab-menu-btn:hover{background:var(--parchment);color:var(--ink);}
+.hab-menu-popup{position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.12);z-index:700;overflow:hidden;min-width:110px;}
+.hab-menu-item{padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .1s;}
+.hab-menu-item:hover{background:var(--parchment);}
+.hab-menu-item.del{color:#c05050;}
 .hab-row:hover{background:#fafafa;}
 .hab-row:last-of-type{border-bottom:none;}
 .hab-ri{display:flex;align-items:center;gap:8px;min-width:0;}
@@ -805,7 +814,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 `;
 
 export default function App() {
-  const [page,setPage]=useState("dashboard");
+  const [page,setPage]=useState(()=>localStorage.getItem("sab_page")||"dashboard");
   const [habits,setHabits]=useDB("sab_habits",DEF_HABITS);
   const [tags,setTags]=useDB("sab_tags",DEF_TAGS);
   const [todos,setTodos]=useDB("sab_todos",[]);
@@ -816,6 +825,8 @@ export default function App() {
   const [editHabit,setEditHabit]=useState(null);
   const [editHName,setEditHName]=useState("");
   const [iconFor,setIconFor]=useState(null);
+  const [habMenuId,setHabMenuId]=useState(null);
+  const [dragHabId,setDragHabId]=useState(null);
   const [newTodo,setNewTodo]=useState("");
   const [newTodoTag,setNewTodoTag]=useState("Personal");
   const [newTodoPriority,setNewTodoPriority]=useState("medium");
@@ -884,6 +895,8 @@ export default function App() {
 
   useEffect(()=>{const h=()=>setIconFor(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
   useEffect(()=>{const h=()=>setShowTaskMenu(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
+  useEffect(()=>{const h=()=>setHabMenuId(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
+  useEffect(()=>{localStorage.setItem("sab_page",page);},[page]);
   useEffect(()=>()=>clearInterval(pomoInterval.current),[]);
   // Snap pomo time when tab becomes visible again (avoids throttled intervals)
   useEffect(()=>{
@@ -990,6 +1003,26 @@ export default function App() {
     return()=>clearInterval(t);
   },[gratReminders,gratitude,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
 
+  // Streak protection: if no habits checked by 5pm and there's an active streak, alert
+  useEffect(()=>{
+    const check=()=>{
+      const now=new Date();
+      if(now.getHours()===17&&now.getMinutes()===0){
+        const todayIdx=new Date(TODAY+"T12:00:00").getDay()===0?6:new Date(TODAY+"T12:00:00").getDay()-1;
+        const anyDoneToday=habits.some(h=>h.days[todayIdx]);
+        const hasStreak=habits.some(h=>h.days.filter(Boolean).length>0);
+        if(!anyDoneToday&&hasStreak){
+          setNotifications(ns=>{
+            if(ns.some(n=>n.date===TODAY&&n.type==="streak-protect"))return ns;
+            return[...ns,{id:Date.now(),type:"streak-protect",date:TODAY,text:"⚠️ Don't break your streak! You haven't checked off any habits today.",read:false}];
+          });
+          try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[440,370].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.22);g.gain.linearRampToValueAtTime(.12,ctx.currentTime+i*.22+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.22+.55);o.start(ctx.currentTime+i*.22);o.stop(ctx.currentTime+i*.22+.55);});}catch(e){}
+        }
+      }
+    };
+    check();const t=setInterval(check,60000);return()=>clearInterval(t);
+  },[habits,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+
   // Pomodoro controls
   const pomoStart=()=>{
     if(pomoActive||pomoLeft===0)return;
@@ -1011,8 +1044,8 @@ export default function App() {
   const pomoColor=pomoProg>0.5?"#c9a87c":pomoProg>0.25?"#c8887a":"#c05050";
 
   const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
-  // Soft crystal-bowl tone for gratitude — warm triangle waves, slow bloom, long resonant decay
-  const gratChime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[[396,0],[528,0.22],[0,0]].slice(0,2).forEach(([freq,delay])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="triangle";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(.09,ctx.currentTime+delay+.18);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+2.2);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+2.2);});}catch(e){}};
+  // Gentle 2-note gratitude chime — soft sine, different from todo chime (C5-E5-G5)
+  const gratChime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[[880,0],[1108.73,0.14]].forEach(([freq,delay])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(.09,ctx.currentTime+delay+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+.7);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+.7);});}catch(e){}};
   const pomoBegin=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[440,554.37,659.25].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.14);g.gain.linearRampToValueAtTime(.15,ctx.currentTime+i*.14+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.14+.35);o.start(ctx.currentTime+i*.14);o.stop(ctx.currentTime+i*.14+.35);});}catch(e){}};
   const pomoEnd=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[659.25,523.25,392].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.16);g.gain.linearRampToValueAtTime(.13,ctx.currentTime+i*.16+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.16+.4);o.start(ctx.currentTime+i*.16);o.stop(ctx.currentTime+i*.16+.4);});}catch(e){}};
   const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
@@ -1023,6 +1056,7 @@ export default function App() {
   const startEH=h=>{setEditHabit(h.id);setEditHName(h.name);};
   const saveEH=id=>{if(editHName.trim())setHabits(h=>h.map(hab=>hab.id===id?{...hab,name:editHName}:hab));setEditHabit(null);};
   const setIcon=(id,icon)=>{setHabits(h=>h.map(hab=>hab.id===id?{...hab,icon}:hab));setIconFor(null);};
+  const reorderHabit=(fromId,toId)=>{if(fromId===toId)return;setHabits(h=>{const arr=[...h];const fi=arr.findIndex(x=>x.id===fromId);const ti=arr.findIndex(x=>x.id===toId);if(fi<0||ti<0)return arr;const [item]=arr.splice(fi,1);arr.splice(ti,0,item);return arr;});};
   const streak=days=>days.filter(Boolean).length;
 
   const byPri=arr=>[...arr].sort((a,b)=>(PRIORITY_ORD[a.priority??"medium"])-(PRIORITY_ORD[b.priority??"medium"]));
@@ -1224,12 +1258,14 @@ export default function App() {
   };
   const longestStreaks=[...habits].map(h=>({...h,str:fullHabitStreak(h.id)})).sort((a,b)=>b.str-a.str).slice(0,5);
   const overallCurrentStreak=longestStreaks.length?longestStreaks[0].str:0;
-  // Completion rate categories (for current view week)
-  const habitDoneCount=habitWeekDays.reduce((s,h)=>s+h.days.filter(Boolean).length,0);
-  const habitMissCount=habitWeekDays.reduce((s,h)=>s+h.days.filter(v=>!v).length,0);
-  const habitDonePct=habitWeekPossible?Math.round(habitDoneCount/habitWeekPossible*100):0;
-  const habitMissPct=habitWeekPossible?Math.round(habitMissCount/habitWeekPossible*100):0;
-  const habitPartPct=Math.max(0,100-habitDonePct-habitMissPct);
+  // Completion rate — day-based: Completed=all habits done, Partial=some done, Missed=none done
+  const habitDayStats=DAYS.map((_,i)=>{const total=habitWeekDays.length;const done=habitWeekDays.filter(h=>h.days[i]).length;if(total===0)return"missed";if(done===total)return"completed";if(done===0)return"missed";return"partial";});
+  const habitDaysCompleted=habitDayStats.filter(s=>s==="completed").length;
+  const habitDaysPartial=habitDayStats.filter(s=>s==="partial").length;
+  const habitDaysMissed=habitDayStats.filter(s=>s==="missed").length;
+  const habitDonePct=Math.round(habitDaysCompleted/7*100);
+  const habitPartPct=Math.round(habitDaysPartial/7*100);
+  const habitMissPct=Math.round(habitDaysMissed/7*100);
   // Week label for navigation
   const habitViewWeekLabel=(()=>{
     if(habitViewWeek===0)return"This week";
@@ -1362,6 +1398,30 @@ export default function App() {
         <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
 
+      {/* ── GLOBAL BELL + SETTINGS (visible on all pages) ── */}
+      <div style={{position:"fixed",top:16,right:24,display:"flex",gap:8,zIndex:300}}>
+        <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
+          {showNotifs&&(
+            <div className="notif-panel" onClick={e=>e.stopPropagation()}>
+              <div className="notif-hd">
+                <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
+                {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
+              </div>
+              {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
+              {[...notifications].reverse().slice(0,5).map(n=>(
+                <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
+                  <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
+                  <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      </div>
+
       <main className="main">
 
         {/* ── HABITS ── */}
@@ -1427,7 +1487,14 @@ export default function App() {
           {viewHabs.map(hab=>{
             const wkCount=hab.days.filter(Boolean).length;
             return(
-              <div key={hab.id} className="hab-row">
+              <div key={hab.id}
+                className={`hab-row${dragHabId===hab.id?" dragging":""}`}
+                draggable={habitViewWeek===0}
+                onDragStart={()=>setDragHabId(hab.id)}
+                onDragEnd={()=>setDragHabId(null)}
+                onDragOver={e=>{e.preventDefault();e.currentTarget.classList.add("drag-over");}}
+                onDragLeave={e=>e.currentTarget.classList.remove("drag-over")}
+                onDrop={e=>{e.preventDefault();e.currentTarget.classList.remove("drag-over");if(dragHabId&&dragHabId!==hab.id)reorderHabit(dragHabId,hab.id);setDragHabId(null);}}>
                 {/* Name + icon */}
                 <div className="hab-ri">
                   <div className="ip-wrap" style={{position:"relative"}} onClick={e=>e.stopPropagation()}>
@@ -1446,7 +1513,7 @@ export default function App() {
                   </div>
                   {editHabit===hab.id
                     ?<input className="ii" autoFocus value={editHName} onChange={e=>setEditHName(e.target.value)} onBlur={()=>saveEH(hab.id)} onKeyDown={e=>e.key==="Enter"&&saveEH(hab.id)} style={{fontSize:12,flex:1,minWidth:0}}/>
-                    :<span className="hab-rname" onClick={()=>startEH(hab)}>{hab.name}</span>
+                    :<span className="hab-rname">{hab.name}</span>
                   }
                 </div>
                 {/* Day checkboxes */}
@@ -1459,10 +1526,21 @@ export default function App() {
                 ))}
                 {/* Week count */}
                 <div className="hab-week-ct">{wkCount}/7</div>
-                {/* Actions */}
-                <div style={{display:"flex",gap:2,opacity:0}} className="ha">
-                  <button className="sb2" onClick={()=>startEH(hab)}>✏️</button>
-                  <button className="sb2 d" onClick={()=>delHabit(hab.id)}>×</button>
+                {/* ⋮ menu */}
+                <div style={{position:"relative"}} onClick={e=>e.stopPropagation()}>
+                  <button className="hab-menu-btn" onClick={()=>setHabMenuId(habMenuId===hab.id?null:hab.id)}>⋮</button>
+                  {habMenuId===hab.id&&(
+                    <div className="hab-menu-popup">
+                      <div className="hab-menu-item" onClick={()=>{startEH(hab);setHabMenuId(null);}}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Edit name
+                      </div>
+                      <div className="hab-menu-item del" onClick={()=>{delHabit(hab.id);setHabMenuId(null);}}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        Delete
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -1599,26 +1677,6 @@ export default function App() {
         Search anything…
         <span style={{marginLeft:"auto",fontSize:10,color:"var(--border)",border:"1px solid var(--border)",borderRadius:4,padding:"1px 5px"}}>⌘K</span>
       </div>
-      <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
-        {showNotifs&&(
-          <div className="notif-panel" onClick={e=>e.stopPropagation()}>
-            <div className="notif-hd">
-              <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
-              {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
-            </div>
-            {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
-            {[...notifications].reverse().slice(0,5).map(n=>(
-              <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
-                <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
-                <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
     </div>
   </div>
 
