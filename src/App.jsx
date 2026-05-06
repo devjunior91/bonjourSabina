@@ -634,7 +634,14 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .grat-item:last-child{border-bottom:none;}
 .grat-num{width:24px;height:24px;border-radius:50%;background:var(--parchment);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--ink-light);flex-shrink:0;}
 .grat-num.base{background:var(--gold-pale);color:var(--gold-deep);}
-.grat-text{flex:1;font-size:13px;color:var(--ink);line-height:1.4;}
+.grat-text{flex:1;font-size:13px;color:var(--ink);line-height:1.4;text-align:left;}
+.grat-edit-inp{flex:1;border:none;border-bottom:1.5px solid var(--gold);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;padding:2px 0;text-align:left;}
+.grat-time-inp{border:none;border-bottom:1.5px solid var(--gold);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink);outline:none;width:68px;cursor:pointer;}
+.grat-nav-row{display:flex;align-items:center;gap:10px;padding:12px 24px 8px;}
+.grat-nav-btn{background:#fff;border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--ink);transition:all .15s;line-height:1;padding:0;}
+.grat-nav-btn:disabled{opacity:.3;cursor:default;}
+.grat-nav-btn:hover:not(:disabled){background:var(--parchment);}
+.grat-nav-lbl{flex:1;text-align:center;font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);}
 .grat-time{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);flex-shrink:0;min-width:36px;text-align:right;}
 .grat-dot-menu{width:26px;height:26px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:16px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
 .grat-item:hover .grat-dot-menu{opacity:1;}
@@ -852,6 +859,10 @@ export default function App() {
   const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
   const [gratInput,setGratInput]=useState("");
   const [gratMenuId,setGratMenuId]=useState(null);
+  const [gratViewOffset,setGratViewOffset]=useState(0);
+  const [gratEditId,setGratEditId]=useState(null);
+  const [gratEditText,setGratEditText]=useState("");
+  const [editingReminder,setEditingReminder]=useState(null);
   const [notifDismissed,setNotifDismissed]=useState(false);
   const [viewDayOffset,setViewDayOffset]=useState(0);
   const [showTaskMenu,setShowTaskMenu]=useState(null);
@@ -2385,14 +2396,24 @@ export default function App() {
 
         {/* ── GRATITUDE ── */}
         {page==="gratitude"&&(()=>{
+          const addDaysG=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return _ld(d);};
+          const viewGratDate=addDaysG(TODAY,-gratViewOffset);
+          const isToday=gratViewOffset===0;
+          const viewGratEntries=gratitude[viewGratDate]||[];
+          const viewGratLabel=gratViewOffset===0?"Today":gratViewOffset===1?"Yesterday":new Date(viewGratDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
           const PROMPTS=["I'm grateful for that moment when…","Something small that made me smile today…","A little thing I almost didn't notice…","Something that could've gone wrong but didn't…","A tiny comfort I appreciated today…"];
-          const promptIdx=todayGrat.length%PROMPTS.length;
+          const promptIdx=viewGratEntries.length%PROMPTS.length;
           const weekBarData=DAYS.map((d,i)=>{
             const date=bilWeekDates[i];
             const count=(gratitude[date]||[]).length;
-            return{d,count,pct:Math.min(count/GRAT_TARGET,1)};
+            return{d,count};
           });
           const maxBar=Math.max(...weekBarData.map(b=>b.count),1);
+          const saveGratEdit=(date,id)=>{
+            if(!gratEditText.trim()){setGratEditId(null);return;}
+            setGratitude(g=>({...g,[date]:(g[date]||[]).map(e=>e.id===id?{...e,text:gratEditText.trim()}:e)}));
+            setGratEditId(null);setGratEditText("");
+          };
           return(
           <div className="grat-wrap">
             {/* Header */}
@@ -2402,8 +2423,19 @@ export default function App() {
                   <div style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Gratitude</div>
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Focus on the good, and watch your life grow.</div>
                 </div>
-                <button onClick={()=>{document.getElementById("grat-input-field")?.focus();}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
+                <button onClick={()=>{setGratViewOffset(0);setTimeout(()=>document.getElementById("grat-input-field")?.focus(),50);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
               </div>
+            </div>
+
+            {/* Day navigation */}
+            <div className="grat-nav-row">
+              <button className="grat-nav-btn" onClick={()=>setGratViewOffset(o=>o+1)}>‹</button>
+              <div className="grat-nav-lbl">
+                <span style={{fontWeight:600}}>{viewGratLabel}</span>
+                {gratViewOffset>0&&<span style={{fontSize:11,color:"var(--ink-light)",marginLeft:8,fontFamily:"'DM Sans',sans-serif"}}>{new Date(viewGratDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</span>}
+              </div>
+              <button className="grat-nav-btn" disabled={gratViewOffset===0} onClick={()=>setGratViewOffset(o=>o-1)}>›</button>
+              {gratViewOffset>0&&<button style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,padding:"5px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}} onClick={()=>setGratViewOffset(0)}>← Today</button>}
             </div>
 
             {/* Body */}
@@ -2411,30 +2443,27 @@ export default function App() {
               {/* LEFT COLUMN */}
               <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
-                {/* Today progress card */}
+                {/* Progress card */}
                 <div className="grat-card">
                   <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16}}>
-                    {/* Left: dots progress */}
                     <div style={{flex:1}}>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Today · {new Date(TODAY+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                      <div style={{fontSize:11.5,color:"var(--ink-light)",marginTop:2}}>{Math.min(todayGrat.length,GRAT_TARGET)} of {GRAT_TARGET} baseline</div>
-                      {/* Progress dots */}
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{viewGratLabel} · {new Date(viewGratDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                      <div style={{fontSize:11.5,color:"var(--ink-light)",marginTop:2}}>{Math.min(viewGratEntries.length,GRAT_TARGET)} of {GRAT_TARGET} baseline</div>
                       <div style={{position:"relative",display:"flex",alignItems:"center",margin:"18px 0 10px"}}>
                         <div style={{position:"absolute",top:"50%",left:10,right:10,height:2,background:"var(--parchment)",transform:"translateY(-50%)",zIndex:0}}/>
-                        <div style={{position:"absolute",top:"50%",left:10,height:2,width:`${todayGrat.length>=GRAT_TARGET?100:Math.max(0,((Math.min(todayGrat.length,GRAT_TARGET)-1)/(GRAT_TARGET-1))*100)}%`,background:"var(--gold)",transform:"translateY(-50%)",zIndex:1,transition:"width .5s",maxWidth:"calc(100% - 20px)"}}/>
+                        <div style={{position:"absolute",top:"50%",left:10,height:2,width:`${viewGratEntries.length>=GRAT_TARGET?100:Math.max(0,((Math.min(viewGratEntries.length,GRAT_TARGET)-1)/(GRAT_TARGET-1))*100)}%`,background:"var(--gold)",transform:"translateY(-50%)",zIndex:1,transition:"width .5s",maxWidth:"calc(100% - 20px)"}}/>
                         <div style={{display:"flex",justifyContent:"space-between",width:"100%",position:"relative",zIndex:2}}>
                           {Array.from({length:GRAT_TARGET},(_,i)=>(
-                            <div key={i} style={{width:22,height:22,borderRadius:"50%",background:i<todayGrat.length?"var(--gold)":"#fff",border:`2px solid ${i<todayGrat.length?"var(--gold)":"var(--parchment)"}`,transition:"all .3s",boxShadow:i<todayGrat.length?"0 0 0 3px rgba(201,168,124,.2)":"none"}}/>
+                            <div key={i} style={{width:22,height:22,borderRadius:"50%",background:i<viewGratEntries.length?"var(--gold)":"#fff",border:`2px solid ${i<viewGratEntries.length?"var(--gold)":"var(--parchment)"}`,transition:"all .3s",boxShadow:i<viewGratEntries.length?"0 0 0 3px rgba(201,168,124,.2)":"none"}}/>
                           ))}
                         </div>
                       </div>
-                      {todayGrat.length>=GRAT_TARGET
-                        ?<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)"}}>You've reached your baseline. Well done! ✨</div>
-                        :<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{GRAT_TARGET-todayGrat.length} more to reach your baseline</div>
+                      {viewGratEntries.length>=GRAT_TARGET
+                        ?<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)"}}>Baseline reached. Well done! ✨</div>
+                        :<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{isToday?`${GRAT_TARGET-viewGratEntries.length} more to reach today's baseline`:"Baseline not reached this day"}</div>
                       }
                     </div>
-                    {/* Right: Why gratitude */}
-                    <div style={{width:240,background:"#faf8f5",borderRadius:12,padding:"16px 18px",flexShrink:0}}>
+                    <div style={{width:220,background:"#faf8f5",borderRadius:12,padding:"16px 18px",flexShrink:0}}>
                       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                         <span style={{fontSize:16}}>🌱</span>
                         <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Why gratitude?</span>
@@ -2444,47 +2473,57 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Input card */}
-                <div className="grat-input-card">
-                  <div className="grat-input-hd">
-                    <div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)"}}>What are you grateful for?</div>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginTop:2}}>Take a moment to reflect and add your wins.</div>
+                {/* Input card — only show on today view */}
+                {isToday&&(
+                  <div className="grat-input-card">
+                    <div className="grat-input-hd">
+                      <div>
+                        <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)"}}>What are you grateful for?</div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginTop:2}}>Take a moment to reflect and add your wins.</div>
+                      </div>
+                      <div style={{textAlign:"right",flexShrink:0}}>
+                        <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:600,color:viewGratEntries.length>=GRAT_TARGET?"var(--sage)":"var(--gold-deep)"}}>{Math.min(viewGratEntries.length,GRAT_TARGET)}/{GRAT_TARGET}</div>
+                        <div style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".06em"}}>Baseline</div>
+                      </div>
                     </div>
-                    <div style={{textAlign:"right",flexShrink:0}}>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:600,color:todayGrat.length>=GRAT_TARGET?"var(--sage)":"var(--gold-deep)"}}>{Math.min(todayGrat.length,GRAT_TARGET)}/{GRAT_TARGET}</div>
-                      <div style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".06em"}}>Baseline</div>
+                    <div style={{display:"flex",gap:10,alignItems:"center"}}>
+                      <input id="grat-input-field" className="grat-inp" style={{minHeight:44}} placeholder={PROMPTS[promptIdx]} value={gratInput} onChange={e=>setGratInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addGrat()}/>
+                      <button style={{display:"flex",alignItems:"center",gap:6,padding:"12px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}} onClick={addGrat}>+ Add</button>
                     </div>
                   </div>
-                  <div style={{display:"flex",gap:10,alignItems:"flex-end"}}>
-                    <input id="grat-input-field" className="grat-inp" placeholder={PROMPTS[promptIdx]} value={gratInput} onChange={e=>setGratInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addGrat()}/>
-                    <button style={{display:"flex",alignItems:"center",gap:6,padding:"13px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}} onClick={addGrat}>+ Add</button>
-                  </div>
-                </div>
+                )}
 
-                {/* Today's list */}
+                {/* Entries list */}
                 <div className="grat-card">
                   <div className="grat-list-hd">
                     <div style={{display:"flex",alignItems:"center",gap:8}}>
-                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Today's Gratitude</span>
-                      <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{todayGrat.length}</span>
+                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{isToday?"Today's":"Past"} Gratitude</span>
+                      <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)"}}>{viewGratEntries.length}</span>
                     </div>
                   </div>
-                  {todayGrat.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"12px 0"}}>Nothing yet today — what small moment are you grateful for? ✦</div>}
-                  {todayGrat.map((entry,i)=>(
+                  {viewGratEntries.length===0&&(
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"12px 0"}}>
+                      {isToday?"Nothing yet — what small moment are you grateful for? ✦":"No entries logged for this day ✦"}
+                    </div>
+                  )}
+                  {viewGratEntries.map((entry,i)=>(
                     <div key={entry.id} className="grat-item">
                       <div className={`grat-num ${i<GRAT_TARGET?"base":""}`}>{i+1}</div>
-                      <div className="grat-text">{entry.text}</div>
+                      {gratEditId===entry.id
+                        ?<input className="grat-edit-inp" autoFocus value={gratEditText} onChange={e=>setGratEditText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")saveGratEdit(viewGratDate,entry.id);if(e.key==="Escape"){setGratEditId(null);setGratEditText("");}}} onBlur={()=>saveGratEdit(viewGratDate,entry.id)}/>
+                        :<div className="grat-text">{entry.text}</div>
+                      }
                       <div className="grat-time">{entry.time}</div>
-                      <button className="grat-dot-menu" onClick={e=>{e.stopPropagation();setGratMenuId(gratMenuId===entry.id?null:entry.id);}}>⋮</button>
+                      <button className="grat-dot-menu" onClick={e=>{e.stopPropagation();setGratMenuId(gratMenuId===entry.id?null:entry.id);setGratEditId(null);}}>⋮</button>
                       {gratMenuId===entry.id&&(
                         <div className="grat-imenu" onClick={e=>e.stopPropagation()}>
-                          <div className="grat-imenu-item del" onClick={()=>{delGrat(TODAY,entry.id);setGratMenuId(null);}}>✕ &nbsp;Delete</div>
+                          <div className="grat-imenu-item" onClick={()=>{setGratEditId(entry.id);setGratEditText(entry.text);setGratMenuId(null);}}>✎ &nbsp;Edit</div>
+                          <div className="grat-imenu-item del" onClick={()=>{delGrat(viewGratDate,entry.id);setGratMenuId(null);}}>✕ &nbsp;Delete</div>
                         </div>
                       )}
                     </div>
                   ))}
-                  {todayGrat.length>0&&(
+                  {isToday&&viewGratEntries.length>0&&(
                     <div style={{textAlign:"center",paddingTop:14,borderTop:"1px solid rgba(26,20,16,.05)",marginTop:4}}>
                       <button style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold-deep)",cursor:"pointer"}} onClick={()=>document.getElementById("grat-input-field")?.focus()}>+ Add another</button>
                     </div>
@@ -2510,7 +2549,6 @@ export default function App() {
                       </div>
                       <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginTop:4}}>{gratStreak>0?"Keep it going!":"Start your streak today"}</div>
                     </div>
-                    {/* 7-day bar chart */}
                     <div className="grat-streak-bars">
                       {weekBarData.map((b,i)=>(
                         <div key={i} className="grat-sbar-col">
@@ -2536,7 +2574,6 @@ export default function App() {
                       <span className="grat-stat-val">{r.val}</span>
                     </div>
                   ))}
-                  <button style={{width:"100%",textAlign:"right",background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer",marginTop:10}}>View all insights →</button>
                 </div>
 
                 {/* Reminders */}
@@ -2546,24 +2583,26 @@ export default function App() {
                     <div className="side-ttl" style={{marginBottom:0}}>Gratitude Reminders</div>
                   </div>
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:14}}>Gentle reminders to pause and reflect.</div>
-                  <div className="grat-rem-row">
-                    <div>
-                      <div style={{fontSize:12.5,color:"var(--ink)"}}>Morning reminder</div>
-                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:1}}>{gratReminders.morningTime}</div>
+                  {[
+                    {key:"morning",label:"Morning reminder",timeKey:"morningTime"},
+                    {key:"evening",label:"Evening reminder",timeKey:"eveningTime"},
+                  ].map(rem=>(
+                    <div key={rem.key} className="grat-rem-row">
+                      <div>
+                        <div style={{fontSize:12.5,color:"var(--ink)"}}>{rem.label}</div>
+                        {editingReminder===rem.key
+                          ?<input type="time" className="grat-time-inp" value={gratReminders[rem.timeKey]} autoFocus
+                              onChange={e=>setGratReminders(r=>({...r,[rem.timeKey]:e.target.value}))}
+                              onBlur={()=>setEditingReminder(null)}
+                              onKeyDown={e=>{if(e.key==="Enter"||e.key==="Escape")setEditingReminder(null);}}/>
+                          :<div style={{fontSize:11,color:"var(--gold-deep)",marginTop:2,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}} onClick={()=>setEditingReminder(rem.key)}>{gratReminders[rem.timeKey]} <span style={{fontSize:9,opacity:.6}}>tap to edit</span></div>
+                        }
+                      </div>
+                      <button className={`grat-toggle ${gratReminders[rem.key]?"on":"off"}`} onClick={()=>setGratReminders(r=>({...r,[rem.key]:!r[rem.key]}))}>
+                        <div className="grat-toggle-knob"/>
+                      </button>
                     </div>
-                    <button className={`grat-toggle ${gratReminders.morning?"on":"off"}`} onClick={()=>setGratReminders(r=>({...r,morning:!r.morning}))}>
-                      <div className="grat-toggle-knob"/>
-                    </button>
-                  </div>
-                  <div className="grat-rem-row">
-                    <div>
-                      <div style={{fontSize:12.5,color:"var(--ink)"}}>Evening reminder</div>
-                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:1}}>{gratReminders.eveningTime}</div>
-                    </div>
-                    <button className={`grat-toggle ${gratReminders.evening?"on":"off"}`} onClick={()=>setGratReminders(r=>({...r,evening:!r.evening}))}>
-                      <div className="grat-toggle-knob"/>
-                    </button>
-                  </div>
+                  ))}
                 </div>
 
               </div>
