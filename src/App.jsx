@@ -2655,7 +2655,7 @@ export default function App() {
                               onChange={e=>setGratReminders(r=>({...r,[rem.timeKey]:e.target.value}))}
                               onBlur={()=>setEditingReminder(null)}
                               onKeyDown={e=>{if(e.key==="Enter"||e.key==="Escape")setEditingReminder(null);}}/>
-                          :<div style={{fontSize:11,color:"var(--gold-deep)",marginTop:2,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}} onClick={()=>setEditingReminder(rem.key)}>{gratReminders[rem.timeKey]} <span style={{fontSize:9,opacity:.6}}>tap to edit</span></div>
+                          :<div style={{fontSize:11,color:"var(--gold-deep)",marginTop:2,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}} onClick={()=>setEditingReminder(rem.key)}>{gratReminders[rem.timeKey]}</div>
                         }
                       </div>
                       <button className={`grat-toggle ${gratReminders[rem.key]?"on":"off"}`} onClick={()=>setGratReminders(r=>({...r,[rem.key]:!r[rem.key]}))}>
