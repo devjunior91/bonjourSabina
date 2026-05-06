@@ -395,7 +395,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hab-check.ck{border:none;}
 .hab-week-ct{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ink-light);text-align:center;}
 /* Icon picker */
-.hab-ip{position:absolute;top:calc(100% + 6px);left:0;z-index:600;background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);display:grid;grid-template-columns:repeat(7,1fr);gap:5px;width:252px;}
+.hab-ip{position:absolute;top:calc(100% + 6px);left:0;z-index:600;background:#fff;border:1px solid var(--border);border-radius:14px;padding:10px;box-shadow:0 8px 32px rgba(0,0,0,.12);display:grid;grid-template-columns:repeat(7,32px);gap:5px;width:auto;}
 .hab-ip-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
 .hab-ip-ico:hover{background:var(--parchment);}
 .hab-ip-ico.sel{border-color:var(--gold);}
