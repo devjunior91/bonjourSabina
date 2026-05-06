@@ -187,7 +187,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);border-top:1px solid rgba(26,20,16,.07);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
+.main{margin-left:var(--sidebar-w);padding:0 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
+.global-topbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:14px 24px;position:sticky;top:0;z-index:200;background:var(--cream);border-bottom:1px solid rgba(26,20,16,.05);margin-bottom:8px;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -350,7 +351,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pomo-btn.stop:hover{background:#fde8e8;color:#c05050;border-color:#fde8e8;}
 
 /* Habits page redesign */
-.hab-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.hab-wrap{margin:0 0 -64px;min-height:calc(100vh - 56px);}
 .hab-top{padding:24px 24px 0;}
 .hab-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
 .hab-nav{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 10px;box-shadow:var(--shadow);}
@@ -620,7 +621,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @media(max-width:900px){.pack-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:600px){.pack-grid{grid-template-columns:1fr;}}
 /* ── GRATITUDE ── */
-.grat-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.grat-wrap{margin:0 0 -64px;min-height:calc(100vh - 56px);}
 .grat-top{padding:24px 24px 0;}
 .grat-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
 .grat-body{display:grid;grid-template-columns:1fr 280px;gap:20px;padding:0 24px 64px;align-items:start;}
@@ -714,7 +715,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,124,.3);border-radius:10px;}
 
 /* ── TODO LAYOUT ── */
-.todo-wrap{margin:-28px 0 -64px;min-height:calc(100vh - 56px);}
+.todo-wrap{margin:0 0 -64px;min-height:calc(100vh - 56px);}
 .todo-top{padding:24px 24px 0;}
 .todo-prog-full{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-top:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
 .todo-navrow{display:flex;align-items:center;gap:10px;padding:14px 24px 10px;}
@@ -1398,31 +1399,31 @@ export default function App() {
         <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
 
-      {/* ── GLOBAL BELL + SETTINGS (visible on all pages) ── */}
-      <div style={{position:"fixed",top:16,right:24,display:"flex",gap:8,zIndex:300}}>
-        <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
-          {showNotifs&&(
-            <div className="notif-panel" onClick={e=>e.stopPropagation()}>
-              <div className="notif-hd">
-                <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
-                {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
-              </div>
-              {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
-              {[...notifications].reverse().slice(0,5).map(n=>(
-                <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
-                  <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
-                  <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-      </div>
-
       <main className="main">
+
+        {/* ── GLOBAL TOP BAR: bell + settings always top-right ── */}
+        <div className="global-topbar">
+          <div className="dash-icon-btn" style={{position:"relative"}} onClick={e=>{e.stopPropagation();setShowNotifs(s=>!s);if(!showNotifs)setNotifications(ns=>ns.map(n=>({...n,read:true})));}} >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            {unreadNotifs>0&&<div className="notif-badge">{unreadNotifs}</div>}
+            {showNotifs&&(
+              <div className="notif-panel" onClick={e=>e.stopPropagation()}>
+                <div className="notif-hd">
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Notifications</span>
+                  {notifications.length>0&&<button style={{background:"none",border:"none",fontSize:10,color:"var(--ink-light)",cursor:"pointer"}} onClick={()=>setNotifications([])}>Clear all</button>}
+                </div>
+                {notifications.length===0&&<div style={{padding:"16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No notifications yet ✦</div>}
+                {[...notifications].reverse().slice(0,5).map(n=>(
+                  <div key={n.id} className={`notif-item ${n.read?"":"unread"}`}>
+                    <div style={{fontWeight:n.read?400:500,marginBottom:2}}>{n.text}</div>
+                    <div style={{fontSize:10,color:"var(--ink-light)"}}>{n.date}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="dash-icon-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        </div>
 
         {/* ── HABITS ── */}
         {page==="habits"&&(()=>{
@@ -1664,7 +1665,7 @@ export default function App() {
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
-<div style={{padding:"0 8px"}}>
+<div style={{padding:"20px 8px 0"}}>
   {/* Page header */}
   <div className="dash-page-header">
     <div>
