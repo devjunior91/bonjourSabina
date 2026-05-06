@@ -1011,6 +1011,8 @@ export default function App() {
   const pomoColor=pomoProg>0.5?"#c9a87c":pomoProg>0.25?"#c8887a":"#c05050";
 
   const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
+  // Soft crystal-bowl tone for gratitude — warm triangle waves, slow bloom, long resonant decay
+  const gratChime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[[396,0],[528,0.22],[0,0]].slice(0,2).forEach(([freq,delay])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="triangle";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(.09,ctx.currentTime+delay+.18);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+2.2);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+2.2);});}catch(e){}};
   const pomoBegin=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[440,554.37,659.25].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.14);g.gain.linearRampToValueAtTime(.15,ctx.currentTime+i*.14+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.14+.35);o.start(ctx.currentTime+i*.14);o.stop(ctx.currentTime+i*.14+.35);});}catch(e){}};
   const pomoEnd=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[659.25,523.25,392].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.16);g.gain.linearRampToValueAtTime(.13,ctx.currentTime+i*.16+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.16+.4);o.start(ctx.currentTime+i*.16);o.stop(ctx.currentTime+i*.16+.4);});}catch(e){}};
   const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
@@ -1141,7 +1143,7 @@ export default function App() {
     const time=now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
     setGratitude(g=>({...g,[TODAY]:[...(g[TODAY]||[]),{id:Date.now(),text:gratInput.trim(),time}]}));
     setGratInput("");
-    chime();
+    gratChime();
   };
   const delGrat=(date,id)=>setGratitude(g=>({...g,[date]:(g[date]||[]).filter(e=>e.id!==id)}));
   const dayTotal=habitsTotal+todosTotalToday+cleaningTotalToday+goalWeightV+1;
