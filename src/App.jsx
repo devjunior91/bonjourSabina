@@ -903,16 +903,6 @@ export default function App() {
   const [dashModalPri,setDashModalPri]=useState("medium");
   const [dashModalTag,setDashModalTag]=useState("Personal");
   const [editSubtask,setEditSubtask]=useState(null);
-  const [showDashModal,setShowDashModal]=useState(false);
-  const [dashModalText,setDashModalText]=useState("");
-  const [dashModalPri,setDashModalPri]=useState("medium");
-  const [dashModalTag,setDashModalTag]=useState("Personal");
-  const [editSubtask,setEditSubtask]=useState(null);
-  const [showDashModal,setShowDashModal]=useState(false);
-  const [dashModalText,setDashModalText]=useState("");
-  const [dashModalPri,setDashModalPri]=useState("medium");
-  const [dashModalTag,setDashModalTag]=useState("Personal");
-  const [editSubtask,setEditSubtask]=useState(null);
 
   // Pomodoro timer state
   const [pomoDur,setPomoDur]=useState(1500);
@@ -1705,56 +1695,6 @@ export default function App() {
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
 <div style={{padding:"0 8px"}}>
-  {/* Dashboard Add Task Modal */}
-  {showDashModal&&(
-    <div className="mov" onClick={()=>setShowDashModal(false)}>
-      <div className="mbox" onClick={e=>e.stopPropagation()}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:3}}>Add Task</div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to Today · {NOW.toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
-        <label className="mlbl">Task</label>
-        <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={dashModalText} onChange={e=>setDashModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addDashTask()} autoFocus/>
-        <label className="mlbl">Priority</label>
-        <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
-          {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
-            <button key={p} className="mpri" style={dashModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setDashModalPri(p)}>{p}</button>
-          ))}
-        </div>
-        <label className="mlbl">Tag</label>
-        <select className="msel" style={{marginBottom:22}} value={dashModalTag} onChange={e=>setDashModalTag(e.target.value)}>
-          {tags.map(tag=><option key={tag}>{tag}</option>)}
-        </select>
-        <div style={{display:"flex",gap:8}}>
-          <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowDashModal(false)}>Cancel</button>
-          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
-        </div>
-      </div>
-    </div>
-  )}
-  {/* Dashboard Add Task Modal */}
-  {showDashModal&&(
-    <div className="mov" onClick={()=>setShowDashModal(false)}>
-      <div className="mbox" onClick={e=>e.stopPropagation()}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:3}}>Add Task</div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to Today · {NOW.toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
-        <label className="mlbl">Task</label>
-        <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={dashModalText} onChange={e=>setDashModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addDashTask()} autoFocus/>
-        <label className="mlbl">Priority</label>
-        <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
-          {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
-            <button key={p} className="mpri" style={dashModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setDashModalPri(p)}>{p}</button>
-          ))}
-        </div>
-        <label className="mlbl">Tag</label>
-        <select className="msel" style={{marginBottom:22}} value={dashModalTag} onChange={e=>setDashModalTag(e.target.value)}>
-          {tags.map(tag=><option key={tag}>{tag}</option>)}
-        </select>
-        <div style={{display:"flex",gap:8}}>
-          <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowDashModal(false)}>Cancel</button>
-          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
-        </div>
-      </div>
-    </div>
-  )}
   {/* Dashboard Add Task Modal */}
   {showDashModal&&(
     <div className="mov" onClick={()=>setShowDashModal(false)}>
