@@ -761,8 +761,24 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .msel{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;background:#fff;box-sizing:border-box;}
 .mpri{flex:1;padding:8px 4px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;text-transform:capitalize;}
 /* Priority flag */
-.pflag{display:flex;align-items:center;gap:4px;flex-shrink:0;min-width:68px;}
+.pflag{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 .pflag span{font-size:10px;font-weight:500;letter-spacing:.02em;}
+/* Subtasks */
+.subtask-row{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 34px;position:relative;}
+.subtask-row::before{content:"";position:absolute;left:21px;top:0;bottom:0;width:1px;background:rgba(26,20,16,.1);}
+.subtask-txt{font-size:11px;color:var(--ink);flex:1;cursor:pointer;line-height:1.4;}
+.subtask-txt.done{text-decoration:line-through;opacity:.5;}
+.subtask-inp{border:none;border-bottom:1px solid var(--gold);outline:none;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--ink);background:transparent;flex:1;padding:1px 0;}
+.subtask-del{border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:15px;opacity:0;transition:opacity .15s;padding:0;line-height:1;flex-shrink:0;}
+.subtask-row:hover .subtask-del{opacity:1;}
+.subtask-ck{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(122,98,82,.35);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.subtask-ck.done{background:var(--sage);border-color:var(--sage);}
+/* Subtask rows on todo list page */
+.subtask-row2{display:flex;align-items:center;gap:8px;padding:5px 18px 5px 50px;border-bottom:1px solid rgba(26,20,16,.03);background:#fafafa;}
+.subtask-row2:hover .subtask-del{opacity:1;}
+.tr2-sub-btn{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--ink-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .15s,background .15s;}
+.tr2:hover .tr2-sub-btn{opacity:1;}
+.tr2-sub-btn:hover{background:var(--parchment);}
 /* Sidebar quick add */
 .sb-quickadd{padding:12px 14px;border-top:1px solid rgba(26,20,16,.07);}
 .sb-qa-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(26,20,16,.35);margin-bottom:5px;font-family:'DM Sans',sans-serif;font-weight:500;}
@@ -882,6 +898,21 @@ export default function App() {
   const [newModalText,setNewModalText]=useState("");
   const [newModalPri,setNewModalPri]=useState("medium");
   const [newModalTag,setNewModalTag]=useState("Personal");
+  const [showDashModal,setShowDashModal]=useState(false);
+  const [dashModalText,setDashModalText]=useState("");
+  const [dashModalPri,setDashModalPri]=useState("medium");
+  const [dashModalTag,setDashModalTag]=useState("Personal");
+  const [editSubtask,setEditSubtask]=useState(null);
+  const [showDashModal,setShowDashModal]=useState(false);
+  const [dashModalText,setDashModalText]=useState("");
+  const [dashModalPri,setDashModalPri]=useState("medium");
+  const [dashModalTag,setDashModalTag]=useState("Personal");
+  const [editSubtask,setEditSubtask]=useState(null);
+  const [showDashModal,setShowDashModal]=useState(false);
+  const [dashModalText,setDashModalText]=useState("");
+  const [dashModalPri,setDashModalPri]=useState("medium");
+  const [dashModalTag,setDashModalTag]=useState("Personal");
+  const [editSubtask,setEditSubtask]=useState(null);
 
   // Pomodoro timer state
   const [pomoDur,setPomoDur]=useState(1500);
@@ -1044,8 +1075,8 @@ export default function App() {
   const pomoColor=pomoProg>0.5?"#c9a87c":pomoProg>0.25?"#c8887a":"#c05050";
 
   const chime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[523.25,659.25,783.99].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.18);g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.18+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.18+.5);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.5);});}catch(e){}};
-  // Gentle 2-note gratitude chime — soft sine, different from todo chime (C5-E5-G5)
-  const gratChime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;if(ctx.state==="suspended")ctx.resume();[[880,0],[1108.73,0.14]].forEach(([freq,delay])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(.09,ctx.currentTime+delay+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+.7);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+.7);});}catch(e){}};
+  // Gentle 2-note gratitude chime — plays on task addition
+  const gratChime=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;const play=()=>{[[880,0],[1108.73,0.18]].forEach(([freq,delay])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(.12,ctx.currentTime+delay+.05);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+.7);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+.8);});};if(ctx.state==="suspended")ctx.resume().then(play);else play();}catch(e){}};
   const pomoBegin=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[440,554.37,659.25].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.14);g.gain.linearRampToValueAtTime(.15,ctx.currentTime+i*.14+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.14+.35);o.start(ctx.currentTime+i*.14);o.stop(ctx.currentTime+i*.14+.35);});}catch(e){}};
   const pomoEnd=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[659.25,523.25,392].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.16);g.gain.linearRampToValueAtTime(.13,ctx.currentTime+i*.16+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.16+.4);o.start(ctx.currentTime+i*.16);o.stop(ctx.currentTime+i*.16+.4);});}catch(e){}};
   const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
@@ -1060,7 +1091,13 @@ export default function App() {
   const streak=days=>days.filter(Boolean).length;
 
   const byPri=arr=>[...arr].sort((a,b)=>(PRIORITY_ORD[a.priority??"medium"])-(PRIORITY_ORD[b.priority??"medium"]));
-  const addTodoFor=date=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date,priority:newTodoPriority}]);setNewTodo("");};
+  const pflag=(p)=>{const cfg={high:{c:"#d93535",l:"High"},medium:{c:"#c9870a",l:"Medium"},low:{c:"#9a9a9a",l:"Low"}};const {c,l}=cfg[p||"medium"];return(<div className="pflag"><svg width="10" height="12" viewBox="0 0 10 12" fill="none"><line x1="1" y1="0" x2="1" y2="12" stroke={c} strokeWidth="1.8" strokeLinecap="round"/><path d="M1 1.5 L9.5 4.5 L1 7.5Z" fill={c}/></svg><span style={{color:c}}>{l}</span></div>);};
+  const addSubtask=(todoId)=>{const newSub={id:Date.now(),text:"",done:false};setTodos(ts=>ts.map(td=>td.id===todoId?{...td,subtasks:[...(td.subtasks||[]),newSub]}:td));setEditSubtask({todoId,subId:newSub.id,text:""});};
+  const toggleSubtask=(todoId,subId)=>setTodos(ts=>ts.map(td=>td.id===todoId?{...td,subtasks:(td.subtasks||[]).map(s=>s.id===subId?{...s,done:!s.done}:s)}:td));
+  const delSubtask=(todoId,subId)=>setTodos(ts=>ts.map(td=>td.id===todoId?{...td,subtasks:(td.subtasks||[]).filter(s=>s.id!==subId)}:td));
+  const saveSubtask=(todoId,subId,text)=>{if(!text.trim()){delSubtask(todoId,subId);}else{setTodos(ts=>ts.map(td=>td.id===todoId?{...td,subtasks:(td.subtasks||[]).map(s=>s.id===subId?{...s,text:text.trim()}:s)}:td));}setEditSubtask(null);};
+  const addDashTask=()=>{if(!dashModalText.trim())return;setTodos(ts=>[...ts,{id:Date.now(),text:dashModalText,done:false,tag:dashModalTag,date:TODAY,priority:dashModalPri,subtasks:[]}]);setDashModalText("");setDashModalPri("medium");setShowDashModal(false);gratChime();};
+  const addTodoFor=date=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date,priority:newTodoPriority,subtasks:[]}]);setNewTodo("");gratChime();};
   const addTodo=()=>addTodoFor(TODAY);
   const addTodoDash=()=>addTodoFor(dashTodoDay==="today"?TODAY:TOMORROW);
   const toggleTodo=id=>setTodos(t=>t.map(td=>{if(td.id!==id)return td;if(!td.done)shout();return{...td,done:!td.done};}));
@@ -1668,6 +1705,81 @@ export default function App() {
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
 <div style={{padding:"0 8px"}}>
+  {/* Dashboard Add Task Modal */}
+  {showDashModal&&(
+    <div className="mov" onClick={()=>setShowDashModal(false)}>
+      <div className="mbox" onClick={e=>e.stopPropagation()}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:3}}>Add Task</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to Today · {NOW.toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
+        <label className="mlbl">Task</label>
+        <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={dashModalText} onChange={e=>setDashModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addDashTask()} autoFocus/>
+        <label className="mlbl">Priority</label>
+        <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
+          {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
+            <button key={p} className="mpri" style={dashModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setDashModalPri(p)}>{p}</button>
+          ))}
+        </div>
+        <label className="mlbl">Tag</label>
+        <select className="msel" style={{marginBottom:22}} value={dashModalTag} onChange={e=>setDashModalTag(e.target.value)}>
+          {tags.map(tag=><option key={tag}>{tag}</option>)}
+        </select>
+        <div style={{display:"flex",gap:8}}>
+          <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowDashModal(false)}>Cancel</button>
+          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
+        </div>
+      </div>
+    </div>
+  )}
+  {/* Dashboard Add Task Modal */}
+  {showDashModal&&(
+    <div className="mov" onClick={()=>setShowDashModal(false)}>
+      <div className="mbox" onClick={e=>e.stopPropagation()}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:3}}>Add Task</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to Today · {NOW.toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
+        <label className="mlbl">Task</label>
+        <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={dashModalText} onChange={e=>setDashModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addDashTask()} autoFocus/>
+        <label className="mlbl">Priority</label>
+        <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
+          {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
+            <button key={p} className="mpri" style={dashModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setDashModalPri(p)}>{p}</button>
+          ))}
+        </div>
+        <label className="mlbl">Tag</label>
+        <select className="msel" style={{marginBottom:22}} value={dashModalTag} onChange={e=>setDashModalTag(e.target.value)}>
+          {tags.map(tag=><option key={tag}>{tag}</option>)}
+        </select>
+        <div style={{display:"flex",gap:8}}>
+          <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowDashModal(false)}>Cancel</button>
+          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
+        </div>
+      </div>
+    </div>
+  )}
+  {/* Dashboard Add Task Modal */}
+  {showDashModal&&(
+    <div className="mov" onClick={()=>setShowDashModal(false)}>
+      <div className="mbox" onClick={e=>e.stopPropagation()}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:3}}>Add Task</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:20}}>Adding to Today · {NOW.toLocaleDateString("en-GB",{day:"numeric",month:"long"})}</div>
+        <label className="mlbl">Task</label>
+        <input className="minp" style={{marginBottom:14}} placeholder="What needs to be done?" value={dashModalText} onChange={e=>setDashModalText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addDashTask()} autoFocus/>
+        <label className="mlbl">Priority</label>
+        <div style={{display:"flex",gap:6,marginTop:5,marginBottom:14}}>
+          {[["high","#d93535"],["medium","#c9870a"],["low","#9a9a9a"]].map(([p,c])=>(
+            <button key={p} className="mpri" style={dashModalPri===p?{background:c,color:"#fff",borderColor:c}:{}} onClick={()=>setDashModalPri(p)}>{p}</button>
+          ))}
+        </div>
+        <label className="mlbl">Tag</label>
+        <select className="msel" style={{marginBottom:22}} value={dashModalTag} onChange={e=>setDashModalTag(e.target.value)}>
+          {tags.map(tag=><option key={tag}>{tag}</option>)}
+        </select>
+        <div style={{display:"flex",gap:8}}>
+          <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowDashModal(false)}>Cancel</button>
+          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
+        </div>
+      </div>
+    </div>
+  )}
   {/* Page header */}
   <div className="dash-page-header">
     <div>
@@ -1764,45 +1876,52 @@ export default function App() {
         ))}
       </div>
 
-      {/* Today's priorities — full width */}
-      <div className="card" style={{display:"flex",flexDirection:"column"}}>
-        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-          <div className="ct" style={{marginBottom:0}}>Today's priorities</div>
-          <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      {/* Today's Tasks — matching to-do list page design */}
+      <div className="todo-card">
+        <div className="todo-chd">
+          <div style={{flex:1,fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)",display:"flex",alignItems:"center",gap:8}}>
+            Today's Tasks
+            <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>!t.done&&t.date===TODAY).length}</span>
+          </div>
+          <div className="todo-cpri">Priority</div>
+          <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer",marginLeft:8,whiteSpace:"nowrap"}}>View all</button>
         </div>
-        <div className="cs" style={{marginBottom:10}}>{todos.filter(t=>!t.done&&t.date===TODAY).length} tasks</div>
-        {/* Top 3 always visible, rest scrollable */}
-        <div className="tl" style={{marginBottom:10}}>
-          {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).slice(0,3).map(todo=>(
-            <div key={todo.id} className="ti">
-              <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-              <div className="tb2">
-                <div className="tt">{todo.text}</div>
-                <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
+        <div style={{maxHeight:360,overflowY:"auto"}}>
+          {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map((todo)=>(
+            <div key={todo.id}>
+              <div className="tr2">
+                <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
+                  {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
+                </div>
+                <div className="tr2-body">
+                  <div className={`tr2-txt ${todo.done?"done":""}`}>{todo.text}</div>
+                  <span className={`tg ${todo.tag}`} style={{marginTop:3,display:"inline-block"}}>{todo.tag}</span>
+                </div>
+                <div className="tr2-pri">{pflag(todo.priority)}</div>
+                <button className="tr2-sub-btn" title="Add subtask" onClick={e=>{e.stopPropagation();addSubtask(todo.id);}}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
               </div>
+              {(todo.subtasks||[]).map(sub=>(
+                <div key={sub.id} className="subtask-row2">
+                  <div className={`subtask-ck${sub.done?" done":""}`} onClick={()=>toggleSubtask(todo.id,sub.id)}>
+                    {sub.done&&<span style={{fontSize:7,color:"#fff",lineHeight:1}}>✓</span>}
+                  </div>
+                  {editSubtask&&editSubtask.todoId===todo.id&&editSubtask.subId===sub.id
+                    ?<input autoFocus className="subtask-inp" style={{flex:1}} value={editSubtask.text} onChange={e=>setEditSubtask(s=>({...s,text:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter")saveSubtask(todo.id,sub.id,editSubtask.text);if(e.key==="Escape"){if(!sub.text)delSubtask(todo.id,sub.id);setEditSubtask(null);}}} onBlur={()=>saveSubtask(todo.id,sub.id,editSubtask.text)}/>
+                    :<span className={`subtask-txt${sub.done?" done":""}`} style={{flex:1,fontSize:12}} onClick={()=>!sub.done&&setEditSubtask({todoId:todo.id,subId:sub.id,text:sub.text})}>{sub.text||<em style={{opacity:.5}}>Type subtask…</em>}</span>
+                  }
+                  <button className="subtask-del" onClick={()=>delSubtask(todo.id,sub.id)}>×</button>
+                </div>
+              ))}
             </div>
           ))}
-          {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&<div className="emp">All caught up ✦</div>}
+          {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&(
+            <div className="emp" style={{padding:"24px 18px"}}>Nothing planned for today ✦</div>
+          )}
         </div>
-        {/* Overflow: items 4+ scrollable */}
-        {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).length>3&&(
-          <div className="tl" style={{maxHeight:100,overflowY:"auto",marginBottom:10}}>
-            {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).slice(3).map(todo=>(
-              <div key={todo.id} className="ti">
-                <div className="tc" onClick={()=>toggleTodo(todo.id)}/>
-                <div className="tb2">
-                  <div className="tt">{todo.text}</div>
-                  <div className="tm"><span className={`tg ${todo.tag}`}>{todo.tag}</span></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        <div style={{borderTop:"1px solid var(--border)",paddingTop:10,marginTop:"auto"}}>
-          <div className="row">
-            <input className="inp" style={{fontSize:12}} placeholder="+ Add new task" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodoDash()}/>
-            <button className="bp" onClick={addTodoDash}>Add</button>
-          </div>
+        <div className="todo-add" onClick={()=>setShowDashModal(true)}>
+          <span style={{fontSize:16,lineHeight:1,marginRight:2}}>+</span> Add Task
         </div>
       </div>
 
@@ -1996,8 +2115,9 @@ export default function App() {
           // Modal add
           const handleModalAdd=()=>{
             if(!newModalText.trim())return;
-            setTodos(ts=>[...ts,{id:Date.now(),text:newModalText,done:false,tag:newModalTag,date:viewDate,priority:newModalPri}]);
+            setTodos(ts=>[...ts,{id:Date.now(),text:newModalText,done:false,tag:newModalTag,date:viewDate,priority:newModalPri,subtasks:[]}]);
             setNewModalText("");setNewModalPri("medium");setShowNewModal(false);
+            gratChime();
           };
           return(
         <div className="todo-wrap">
@@ -2135,7 +2255,8 @@ export default function App() {
                 {viewTodos.map((todo,idx)=>{
                   const menuUp=idx>=viewTodos.length-2;
                   return(
-                  <div key={todo.id} className="tr2">
+                  <div key={todo.id}>
+                  <div className="tr2">
                     <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
                       {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
                     </div>
@@ -2144,6 +2265,9 @@ export default function App() {
                       <span className="tr2-tg">{todo.tag}</span>
                     </div>
                     <div className="tr2-pri">{pflag(todo.priority)}</div>
+                    <button className="tr2-sub-btn" title="Add subtask" onClick={e=>{e.stopPropagation();addSubtask(todo.id);}}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
                     <button className="tr2-edit" onClick={e=>{e.stopPropagation();setEditModal({...todo});}} title="Edit task">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
@@ -2156,6 +2280,19 @@ export default function App() {
                         <div className="tmi del" onClick={()=>{delTodo(todo.id);setShowTaskMenu(null);}}>✕ &nbsp;Delete</div>
                       </div>
                     )}
+                  </div>
+                  {(todo.subtasks||[]).map(sub=>(
+                    <div key={sub.id} className="subtask-row2">
+                      <div className={`subtask-ck${sub.done?" done":""}`} onClick={()=>toggleSubtask(todo.id,sub.id)}>
+                        {sub.done&&<span style={{fontSize:7,color:"#fff",lineHeight:1}}>✓</span>}
+                      </div>
+                      {editSubtask&&editSubtask.todoId===todo.id&&editSubtask.subId===sub.id
+                        ?<input autoFocus className="subtask-inp" style={{flex:1}} value={editSubtask.text} onChange={e=>setEditSubtask(s=>({...s,text:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter")saveSubtask(todo.id,sub.id,editSubtask.text);if(e.key==="Escape"){if(!sub.text)delSubtask(todo.id,sub.id);setEditSubtask(null);}}} onBlur={()=>saveSubtask(todo.id,sub.id,editSubtask.text)}/>
+                        :<span className={`subtask-txt${sub.done?" done":""}`} style={{flex:1,fontSize:12}} onClick={()=>!sub.done&&setEditSubtask({todoId:todo.id,subId:sub.id,text:sub.text})}>{sub.text||<em style={{opacity:.5}}>Type subtask…</em>}</span>
+                      }
+                      <button className="subtask-del" onClick={()=>delSubtask(todo.id,sub.id)}>×</button>
+                    </div>
+                  ))}
                   </div>
                 );})}
                 {viewTodos.length===0&&<div className="emp" style={{padding:"24px 18px"}}>Nothing planned for {VIEW_LBL.toLowerCase()} ✦</div>}
