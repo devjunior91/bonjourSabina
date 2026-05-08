@@ -555,9 +555,9 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .goal-tabs{display:flex;gap:4px;background:var(--parchment);border-radius:10px;padding:3px;}
 .goal-tab{padding:6px 14px;border:none;background:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .goal-tab.active{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08);}
-.goal-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:0;margin-bottom:16px;box-shadow:var(--shadow);display:flex;overflow:hidden;}
-.goal-card-left{padding:22px 24px;flex:0 0 340px;display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(26,20,16,.06);}
-.goal-card-right{flex:1;padding:20px 24px;display:flex;flex-direction:column;}
+.goal-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:0;margin-bottom:16px;box-shadow:var(--shadow);display:flex;}
+.goal-card-left{padding:22px 24px;flex:0 0 340px;display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(26,20,16,.06);border-radius:14px 0 0 14px;}
+.goal-card-right{flex:1;padding:20px 24px;display:flex;flex-direction:column;border-radius:0 14px 14px 0;overflow:visible;position:relative;}
 .goal-icon-wrap{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden;flex-shrink:0;}
 .goal-title-txt{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);margin-bottom:5px;line-height:1.3;}
 .goal-desc-txt{font-size:12px;color:var(--ink-light);line-height:1.5;margin-bottom:16px;flex:1;}
@@ -1224,7 +1224,7 @@ export default function App() {
   const saveGoal=()=>{if(!gDraft.title.trim())return;const ms=gDraft.milestones.filter(m=>(typeof m==="string"?m:m.text||"").trim()).map(m=>{const txt=typeof m==="string"?m:m.text||"";return{id:Date.now()+Math.random(),text:txt.trim(),done:false,doneDate:null};});if(goalModalMode==="add"){const ex=goals[vMonth]||[];setGoals(p=>({...p,[vMonth]:[...ex,{id:Date.now(),title:gDraft.title,description:gDraft.description,category:gDraft.category,icon:gDraft.icon,targetDate:gDraft.targetDate,milestones:ms}]}));}else{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===goalEditId?{...g,title:gDraft.title,description:gDraft.description,category:gDraft.category,icon:gDraft.icon,targetDate:gDraft.targetDate,milestones:ms}:g)}));}setShowGoalModal(false);gratChime();};
   const delGoal=id=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).filter(g=>g.id!==id)}));setGoalMenuOpen(null);};
   const toggleMs=(gid,mi)=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>{if(g.id!==gid)return g;const ms=g.milestones.map((m,i)=>{if(i!==mi)return m;const nowDone=!m.done;if(nowDone)chime();return{...m,done:nowDone,doneDate:nowDone?TODAY:null};});return{...g,milestones:ms};})}));};
-  const updateMsStatus=(gid,mi,newStatus)=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>{if(g.id!==gid)return g;const ms=g.milestones.map((m,i)=>{if(i!==mi)return m;if(newStatus==="completed"&&!m.done)chime();return{...m,done:newStatus==="completed",doneDate:newStatus==="completed"?TODAY:null,status:newStatus};});return{...g,milestones:ms};})}));setMsDropOpen(null);};
+  const updateMsStatus=(gid,mi,newStatus)=>{const prevMs=(goals[vMonth]||[]).find(g=>g.id===gid)?.milestones?.[mi];if(newStatus==="completed"&&prevMs&&!prevMs.done)chime();setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>{if(g.id!==gid)return g;const ms=g.milestones.map((m,i)=>{if(i!==mi)return m;return{...m,done:newStatus==="completed",doneDate:newStatus==="completed"?TODAY:null,status:newStatus};});return{...g,milestones:ms};})}));setMsDropOpen(null);};
   const gMsAdd=()=>{if(gDraft.milestones.length<5)setGDraft(d=>({...d,milestones:[...d.milestones,""]}));};
   const gMsDel=i=>setGDraft(d=>({...d,milestones:d.milestones.filter((_,j)=>j!==i)}));
   const gMsChange=(i,v)=>setGDraft(d=>({...d,milestones:d.milestones.map((m,j)=>j===i?v:m)}));
@@ -2766,7 +2766,7 @@ export default function App() {
                   <span className="goal-ms-lbl">Milestones</span>
                 </div>
                 {goal.milestones&&goal.milestones.map((m,i)=>{
-                  const status=m.done?"completed":(m.status&&m.status!=="completed"?m.status:"notstarted");
+                  const safeStatus=["notstarted","inprogress","completed"].includes(m.status)?m.status:null;const status=m.done?"completed":(safeStatus&&safeStatus!=="completed"?safeStatus:"notstarted");
                   const statusLabel=status==="completed"?"Completed":status==="inprogress"?"In progress":"Not started";
                   return(
                   <div key={m.id||i} className="ms2-row">
