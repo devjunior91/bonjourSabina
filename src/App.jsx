@@ -1872,8 +1872,8 @@ export default function App() {
           );
         })()}
         {/* Camera overlay for photo upload */}
-        <div onClick={()=>photoInputRef.current&&photoInputRef.current.click()} style={{position:"absolute",bottom:2,right:2,width:26,height:26,borderRadius:"50%",background:"var(--ink)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.25)",zIndex:2}}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <div onClick={()=>photoInputRef.current&&photoInputRef.current.click()} style={{position:"absolute",bottom:4,right:4,width:22,height:22,borderRadius:"50%",background:"var(--gold)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.2)",zIndex:2}}>
+          <span style={{color:"#fff",fontSize:16,lineHeight:1,fontWeight:300,marginTop:"-1px"}}>+</span>
         </div>
         <input ref={photoInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoChange}/>
       </div>
@@ -2598,9 +2598,10 @@ export default function App() {
             const pct=goalPct(g);
             const allDone=g.milestones&&g.milestones.length>0&&g.milestones.every(m=>m.done);
             const anyDone=g.milestones&&g.milestones.some(m=>m.done);
+            const anyInProgress=g.milestones&&g.milestones.some(m=>!m.done&&m.status==="inprogress");
             if(goalFilter==="completed")return allDone||(pct===100);
-            if(goalFilter==="inprogress")return !allDone&&anyDone;
-            if(goalFilter==="notstarted")return !anyDone&&pct===0;
+            if(goalFilter==="inprogress")return !allDone&&(anyDone||anyInProgress);
+            if(goalFilter==="notstarted")return !anyDone&&!anyInProgress&&pct===0;
             return true;
           });
           const mCompletedCount=mGoals.filter(g=>g.milestones&&g.milestones.length>0&&g.milestones.every(m=>m.done)).length;
