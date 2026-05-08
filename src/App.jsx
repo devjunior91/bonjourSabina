@@ -2591,7 +2591,7 @@ export default function App() {
         </>}
 
         {/* ── GOALS ── */}
-        {page==="goals"&&(()=>{
+        {page==="goals"&&(()=>{try{
           const mGoalsF=mGoals.filter(g=>{
             if(goalCat&&g.category!==goalCat)return false;
             const pct=goalPct(g);
@@ -2605,6 +2605,7 @@ export default function App() {
           const mCompletedCount=mGoals.filter(g=>g.milestones&&g.milestones.length>0&&g.milestones.every(m=>m.done)).length;
           const mAvgPct=mGoals.length?Math.round(mGoals.reduce((s,g)=>s+goalPct(g),0)/mGoals.length):0;
           const goalQuote=GOAL_QUOTES[NOW.getDate()%GOAL_QUOTES.length];
+          const fmtDate=d=>{if(!d)return"";const dt=new Date(d+"T00:00:00");if(isNaN(dt.getTime()))return"";return dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});};
           const recentGoalWins=mGoals.flatMap(g=>(g.milestones||[]).filter(m=>m.done&&m.doneDate).map(m=>({...m,goalTitle:g.title,goalIcon:g.icon,cat:g.category}))).sort((a,b)=>(b.doneDate||"").localeCompare(a.doneDate||"")).slice(0,4);
           const CIRC=2*Math.PI*38;
           const donutDash=`${(mAvgPct/100)*CIRC} ${CIRC}`;
@@ -2743,7 +2744,6 @@ export default function App() {
           {goalView==="list"&&mGoalsF.map(goal=>{
             const pct=goalPct(goal);
             const cm=catMeta(goal.category);
-            const fmtDate=d=>{if(!d)return"";const dt=new Date(d+"T00:00:00");if(isNaN(dt.getTime()))return"";return dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});};
             return(
             <div key={goal.id} className="goal-card" style={{position:"relative"}}>
               <div className="goal-card-left">
@@ -2813,7 +2813,7 @@ export default function App() {
                 <div className="gtit" style={{marginBottom:0}}>{goal.title}</div>
               </div>
               <div className="pb2"><div className="pf" style={{width:`${pct}%`,background:cm.color}}/></div>
-              <div className="pr"><span className="pp">{pct}% complete</span>{goal.targetDate&&<span className="gd">→ {new Date(goal.targetDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}</div>
+              <div className="pr"><span className="pp">{pct}% complete</span>{goal.targetDate&&!isNaN(new Date(goal.targetDate+"T00:00:00"))&&<span className="gd">→ {new Date(goal.targetDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}</div>
               <div className="ms">{(goal.milestones||[]).map((m,i)=><div key={m.id||i} className={`mi${m.done?" dm":""}`} onClick={()=>toggleMs(goal.id,i)}><div className="md2" style={m.done?{background:cm.color}:{}}/><span>{m.text}</span></div>)}</div>
             </div>);
           })}</div>}
@@ -2850,7 +2850,7 @@ export default function App() {
             </div>
           </div>
           <div className="goal-page-footer">✦ Big goals are achieved one small step at a time. ♡</div>
-        </>);})()} 
+        </>);}catch(e){console.error('Goals render error:',e);return(<div style={{padding:'40px',textAlign:'center'}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:'var(--ink)',marginBottom:16}}>Something went wrong ✦</div><p style={{fontSize:13,color:'var(--ink-light)',marginBottom:24}}>Your goals data may need a reset.</p><button onClick={()=>{localStorage.setItem('sab_goals','{}');window.location.reload();}} style={{background:'var(--ink)',color:'#f4ede3',border:'none',borderRadius:10,padding:'10px 24px',fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:'pointer'}}>Reset Goals & Reload</button></div>);}})()}
 
         {/* ── CALENDAR ── */}
         {page==="calendar"&&<>
