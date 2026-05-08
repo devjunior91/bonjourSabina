@@ -933,7 +933,7 @@ export default function App() {
   const [vMonth,setVMonth]=useState(MK);
   const [showGoalModal,setShowGoalModal]=useState(false);
   const [userPhoto,setUserPhoto]=useState(()=>localStorage.getItem("userPhoto")||null);
-  const photoInputRef=React.useRef(null);
+  const photoInputRef=useRef(null);
   const handlePhotoChange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const d=ev.target.result;setUserPhoto(d);localStorage.setItem("userPhoto",d);};r.readAsDataURL(f);};
   const [goalModalMode,setGoalModalMode]=useState("add");
   const [goalEditId,setGoalEditId]=useState(null);
