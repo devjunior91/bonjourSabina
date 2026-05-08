@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import sabinaPhoto from "./assets/sabina.jpg";
+import tipsBg from "./assets/image.png";
 import { createClient } from "@supabase/supabase-js";
 
 // ── Change this to your own password ──
@@ -547,7 +548,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .mi.dm .md2{background:var(--sage);}
 .mi.dm span{text-decoration:line-through;opacity:.5;}
 /* ── Goals redesign ── */
-.goal-stats-row{display:grid;grid-template-columns:1fr 1fr 1.5fr 1fr;gap:16px;margin-bottom:24px;}
+.goal-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
 .goal-stat-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);}
 .goal-stat-label{font-size:11px;font-weight:500;color:var(--ink-light);letter-spacing:.05em;margin-bottom:14px;}
 .goal-filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;}
@@ -2714,12 +2715,6 @@ export default function App() {
                 {mGoals.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No goals set yet</div>}
               </div>
             </div>
-            {/* Quote */}
-            <div className="goal-stat-card" style={{background:"var(--parchment)",border:"none"}}>
-              <div style={{fontSize:32,color:"var(--gold)",lineHeight:1,marginBottom:10}}>❝</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--ink)",lineHeight:1.5}}>{goalQuote}</div>
-              <div style={{marginTop:16,color:"var(--gold)",fontSize:18,textAlign:"right"}}>♡</div>
-            </div>
           </div>
           {/* Filter + view controls */}
           <div className="goal-filter-row">
@@ -2836,7 +2831,7 @@ export default function App() {
                 </div>
               );})}
             </div>
-            <div className="tips-card" style={{backgroundImage:"url('/tips-bg.png')"}}>
+            <div className="tips-card" style={{backgroundImage:`url(${tipsBg})`}}>
               <div className="tips-card-overlay"/>
               <div className="tips-card-content">
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16}}>Tips for this month</div>
