@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import sabinaPhoto from "./assets/sabina.jpg";
-import tipsBg from "./assets/image.png";
 import { createClient } from "@supabase/supabase-js";
 
 // ── Change this to your own password ──
@@ -2837,7 +2836,7 @@ export default function App() {
                 </div>
               );})}
             </div>
-            <div className="tips-card" style={{backgroundImage:`url(${tipsBg})`}}>
+            <div className="tips-card" style={{backgroundImage:"url('/tips-bg.png')"}}>
               <div className="tips-card-overlay"/>
               <div className="tips-card-content">
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16}}>Tips for this month</div>
