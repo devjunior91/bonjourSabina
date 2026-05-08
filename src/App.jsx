@@ -571,7 +571,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ms2-row:last-child{border-bottom:none;}
 .ms2-ck{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(122,98,82,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;}
 .ms2-ck.done{border-color:transparent;}
-.ms2-txt{font-size:12.5px;color:var(--ink);line-height:1.35;}
+.ms2-txt{font-size:12.5px;color:var(--ink);line-height:1.35;text-align:left;}
 .ms2-txt.done{text-decoration:line-through;opacity:.45;}
 .ms-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;}
 .ms-badge.completed{background:#eef3ea;color:#6f7f55;}
@@ -932,6 +932,9 @@ export default function App() {
   const [newTag,setNewTag]=useState("");
   const [vMonth,setVMonth]=useState(MK);
   const [showGoalModal,setShowGoalModal]=useState(false);
+  const [userPhoto,setUserPhoto]=useState(()=>localStorage.getItem("userPhoto")||null);
+  const photoInputRef=React.useRef(null);
+  const handlePhotoChange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const d=ev.target.result;setUserPhoto(d);localStorage.setItem("userPhoto",d);};r.readAsDataURL(f);};
   const [goalModalMode,setGoalModalMode]=useState("add");
   const [goalEditId,setGoalEditId]=useState(null);
   const [gDraft,setGDraft]=useState({title:"",description:"",category:"Health",icon:"health",targetDate:"",milestones:[""]});
@@ -1827,7 +1830,7 @@ export default function App() {
   <div className="dash-top-row">
     <div className="prog-card">
       {/* 1 — Photo with circular progress ring */}
-      <div className="prog-ring-col">
+      <div className="prog-ring-col" style={{position:"relative"}}>
         {(()=>{
           const R=46,C=2*Math.PI*R;
           const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";
@@ -1838,10 +1841,15 @@ export default function App() {
                 strokeDasharray={C} strokeDashoffset={C*(1-dayPct/100)}
                 strokeLinecap="round" transform="rotate(-90 60 60)" style={{transition:"stroke-dashoffset .6s"}}/>
               <clipPath id="ppClip"><circle cx="60" cy="60" r="36"/></clipPath>
-              <image href={sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
+              <image href={userPhoto||sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
             </svg>
           );
         })()}
+        {/* Camera overlay for photo upload */}
+        <div onClick={()=>photoInputRef.current&&photoInputRef.current.click()} style={{position:"absolute",bottom:2,right:2,width:26,height:26,borderRadius:"50%",background:"var(--ink)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.25)",zIndex:2}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <input ref={photoInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoChange}/>
       </div>
       {/* 2 — Big % number + bar */}
       <div className="prog-center">
@@ -2619,7 +2627,7 @@ export default function App() {
             </div>
           )}
           {/* Page header */}
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24}}>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24,padding:"0"}}>
             <div>
               <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:30,fontWeight:400,color:"var(--ink)",display:"flex",alignItems:"center",gap:8}}>Monthly Goals <span style={{color:"var(--gold)"}}>✦</span></h1>
               <p style={{fontSize:13,color:"var(--ink-light)",marginTop:4,fontFamily:"'DM Sans',sans-serif"}}>Focus on what matters this month and make it happen.</p>
@@ -2656,6 +2664,14 @@ export default function App() {
               <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,color:"var(--ink)",lineHeight:1}}>{mCompletedCount}</div>
               <div style={{fontSize:12,color:"var(--ink-light)",marginTop:4}}>/{mGoals.length} total goals</div>
               <div style={{fontSize:11,color:"var(--sage)",marginTop:8}}>{mCompletedCount>0?"Keep going, you're doing great!":"Start tracking your first milestone ✦"}</div>
+              <svg width="120" height="44" viewBox="0 0 120 44" fill="none" style={{marginTop:12}}>
+                <path d="M6 34 C18 30, 24 31, 34 27 C44 22, 52 25, 62 21 C74 16, 82 19, 92 12 C102 6, 110 9, 116 4" stroke="#B89576" strokeWidth="3" strokeLinecap="round"/>
+                <circle cx="6" cy="34" r="3.5" fill="#B89576"/>
+                <circle cx="34" cy="27" r="3.5" fill="#B89576"/>
+                <circle cx="62" cy="21" r="3.5" fill="#B89576"/>
+                <circle cx="92" cy="12" r="3.5" fill="#B89576"/>
+                <circle cx="116" cy="4" r="3.5" fill="#B89576"/>
+              </svg>
             </div>
             {/* Focus This Month */}
             <div className="goal-stat-card">
@@ -2666,7 +2682,7 @@ export default function App() {
                     <div style={{width:28,height:28,borderRadius:"50%",overflow:"hidden",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",background:cm.bg}}>
                       <div style={{transform:"scale(0.7)",transformOrigin:"center"}}>{goalIconEl(g.icon)}</div>
                     </div>
-                    <span style={{fontSize:13,color:"var(--ink)"}}>{g.title}</span>
+                    <span style={{fontSize:13,color:"var(--ink)",textAlign:"left"}}>{g.title}</span>
                   </div>
                 );})}
                 {mGoals.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No goals set yet</div>}
@@ -2702,7 +2718,6 @@ export default function App() {
           {goalView==="list"&&mGoalsF.map(goal=>{
             const pct=goalPct(goal);
             const cm=catMeta(goal.category);
-            const firstUndone=goal.milestones?goal.milestones.findIndex(m=>!m.done):-1;
             const fmtDate=d=>{if(!d)return"";const dt=new Date(d+"T00:00:00");return dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});};
             return(
             <div key={goal.id} className="goal-card" style={{position:"relative"}}>
@@ -2725,7 +2740,7 @@ export default function App() {
                   <span className="goal-ms-lbl">Milestones</span>
                 </div>
                 {goal.milestones&&goal.milestones.map((m,i)=>{
-                  const status=m.done?"completed":i===firstUndone?"inprogress":"notstarted";
+                  const status=m.done?"completed":"notstarted";
                   const statusLabel=status==="completed"?"Completed":status==="inprogress"?"In progress":"Not started";
                   return(
                   <div key={m.id||i} className="ms2-row">
