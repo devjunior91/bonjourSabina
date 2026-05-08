@@ -50,6 +50,24 @@ const MONTHS=["January","February","March","April","May","June","July","August",
 const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const HCOLORS=["#c9a87c","#7a9070","#b098c0","#7090a8","#a89080","#c8887a","#8cb87a","#c8b87a","#a0b0c8","#c8a0b0"];
 const HICONS=["○","□","△","▽","◇","☆","♡","♢","◎","⊙","⊕","◈","⊞","⊟","◉","✦","✧","✤","✱","✳","✎","☼","☽","♪","✐","∞","⊗","◁","▷","⊣","⊢","⋄","◊","❖","✦"];
+const GOAL_CATS={"Health":{color:"#6F7F55",bg:"#EEF3EA"},"Spiritual":{color:"#9B7BB6",bg:"#F2EDF7"},"Finance":{color:"#B89576",bg:"#F3EAE1"},"Personal":{color:"#C98F8F",bg:"#F7EDEA"},"Career":{color:"#7FA6C6",bg:"#EEF3F8"},"Travel":{color:"#A88B6F",bg:"#F3EAE1"},"Home":{color:"#C47C6A",bg:"#F7ECE8"},"Relationships":{color:"#C98F8F",bg:"#F7EDEA"},"Creativity":{color:"#D29A52",bg:"#FFF4E6"},"Faith":{color:"#7FA37A",bg:"#EEF3EA"},"Study":{color:"#7FA6C6",bg:"#EEF3F8"},"Weight Loss":{color:"#6F7F55",bg:"#EEF3EA"},"Business":{color:"#B89576",bg:"#F3EAE1"},"Self-care":{color:"#C98F8F",bg:"#F7EDEA"}};
+const GOAL_ICON_LIST=[
+  {id:"health",label:"Health / Fitness",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M7 10V14" stroke="#6F7F55" strokeWidth="2" strokeLinecap="round"/><path d="M17 10V14" stroke="#6F7F55" strokeWidth="2" strokeLinecap="round"/><path d="M4.5 12H19.5" stroke="#6F7F55" strokeWidth="2" strokeLinecap="round"/><path d="M5.5 10.5V13.5" stroke="#6F7F55" strokeWidth="1.8" strokeLinecap="round"/><path d="M18.5 10.5V13.5" stroke="#6F7F55" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:"spiritual",label:"Spiritual / Learning",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F2EDF7"/><path d="M5.5 7C7.5 6.2 9.5 6.2 11.5 7.2V18C9.5 17.1 7.5 17.1 5.5 18V7Z" stroke="#9B7BB6" strokeWidth="1.8" strokeLinejoin="round"/><path d="M18.5 7C16.5 6.2 14.5 6.2 12.5 7.2V18C14.5 17.1 16.5 17.1 18.5 18V7Z" stroke="#9B7BB6" strokeWidth="1.8" strokeLinejoin="round"/></svg>},
+  {id:"finance",label:"Finance / Savings",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M13.5 6.5C12.4 6.5 11.5 7.4 11.5 8.5V17" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/><path d="M9 11H15" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/><path d="M9 17H16" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/></svg>},
+  {id:"personal",label:"Personal / Growth",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M12 18.5C11.8 18.5 11.6 18.4 11.4 18.3C8.2 16.1 6 14.2 6 11.3C6 9.5 7.4 8.1 9.1 8.1C10.1 8.1 11.1 8.6 11.7 9.4C12.3 8.6 13.3 8.1 14.3 8.1C16 8.1 17.4 9.5 17.4 11.3C17.4 14.2 15.2 16.1 12 18.3Z" fill="#C98F8F"/></svg>},
+  {id:"career",label:"Career",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3F8"/><rect x="6" y="9" width="12" height="8" rx="2" stroke="#7FA6C6" strokeWidth="1.8"/><path d="M9.5 9V7.5C9.5 6.7 10.2 6 11 6H13C13.8 6 14.5 6.7 14.5 7.5V9" stroke="#7FA6C6" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:"travel",label:"Travel",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M4.5 13L19 7.5L14.5 19L11.5 14.5L4.5 13Z" stroke="#A88B6F" strokeWidth="1.8" strokeLinejoin="round"/></svg>},
+  {id:"home",label:"Home",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7ECE8"/><path d="M6 11.5L12 6.5L18 11.5V18H14V14H10V18H6V11.5Z" stroke="#C47C6A" strokeWidth="1.8" strokeLinejoin="round"/></svg>},
+  {id:"relationships",label:"Relationships",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M8.5 10.5C8.5 9.2 9.5 8.2 10.8 8.2C11.5 8.2 12.1 8.6 12.5 9.1C12.9 8.6 13.5 8.2 14.2 8.2C15.5 8.2 16.5 9.2 16.5 10.5C16.5 12.7 14.8 14.1 12.5 15.8C10.2 14.1 8.5 12.7 8.5 10.5Z" fill="#C98F8F"/></svg>},
+  {id:"creativity",label:"Creativity",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#FFF4E6"/><path d="M12 5L12.8 9.2L17 10L12.8 10.8L12 15L11.2 10.8L7 10L11.2 9.2L12 5Z" fill="#D29A52"/><path d="M17 14L17.4 15.6L19 16L17.4 16.4L17 18L16.6 16.4L15 16L16.6 15.6L17 14Z" fill="#D29A52"/></svg>},
+  {id:"faith",label:"Faith / Prayer",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M12 5.5C9.7 6.8 8.2 9.2 8.2 12C8.2 14.8 9.7 17.2 12 18.5C14.3 17.2 15.8 14.8 15.8 12C15.8 9.2 14.3 6.8 12 5.5Z" stroke="#7FA37A" strokeWidth="1.8"/><path d="M12 8V16" stroke="#7FA37A" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:"study",label:"Study / Certification",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3F8"/><path d="M6 8L12 5.5L18 8L12 10.5L6 8Z" stroke="#7FA6C6" strokeWidth="1.8" strokeLinejoin="round"/><path d="M8 10V14C9.2 15 10.5 15.5 12 15.5C13.5 15.5 14.8 15 16 14V10" stroke="#7FA6C6" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:"weightloss",label:"Weight Loss",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M7.5 17V10C7.5 8.3 8.8 7 10.5 7H13.5C15.2 7 16.5 8.3 16.5 10V17H7.5Z" stroke="#6F7F55" strokeWidth="1.8"/><path d="M10 10.5C10.6 9.9 11.3 9.6 12 9.6C12.7 9.6 13.4 9.9 14 10.5" stroke="#6F7F55" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:"business",label:"Business / Side Hustle",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M7 17V9" stroke="#B89576" strokeWidth="1.8" strokeLinecap="round"/><path d="M12 17V6" stroke="#B89576" strokeWidth="1.8" strokeLinecap="round"/><path d="M17 17V12" stroke="#B89576" strokeWidth="1.8" strokeLinecap="round"/><path d="M6 17H18" stroke="#B89576" strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:"selfcare",label:"Self-care",el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M8 13C8 10.8 9.8 9 12 9C14.2 9 16 10.8 16 13" stroke="#C98F8F" strokeWidth="1.8" strokeLinecap="round"/><path d="M9 16C10 17 14 17 15 16" stroke="#C98F8F" strokeWidth="1.8" strokeLinecap="round"/><circle cx="10" cy="12" r="0.8" fill="#C98F8F"/><circle cx="14" cy="12" r="0.8" fill="#C98F8F"/></svg>},
+];
+const GOAL_QUOTES=["Small consistent actions create big lasting change.","Progress, not perfection, is the goal.","Every milestone is proof you can go further.","You are closer than you were yesterday.","Discipline is choosing your future self over your present comfort."];
 const HABIT_ICON_SVGS={
   run:(c)=>`<path d="M6 5C6 14 10 18 19 18" stroke="${c}" stroke-width="2" stroke-linecap="round"/><circle cx="7" cy="6" r="2" fill="${c}"/><circle cx="18" cy="17" r="2" fill="${c}"/>`,
   book:(c)=>`<path d="M4 6C6 5 8 5 10 6V18C8 17 6 17 4 18V6Z" fill="${c}"/><path d="M20 6C18 5 16 5 14 6V18C16 17 18 17 20 18V6Z" fill="${c}"/>`,
@@ -528,6 +546,63 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .md2{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .2s;}
 .mi.dm .md2{background:var(--sage);}
 .mi.dm span{text-decoration:line-through;opacity:.5;}
+/* ── Goals redesign ── */
+.goal-stats-row{display:grid;grid-template-columns:1fr 1fr 1.5fr 1fr;gap:16px;margin-bottom:24px;}
+.goal-stat-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);}
+.goal-stat-label{font-size:11px;font-weight:500;color:var(--ink-light);letter-spacing:.05em;margin-bottom:14px;}
+.goal-filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;}
+.goal-tabs{display:flex;gap:4px;background:var(--parchment);border-radius:10px;padding:3px;}
+.goal-tab{padding:6px 14px;border:none;background:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.goal-tab.active{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.goal-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:0;margin-bottom:16px;box-shadow:var(--shadow);display:flex;overflow:hidden;}
+.goal-card-left{padding:22px 24px;flex:0 0 340px;display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(26,20,16,.06);}
+.goal-card-right{flex:1;padding:20px 24px;display:flex;flex-direction:column;}
+.goal-icon-wrap{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden;flex-shrink:0;}
+.goal-title-txt{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);margin-bottom:5px;line-height:1.3;}
+.goal-desc-txt{font-size:12px;color:var(--ink-light);line-height:1.5;margin-bottom:16px;flex:1;}
+.goal-prog-track{height:6px;background:rgba(26,20,16,.07);border-radius:10px;margin-bottom:6px;overflow:hidden;}
+.goal-prog-fill{height:100%;border-radius:10px;transition:width .5s ease;}
+.goal-prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.goal-prog-pct{font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);font-weight:600;}
+.goal-target{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-light);margin-top:auto;}
+.goal-ms-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.goal-ms-lbl{font-size:11px;font-weight:600;color:var(--ink-light);letter-spacing:.08em;text-transform:uppercase;}
+.ms2-row{display:grid;grid-template-columns:20px 1fr 90px 70px;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,20,16,.04);}
+.ms2-row:last-child{border-bottom:none;}
+.ms2-ck{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(122,98,82,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;}
+.ms2-ck.done{border-color:transparent;}
+.ms2-txt{font-size:12.5px;color:var(--ink);line-height:1.35;}
+.ms2-txt.done{text-decoration:line-through;opacity:.45;}
+.ms-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;}
+.ms-badge.completed{background:#eef3ea;color:#6f7f55;}
+.ms-badge.inprogress{background:#f2edf7;color:#9b7bb6;}
+.ms-badge.notstarted{background:var(--parchment);color:var(--ink-light);}
+.ms2-date{font-size:10px;color:var(--ink-light);text-align:right;}
+.goal-cat-tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;}
+.goal-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
+.goal-menu-btn{border:none;background:none;cursor:pointer;color:var(--ink-light);font-size:18px;padding:2px 6px;border-radius:6px;transition:background .15s;line-height:1;}
+.goal-menu-btn:hover{background:var(--parchment);}
+.goal-dropdown{position:absolute;right:16px;top:44px;z-index:200;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.1);min-width:130px;}
+.goal-dd-item{padding:7px 12px;font-size:12px;color:var(--ink);cursor:pointer;border-radius:6px;transition:background .12s;}
+.goal-dd-item:hover{background:var(--parchment);}
+.goal-dd-item.del{color:#c05050;}
+.goal-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;color:var(--ink-light);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;text-align:center;}
+.goal-modal-ov{position:fixed;inset:0;background:rgba(26,20,16,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.goal-modal-box{background:#fff;border-radius:18px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.18);}
+.goal-icon-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px;margin-bottom:16px;}
+.goal-icon-opt{border:1.5px solid var(--border);border-radius:10px;padding:6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.goal-icon-opt.selected{border-color:var(--gold);background:var(--gold-pale);}
+.goal-icon-opt:hover{border-color:var(--gold-deep);}
+.ms-input-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.ms-input-num{width:20px;font-size:11px;color:var(--ink-light);flex-shrink:0;text-align:center;}
+.recent-wins-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;}
+.rw-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(26,20,16,.05);}
+.rw-icon{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;}
+.rw-text{font-size:13px;color:var(--ink);flex:1;}
+.rw-date{font-size:11px;color:var(--ink-light);white-space:nowrap;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(26,20,16,.05);}
+.tip-icon{width:28px;height:28px;border-radius:8px;background:var(--parchment);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.goal-page-footer{text-align:center;padding:32px 0 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--ink-light);}
 .gadd{background:transparent;border:1.5px dashed rgba(38,29,18,.12);border-radius:14px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--ink-light);gap:6px;min-height:180px;}
 .gadd:hover{border-color:var(--gold);color:var(--gold-deep);background:rgba(201,168,124,.04);}
 .gf{background:var(--ivory);border:1.5px solid var(--gold);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:11px;box-shadow:var(--shadow-lg);}
@@ -856,8 +931,14 @@ export default function App() {
   const [liveDate,setLiveDate]=useState(()=>_ld(new Date()));
   const [newTag,setNewTag]=useState("");
   const [vMonth,setVMonth]=useState(MK);
-  const [goalForm,setGoalForm]=useState(null);
-  const [gDraft,setGDraft]=useState({title:"",category:"",deadline:"",progress:0,milestones:["","","",""]});
+  const [showGoalModal,setShowGoalModal]=useState(false);
+  const [goalModalMode,setGoalModalMode]=useState("add");
+  const [goalEditId,setGoalEditId]=useState(null);
+  const [gDraft,setGDraft]=useState({title:"",description:"",category:"Health",icon:"health",targetDate:"",milestones:[""]});
+  const [goalFilter,setGoalFilter]=useState("all");
+  const [goalCat,setGoalCat]=useState("");
+  const [goalView,setGoalView]=useState("list");
+  const [goalMenuOpen,setGoalMenuOpen]=useState(null);
   const [cInputs,setCInputs]=useState(Object.fromEntries(DAYS.map(d=>[d,""])));
   const [editC,setEditC]=useState(null);
   const [editCTxt,setEditCTxt]=useState("");
@@ -1107,11 +1188,17 @@ export default function App() {
   const mGoals=goals[vMonth]||[];
   const pmG=()=>{const d=new Date(vMonth+"-02");d.setMonth(d.getMonth()-1);setVMonth(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`);};
   const nmG=()=>{const d=new Date(vMonth+"-02");d.setMonth(d.getMonth()+1);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;if(k<=MK)setVMonth(k);};
-  const openAddG=()=>{setGDraft({title:"",category:"",deadline:"",progress:0,milestones:["","","",""]});setGoalForm({mode:"add"});};
-  const openEditG=g=>{setGDraft({title:g.title,category:g.category,deadline:g.deadline,progress:g.progress,milestones:[...g.milestones.map(m=>m.text),...Array(4)].slice(0,4).map(m=>m||"")});setGoalForm({mode:"edit",id:g.id});};
-  const saveGoal=()=>{if(!gDraft.title.trim())return;const ms=gDraft.milestones.filter(m=>m.trim()).map(m=>({text:m,done:false}));if(goalForm.mode==="add"){const ex=goals[vMonth]||[];setGoals(p=>({...p,[vMonth]:[...ex,{id:Date.now(),...gDraft,progress:Number(gDraft.progress),milestones:ms,color:HCOLORS[ex.length%HCOLORS.length]}]}));}else{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===goalForm.id?{...g,...gDraft,progress:Number(gDraft.progress),milestones:ms}:g)}));}setGoalForm(null);};
-  const delGoal=id=>setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).filter(g=>g.id!==id)}));
-  const toggleMs=(gid,mi)=>setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===gid?{...g,milestones:g.milestones.map((m,i)=>i===mi?{...m,done:!m.done}:m)}:g)}));
+  const goalPct=g=>{if(!g.milestones||!g.milestones.length)return g.progress||0;return Math.round(g.milestones.filter(m=>m.done).length/g.milestones.length*100);};
+  const catMeta=cat=>GOAL_CATS[cat]||{color:"#b09070",bg:"#f4ede3"};
+  const goalIconEl=id=>{const ic=GOAL_ICON_LIST.find(i=>i.id===id);return ic?ic.el:<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#f4ede3"/></svg>;};
+  const openAddG=()=>{setGDraft({title:"",description:"",category:"Health",icon:"health",targetDate:"",milestones:[""]});setGoalModalMode("add");setGoalEditId(null);setShowGoalModal(true);gratChime();};
+  const openEditG=g=>{setGDraft({title:g.title,description:g.description||"",category:g.category||"Health",icon:g.icon||"health",targetDate:g.targetDate||g.deadline||"",milestones:g.milestones.map(m=>m.text||m)});setGoalModalMode("edit");setGoalEditId(g.id);setShowGoalModal(true);};
+  const saveGoal=()=>{if(!gDraft.title.trim())return;const ms=gDraft.milestones.filter(m=>(typeof m==="string"?m:m.text||"").trim()).map(m=>{const txt=typeof m==="string"?m:m.text||"";return{id:Date.now()+Math.random(),text:txt.trim(),done:false,doneDate:null};});if(goalModalMode==="add"){const ex=goals[vMonth]||[];setGoals(p=>({...p,[vMonth]:[...ex,{id:Date.now(),title:gDraft.title,description:gDraft.description,category:gDraft.category,icon:gDraft.icon,targetDate:gDraft.targetDate,milestones:ms}]}));}else{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===goalEditId?{...g,title:gDraft.title,description:gDraft.description,category:gDraft.category,icon:gDraft.icon,targetDate:gDraft.targetDate,milestones:ms}:g)}));}setShowGoalModal(false);gratChime();};
+  const delGoal=id=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).filter(g=>g.id!==id)}));setGoalMenuOpen(null);};
+  const toggleMs=(gid,mi)=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>{if(g.id!==gid)return g;const ms=g.milestones.map((m,i)=>{if(i!==mi)return m;const nowDone=!m.done;if(nowDone)chime();return{...m,done:nowDone,doneDate:nowDone?TODAY:null};});return{...g,milestones:ms};})}));};
+  const gMsAdd=()=>{if(gDraft.milestones.length<5)setGDraft(d=>({...d,milestones:[...d.milestones,""]}));};
+  const gMsDel=i=>setGDraft(d=>({...d,milestones:d.milestones.filter((_,j)=>j!==i)}));
+  const gMsChange=(i,v)=>setGDraft(d=>({...d,milestones:d.milestones.map((m,j)=>j===i?v:m)}));
 
   const toggleClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,done:!t.done}:t)}));
   const delClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].filter((_,i)=>i!==idx)}));
@@ -1134,7 +1221,7 @@ export default function App() {
   const habitsToday=habits.filter(h=>h.days[0]).length;
   const todosDone=todos.filter(t=>t.done&&t.date===TODAY).length;
   const allGoals=Object.values(goals).flat();
-  const avgProg=allGoals.length?Math.round(allGoals.reduce((a,g)=>a+g.progress,0)/allGoals.length):0;
+  const avgProg=allGoals.length?Math.round(allGoals.reduce((a,g)=>a+((g.milestones&&g.milestones.length)?g.milestones.filter(m=>m.done).length/g.milestones.length*100:(g.progress||0)),0)/allGoals.length):0;
   const upcoming=events.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(e=>({...e,away:Math.round((new Date(e.date+"T00:00:00")-new Date(TODAY+"T00:00:00"))/864e5)}));
   const graphData=DAYS.map((d,i)=>({day:d,count:habits.filter(h=>h.days[i]).length}));
   const maxBar=Math.max(...graphData.map(d=>d.count),1);
@@ -2471,30 +2558,247 @@ export default function App() {
         </>}
 
         {/* ── GOALS ── */}
-        {page==="goals"&&<>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Vision and ambition</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Monthly <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Goals</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Set, edit and track goals month by month</p></div>{headerIcons}</div>
-          <div className="card">
-            <div className="gmh"><div className="gml">{vmLabel}</div><div style={{display:"flex",gap:8}}><button className="mnb" onClick={pmG}>← Prev</button><button className="mnb" onClick={()=>setVMonth(MK)}>This month</button><button className="mnb" onClick={nmG} disabled={vMonth>=MK}>Next →</button></div></div>
-            <div className="gg">
-              {mGoals.map(goal=><div key={goal.id} className="gc"><div className="gac" style={{background:goal.color}}/>
-                <div className="gct"><div className="gcat">{goal.category}</div><div className="gca"><button className="sb2" onClick={()=>openEditG(goal)}>✏️</button><button className="sb2 d" onClick={()=>delGoal(goal.id)}>×</button></div></div>
-                <div className="gtit">{goal.title}</div>
-                <div className="pb2"><div className="pf" style={{width:`${goal.progress}%`,background:goal.color}}/></div>
-                <div className="pr"><span className="pp">{goal.progress}% complete</span>{goal.deadline&&<span className="gd">→ {goal.deadline}</span>}</div>
-                <div className="ms">{goal.milestones.map((m,i)=><div key={i} className={`mi ${m.done?"dm":""}`} onClick={()=>toggleMs(goal.id,i)}><div className="md2" style={m.done?{background:goal.color}:{}}/><span>{m.text}</span></div>)}</div>
-              </div>)}
-              {goalForm?(<div className="gf"><div className="gft">{goalForm.mode==="add"?`New goal · ${vmLabel}`:`Edit goal · ${vmLabel}`}</div>
-                <div className="fg"><div className="fl">GOAL TITLE</div><input className="inp" placeholder="What do you want to achieve?" value={gDraft.title} onChange={e=>setGDraft(g=>({...g,title:e.target.value}))}/></div>
-                <div className="fr"><div className="fg"><div className="fl">CATEGORY</div><input className="inp" placeholder="e.g. Health" value={gDraft.category} onChange={e=>setGDraft(g=>({...g,category:e.target.value}))}/></div><div className="fg"><div className="fl">DEADLINE</div><input className="inp" placeholder="e.g. End of month" value={gDraft.deadline} onChange={e=>setGDraft(g=>({...g,deadline:e.target.value}))}/></div></div>
-                <div className="fg"><div className="fl">PROGRESS: {gDraft.progress}%</div><input type="range" min="0" max="100" value={gDraft.progress} className="ri" onChange={e=>setGDraft(g=>({...g,progress:e.target.value}))}/></div>
-                <div className="fl">MILESTONES</div>
-                {gDraft.milestones.map((m,i)=><input key={i} className="inp" placeholder={`Milestone ${i+1}…`} value={m} onChange={e=>setGDraft(g=>({...g,milestones:g.milestones.map((x,j)=>j===i?e.target.value:x)}))}/>)}
-                <div className="fbr"><button className="bc2" onClick={()=>setGoalForm(null)}>Cancel</button><button className="bs" onClick={saveGoal}>Save goal ✦</button></div>
-              </div>):(<div className="gadd" onClick={openAddG}><div style={{fontSize:28}}>+</div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14}}>Add a goal for {vmLabel}</div></div>)}
+        {page==="goals"&&(()=>{
+          const mGoalsF=mGoals.filter(g=>{
+            if(goalCat&&g.category!==goalCat)return false;
+            const pct=goalPct(g);
+            const allDone=g.milestones&&g.milestones.length>0&&g.milestones.every(m=>m.done);
+            const anyDone=g.milestones&&g.milestones.some(m=>m.done);
+            if(goalFilter==="completed")return allDone||(pct===100);
+            if(goalFilter==="inprogress")return !allDone&&anyDone;
+            if(goalFilter==="notstarted")return !anyDone&&pct===0;
+            return true;
+          });
+          const mCompletedCount=mGoals.filter(g=>g.milestones&&g.milestones.length>0&&g.milestones.every(m=>m.done)).length;
+          const mAvgPct=mGoals.length?Math.round(mGoals.reduce((s,g)=>s+goalPct(g),0)/mGoals.length):0;
+          const goalQuote=GOAL_QUOTES[NOW.getDate()%GOAL_QUOTES.length];
+          const recentGoalWins=mGoals.flatMap(g=>(g.milestones||[]).filter(m=>m.done&&m.doneDate).map(m=>({...m,goalTitle:g.title,goalIcon:g.icon,cat:g.category}))).sort((a,b)=>(b.doneDate||"").localeCompare(a.doneDate||"")).slice(0,4);
+          const CIRC=2*Math.PI*38;
+          const donutDash=`${(mAvgPct/100)*CIRC} ${CIRC}`;
+          return(<>
+          {/* Add/Edit Goal Modal */}
+          {showGoalModal&&(
+            <div className="goal-modal-ov" onClick={()=>setShowGoalModal(false)}>
+              <div className="goal-modal-box" onClick={e=>e.stopPropagation()}>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink)",marginBottom:4}}>{goalModalMode==="add"?"New Goal":"Edit Goal"}</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",marginBottom:22}}>{vmLabel}</div>
+                <label className="mlbl">Goal Title</label>
+                <input className="minp" style={{marginBottom:14}} placeholder="What do you want to achieve?" value={gDraft.title} onChange={e=>setGDraft(d=>({...d,title:e.target.value}))} autoFocus/>
+                <label className="mlbl">Description</label>
+                <input className="minp" style={{marginBottom:14}} placeholder="A short description of this goal…" value={gDraft.description} onChange={e=>setGDraft(d=>({...d,description:e.target.value}))}/>
+                <label className="mlbl">Category</label>
+                <select className="msel" style={{marginBottom:14}} value={gDraft.category} onChange={e=>setGDraft(d=>({...d,category:e.target.value}))}>
+                  {Object.keys(GOAL_CATS).map(c=><option key={c}>{c}</option>)}
+                </select>
+                <label className="mlbl">Icon</label>
+                <div className="goal-icon-grid">
+                  {GOAL_ICON_LIST.map(ic=>(
+                    <div key={ic.id} className={`goal-icon-opt${gDraft.icon===ic.id?" selected":""}`} title={ic.label} onClick={()=>setGDraft(d=>({...d,icon:ic.id}))}>
+                      {ic.el}
+                    </div>
+                  ))}
+                </div>
+                <label className="mlbl">Target Date</label>
+                <input className="minp" style={{marginBottom:18}} type="date" value={gDraft.targetDate} onChange={e=>setGDraft(d=>({...d,targetDate:e.target.value}))}/>
+                <label className="mlbl">Milestones <span style={{color:"var(--ink-light)",fontWeight:400}}>(up to 5)</span></label>
+                <div style={{display:"flex",flexDirection:"column",gap:6,marginTop:6,marginBottom:4}}>
+                  {gDraft.milestones.map((m,i)=>(
+                    <div key={i} className="ms-input-row">
+                      <span className="ms-input-num">{i+1}</span>
+                      <input className="minp" style={{flex:1,marginBottom:0}} placeholder={`Milestone ${i+1}…`} value={m} onChange={e=>gMsChange(i,e.target.value)}/>
+                      {gDraft.milestones.length>1&&<button onClick={()=>gMsDel(i)} style={{border:"none",background:"none",cursor:"pointer",color:"var(--ink-light)",fontSize:16,padding:"0 4px",lineHeight:1}}>×</button>}
+                    </div>
+                  ))}
+                </div>
+                {gDraft.milestones.length<5&&<button onClick={gMsAdd} style={{border:"1px dashed var(--border)",background:"none",borderRadius:8,padding:"7px 14px",fontSize:12,color:"var(--ink-light)",cursor:"pointer",width:"100%",marginBottom:20}}>+ Add milestone</button>}
+                <div style={{display:"flex",gap:8,marginTop:8}}>
+                  <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowGoalModal(false)}>Cancel</button>
+                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={saveGoal}>Save Goal ✦</button>
+                </div>
+              </div>
             </div>
-            {mGoals.length===0&&!goalForm&&<div className="emp" style={{marginTop:12}}>No goals for {vmLabel} yet ✦</div>}
+          )}
+          {/* Page header */}
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24}}>
+            <div>
+              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:30,fontWeight:400,color:"var(--ink)",display:"flex",alignItems:"center",gap:8}}>Monthly Goals <span style={{color:"var(--gold)"}}>✦</span></h1>
+              <p style={{fontSize:13,color:"var(--ink-light)",marginTop:4,fontFamily:"'DM Sans',sans-serif"}}>Focus on what matters this month and make it happen.</p>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{display:"flex",alignItems:"center",gap:4,border:"1px solid var(--border)",borderRadius:10,padding:"5px 10px",background:"#fff",fontSize:13}}>
+                <button onClick={pmG} style={{border:"none",background:"none",cursor:"pointer",color:"var(--ink-light)",fontSize:16,padding:"0 4px",lineHeight:1}}>‹</button>
+                <span style={{minWidth:90,textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)"}}>{vmLabel}</span>
+                <button onClick={nmG} disabled={vMonth>=MK} style={{border:"none",background:"none",cursor:"pointer",color:vMonth>=MK?"var(--border)":"var(--ink-light)",fontSize:16,padding:"0 4px",lineHeight:1}}>›</button>
+              </div>
+              <button onClick={openAddG} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:10,padding:"8px 18px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>+ New Goal</button>
+            </div>
           </div>
-        </>}
+          {/* Stats row */}
+          <div className="goal-stats-row">
+            {/* Overall Progress — donut */}
+            <div className="goal-stat-card">
+              <div className="goal-stat-label">Overall Progress</div>
+              <div style={{display:"flex",alignItems:"center",gap:16}}>
+                <svg width="88" height="88" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(26,20,16,.07)" strokeWidth="8"/>
+                  <circle cx="50" cy="50" r="38" fill="none" stroke="var(--sage)" strokeWidth="8" strokeLinecap="round" strokeDasharray={donutDash} strokeDashoffset={-CIRC/4} style={{transition:"stroke-dasharray .5s"}}/>
+                  <text x="50" y="55" textAnchor="middle" fontFamily="'Playfair Display',serif" fontSize="18" fill="var(--ink)">{mAvgPct}%</text>
+                </svg>
+                <div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:28,color:"var(--ink)",lineHeight:1}}>{mAvgPct}%</div>
+                  <div style={{fontSize:11,color:"var(--ink-light)",marginTop:4}}>{mGoals.length} goals this month</div>
+                </div>
+              </div>
+            </div>
+            {/* Goals Completed */}
+            <div className="goal-stat-card">
+              <div className="goal-stat-label">Goals Completed</div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,color:"var(--ink)",lineHeight:1}}>{mCompletedCount}</div>
+              <div style={{fontSize:12,color:"var(--ink-light)",marginTop:4}}>/{mGoals.length} total goals</div>
+              <div style={{fontSize:11,color:"var(--sage)",marginTop:8}}>{mCompletedCount>0?"Keep going, you're doing great!":"Start tracking your first milestone ✦"}</div>
+            </div>
+            {/* Focus This Month */}
+            <div className="goal-stat-card">
+              <div className="goal-stat-label">Focus This Month</div>
+              <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                {mGoals.slice(0,3).map(g=>{const cm=catMeta(g.category);return(
+                  <div key={g.id} style={{display:"flex",alignItems:"center",gap:10}}>
+                    <div style={{width:28,height:28,borderRadius:"50%",overflow:"hidden",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",background:cm.bg}}>
+                      <div style={{transform:"scale(0.7)",transformOrigin:"center"}}>{goalIconEl(g.icon)}</div>
+                    </div>
+                    <span style={{fontSize:13,color:"var(--ink)"}}>{g.title}</span>
+                  </div>
+                );})}
+                {mGoals.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No goals set yet</div>}
+              </div>
+            </div>
+            {/* Quote */}
+            <div className="goal-stat-card" style={{background:"var(--parchment)",border:"none"}}>
+              <div style={{fontSize:32,color:"var(--gold)",lineHeight:1,marginBottom:10}}>❝</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--ink)",lineHeight:1.5}}>{goalQuote}</div>
+              <div style={{marginTop:16,color:"var(--gold)",fontSize:18,textAlign:"right"}}>♡</div>
+            </div>
+          </div>
+          {/* Filter + view controls */}
+          <div className="goal-filter-row">
+            <div className="goal-tabs">
+              {[["all","All Goals"],["inprogress","In Progress"],["completed","Completed"],["notstarted","Not Started"]].map(([v,l])=>(
+                <button key={v} className={`goal-tab${goalFilter===v?" active":""}`} onClick={()=>setGoalFilter(v)}>{l}</button>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <select value={goalCat} onChange={e=>setGoalCat(e.target.value)} style={{border:"1px solid var(--border)",borderRadius:8,padding:"5px 10px",fontSize:12,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",background:"#fff",cursor:"pointer"}}>
+                <option value="">All Categories</option>
+                {Object.keys(GOAL_CATS).map(c=><option key={c}>{c}</option>)}
+              </select>
+              <div style={{display:"flex",border:"1px solid var(--border)",borderRadius:8,overflow:"hidden"}}>
+                {[["list","☰"],["grid","⊞"]].map(([v,ic])=>(
+                  <button key={v} onClick={()=>setGoalView(v)} style={{border:"none",background:goalView===v?"var(--ink)":"#fff",color:goalView===v?"#f4ede3":"var(--ink-light)",padding:"6px 12px",cursor:"pointer",fontSize:14,transition:"all .15s"}}>{ic}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Goal cards */}
+          {goalView==="list"&&mGoalsF.map(goal=>{
+            const pct=goalPct(goal);
+            const cm=catMeta(goal.category);
+            const firstUndone=goal.milestones?goal.milestones.findIndex(m=>!m.done):-1;
+            const fmtDate=d=>{if(!d)return"";const dt=new Date(d+"T00:00:00");return dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});};
+            return(
+            <div key={goal.id} className="goal-card" style={{position:"relative"}}>
+              <div className="goal-card-left">
+                <div className="goal-card-top">
+                  <div className="goal-icon-wrap" style={{background:cm.bg}}>{goalIconEl(goal.icon)}</div>
+                  <span className="goal-cat-tag" style={{color:cm.color,background:cm.bg,marginBottom:12}}>{goal.category}</span>
+                </div>
+                <div className="goal-title-txt">{goal.title}</div>
+                <div className="goal-desc-txt">{goal.description||""}</div>
+                <div className="goal-prog-track"><div className="goal-prog-fill" style={{width:`${pct}%`,background:cm.color}}/></div>
+                <div className="goal-prog-row">
+                  <span className="goal-prog-pct">{pct}%</span>
+                  <span style={{fontSize:11,color:"var(--ink-light)"}}>{goal.milestones?`${goal.milestones.filter(m=>m.done).length}/${goal.milestones.length} milestones`:""}</span>
+                </div>
+                {goal.targetDate&&<div className="goal-target"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Target date: {fmtDate(goal.targetDate)}</div>}
+              </div>
+              <div className="goal-card-right">
+                <div className="goal-ms-hd">
+                  <span className="goal-ms-lbl">Milestones</span>
+                </div>
+                {goal.milestones&&goal.milestones.map((m,i)=>{
+                  const status=m.done?"completed":i===firstUndone?"inprogress":"notstarted";
+                  const statusLabel=status==="completed"?"Completed":status==="inprogress"?"In progress":"Not started";
+                  return(
+                  <div key={m.id||i} className="ms2-row">
+                    <div className={`ms2-ck${m.done?" done":""}`} style={m.done?{background:cm.color}:{}} onClick={()=>toggleMs(goal.id,i)}>
+                      {m.done&&<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                    </div>
+                    <span className={`ms2-txt${m.done?" done":""}`}>{m.text}</span>
+                    <span className={`ms-badge ${status}`}>{statusLabel}</span>
+                    <span className="ms2-date">{m.done&&m.doneDate?fmtDate(m.doneDate):""}</span>
+                  </div>
+                );})}
+                {(!goal.milestones||goal.milestones.length===0)&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",padding:"8px 0"}}>No milestones added yet</div>}
+              </div>
+              {/* Menu */}
+              <div style={{position:"absolute",top:14,right:14}}>
+                <button className="goal-menu-btn" onClick={e=>{e.stopPropagation();setGoalMenuOpen(goalMenuOpen===goal.id?null:goal.id);}}>⋯</button>
+                {goalMenuOpen===goal.id&&(
+                  <div className="goal-dropdown" onClick={e=>e.stopPropagation()}>
+                    <div className="goal-dd-item" onClick={()=>{openEditG(goal);setGoalMenuOpen(null);}}>✎ &nbsp;Edit goal</div>
+                    <div className="goal-dd-item del" onClick={()=>delGoal(goal.id)}>✕ &nbsp;Delete</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );})}
+          {goalView==="grid"&&<div className="gg">{mGoalsF.map(goal=>{
+            const pct=goalPct(goal);const cm=catMeta(goal.category);
+            return(<div key={goal.id} className="gc" style={{position:"relative"}}>
+              <div className="gac" style={{background:cm.color}}/>
+              <div className="gct">
+                <span className="goal-cat-tag" style={{color:cm.color,background:cm.bg}}>{goal.category}</span>
+                <div className="gca"><button className="sb2" onClick={()=>openEditG(goal)}>✏️</button><button className="sb2 d" onClick={()=>delGoal(goal.id)}>×</button></div>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                <div style={{width:28,height:28,borderRadius:"50%",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center",background:cm.bg,flexShrink:0}}><div style={{transform:"scale(0.7)",transformOrigin:"center"}}>{goalIconEl(goal.icon)}</div></div>
+                <div className="gtit" style={{marginBottom:0}}>{goal.title}</div>
+              </div>
+              <div className="pb2"><div className="pf" style={{width:`${pct}%`,background:cm.color}}/></div>
+              <div className="pr"><span className="pp">{pct}% complete</span>{goal.targetDate&&<span className="gd">→ {new Date(goal.targetDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}</div>
+              <div className="ms">{(goal.milestones||[]).map((m,i)=><div key={m.id||i} className={`mi${m.done?" dm":""}`} onClick={()=>toggleMs(goal.id,i)}><div className="md2" style={m.done?{background:cm.color}:{}}/><span>{m.text}</span></div>)}</div>
+            </div>);
+          })}</div>}
+          {mGoalsF.length===0&&(
+            <div className="goal-empty">
+              <div style={{fontSize:32,marginBottom:8}}>✦</div>
+              <div>{goalFilter==="all"?`No goals for ${vmLabel} yet — click + New Goal to start.`:`No ${goalFilter==="completed"?"completed":goalFilter==="inprogress"?"in-progress":"not started"} goals`}</div>
+            </div>
+          )}
+          {/* Recent Wins + Tips */}
+          <div className="recent-wins-grid">
+            <div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16,display:"flex",alignItems:"center",gap:6}}>Recent Wins <span style={{color:"var(--gold)"}}>✦</span></div>
+              {recentGoalWins.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>Complete your first milestone to see it here ✦</div>}
+              {recentGoalWins.map((w,i)=>{const cm=catMeta(w.cat);return(
+                <div key={i} className="rw-item">
+                  <div className="rw-icon" style={{background:cm.bg}}><div style={{transform:"scale(0.8)",transformOrigin:"center"}}>{goalIconEl(w.goalIcon)}</div></div>
+                  <span className="rw-text">{w.text}</span>
+                  <span className="rw-date">{w.doneDate}</span>
+                </div>
+              );})}
+            </div>
+            <div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16}}>Tips for this month</div>
+              {[["✓","Focus on consistency, not perfection."],["✦","Track small wins to stay motivated."],["↺","Review and adjust your plan weekly."]].map(([ic,tip],i)=>(
+                <div key={i} className="tip-item">
+                  <div className="tip-icon">{ic}</div>
+                  <span style={{fontSize:13,color:"var(--ink)"}}>{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="goal-page-footer">✦ Big goals are achieved one small step at a time. ♡</div>
+        </>);})()} 
 
         {/* ── CALENDAR ── */}
         {page==="calendar"&&<>
