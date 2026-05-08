@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import sabinaPhoto from "./assets/sabina.jpg";
+import tipsBg from "./assets/image.png";
 import { createClient } from "@supabase/supabase-js";
 
 // ── Change this to your own password ──
@@ -205,7 +206,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);border-top:1px solid rgba(26,20,16,.07);}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:hidden;}
+.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:clip;}
 
 /* ── DASHBOARD ── */
 .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
@@ -573,7 +574,12 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ms2-ck.done{border-color:transparent;}
 .ms2-txt{font-size:12.5px;color:var(--ink);line-height:1.35;text-align:left;}
 .ms2-txt.done{text-decoration:line-through;opacity:.45;}
-.ms-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;}
+.ms-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;cursor:pointer;user-select:none;transition:opacity .15s;}
+.ms-badge:hover{opacity:.8;}
+.ms-status-wrap{position:relative;display:inline-flex;}
+.ms-status-drop{position:absolute;right:0;top:calc(100% + 4px);z-index:300;background:#fff;border:1px solid var(--border);border-radius:10px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:120px;}
+.ms-status-opt{padding:6px 12px;font-size:11px;color:var(--ink);cursor:pointer;border-radius:6px;transition:background .12s;text-align:left;white-space:nowrap;}
+.ms-status-opt:hover{background:var(--parchment);}
 .ms-badge.completed{background:#eef3ea;color:#6f7f55;}
 .ms-badge.inprogress{background:#f2edf7;color:#9b7bb6;}
 .ms-badge.notstarted{background:var(--parchment);color:var(--ink-light);}
@@ -596,6 +602,10 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ms-input-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .ms-input-num{width:20px;font-size:11px;color:var(--ink-light);flex-shrink:0;text-align:center;}
 .recent-wins-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;}
+.rw-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow);}
+.tips-card{border-radius:14px;padding:22px 24px;box-shadow:var(--shadow);background-size:cover;background-position:center;position:relative;overflow:hidden;}
+.tips-card-overlay{position:absolute;inset:0;background:rgba(250,245,238,.88);border-radius:14px;}
+.tips-card-content{position:relative;z-index:1;}
 .rw-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(26,20,16,.05);}
 .rw-icon{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;}
 .rw-text{font-size:13px;color:var(--ink);flex:1;}
@@ -904,6 +914,20 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 }
 `;
 
+const MONTHLY_TIPS={
+  0:[["✓","Start the year with clarity — write down your top 3 goals."],["✦","Build momentum with small daily actions."],["↺","Review your habits from last year."]],
+  1:[["✓","February is for focus — pick one goal to go deep on."],["✦","Celebrate small progress, not just big milestones."],["↺","Check in with your vision board."]],
+  2:[["✓","Spring is here — refresh your goals with new energy."],["✦","Get outside, move your body, clear your mind."],["↺","Is your plan aligned with what you truly want?"]],
+  3:[["✓","Consistency over intensity — show up every day."],["✦","Track small wins to stay motivated."],["↺","Review and adjust your plan mid-month."]],
+  4:[["✓","May brings growth — what new skill will you nurture?"],["✦","Focus on consistency, not perfection."],["↺","Celebrate how far you have come since January."]],
+  5:[["✓","Mid-year check-in — are you on track?"],["✦","Rest is part of the journey, not a step back."],["↺","Revisit your year goals and update what needs changing."]],
+  6:[["✓","Summer energy — use it to power through hard goals."],["✦","Keep hydrated, rested and intentional."],["↺","Simplify: focus on what matters most."]],
+  7:[["✓","August momentum — the year is not over yet."],["✦","Your habits today shape your November."],["↺","What can you accomplish in the next 30 days?"]],
+  8:[["✓","Autumn reset — structure brings clarity."],["✦","Batch your tasks and protect deep work time."],["↺","Review your goals before Q4 begins."]],
+  9:[["✓","The final quarter — make it count."],["✦","One strong month can change everything."],["↺","What would make this month unforgettable?"]],
+  10:[["✓","Stay focused as the year winds down."],["✦","Do not wait for January — start now."],["↺","Reflect on your biggest win of the year so far."]],
+  11:[["✓","December — finish strong and celebrate your growth."],["✦","Rest, reflect and plan for a powerful new year."],["↺","Write 3 things you achieved this year that you are proud of."]],
+};
 export default function App() {
   const [page,setPage]=useState(()=>localStorage.getItem("sab_page")||"dashboard");
   const [habits,setHabits]=useDB("sab_habits",DEF_HABITS);
@@ -942,6 +966,7 @@ export default function App() {
   const [goalCat,setGoalCat]=useState("");
   const [goalView,setGoalView]=useState("list");
   const [goalMenuOpen,setGoalMenuOpen]=useState(null);
+  const [msDropOpen,setMsDropOpen]=useState(null);
   const [cInputs,setCInputs]=useState(Object.fromEntries(DAYS.map(d=>[d,""])));
   const [editC,setEditC]=useState(null);
   const [editCTxt,setEditCTxt]=useState("");
@@ -1199,6 +1224,7 @@ export default function App() {
   const saveGoal=()=>{if(!gDraft.title.trim())return;const ms=gDraft.milestones.filter(m=>(typeof m==="string"?m:m.text||"").trim()).map(m=>{const txt=typeof m==="string"?m:m.text||"";return{id:Date.now()+Math.random(),text:txt.trim(),done:false,doneDate:null};});if(goalModalMode==="add"){const ex=goals[vMonth]||[];setGoals(p=>({...p,[vMonth]:[...ex,{id:Date.now(),title:gDraft.title,description:gDraft.description,category:gDraft.category,icon:gDraft.icon,targetDate:gDraft.targetDate,milestones:ms}]}));}else{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>g.id===goalEditId?{...g,title:gDraft.title,description:gDraft.description,category:gDraft.category,icon:gDraft.icon,targetDate:gDraft.targetDate,milestones:ms}:g)}));}setShowGoalModal(false);gratChime();};
   const delGoal=id=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).filter(g=>g.id!==id)}));setGoalMenuOpen(null);};
   const toggleMs=(gid,mi)=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>{if(g.id!==gid)return g;const ms=g.milestones.map((m,i)=>{if(i!==mi)return m;const nowDone=!m.done;if(nowDone)chime();return{...m,done:nowDone,doneDate:nowDone?TODAY:null};});return{...g,milestones:ms};})}));};
+  const updateMsStatus=(gid,mi,newStatus)=>{setGoals(p=>({...p,[vMonth]:(p[vMonth]||[]).map(g=>{if(g.id!==gid)return g;const ms=g.milestones.map((m,i)=>{if(i!==mi)return m;if(newStatus==="completed"&&!m.done)chime();return{...m,done:newStatus==="completed",doneDate:newStatus==="completed"?TODAY:null,status:newStatus};});return{...g,milestones:ms};})}));setMsDropOpen(null);};
   const gMsAdd=()=>{if(gDraft.milestones.length<5)setGDraft(d=>({...d,milestones:[...d.milestones,""]}));};
   const gMsDel=i=>setGDraft(d=>({...d,milestones:d.milestones.filter((_,j)=>j!==i)}));
   const gMsChange=(i,v)=>setGDraft(d=>({...d,milestones:d.milestones.map((m,j)=>j===i?v:m)}));
@@ -2718,7 +2744,7 @@ export default function App() {
           {goalView==="list"&&mGoalsF.map(goal=>{
             const pct=goalPct(goal);
             const cm=catMeta(goal.category);
-            const fmtDate=d=>{if(!d)return"";const dt=new Date(d+"T00:00:00");return dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});};
+            const fmtDate=d=>{if(!d)return"";const dt=new Date(d+"T00:00:00");if(isNaN(dt.getTime()))return"";return dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});};
             return(
             <div key={goal.id} className="goal-card" style={{position:"relative"}}>
               <div className="goal-card-left">
@@ -2740,7 +2766,7 @@ export default function App() {
                   <span className="goal-ms-lbl">Milestones</span>
                 </div>
                 {goal.milestones&&goal.milestones.map((m,i)=>{
-                  const status=m.done?"completed":"notstarted";
+                  const status=m.done?"completed":(m.status&&m.status!=="completed"?m.status:"notstarted");
                   const statusLabel=status==="completed"?"Completed":status==="inprogress"?"In progress":"Not started";
                   return(
                   <div key={m.id||i} className="ms2-row">
@@ -2748,7 +2774,16 @@ export default function App() {
                       {m.done&&<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                     </div>
                     <span className={`ms2-txt${m.done?" done":""}`}>{m.text}</span>
-                    <span className={`ms-badge ${status}`}>{statusLabel}</span>
+                    <div className="ms-status-wrap">
+                      <span className={`ms-badge ${status}`} onClick={e=>{e.stopPropagation();setMsDropOpen(msDropOpen&&msDropOpen.gid===goal.id&&msDropOpen.mi===i?null:{gid:goal.id,mi:i});}}>{statusLabel} ▾</span>
+                      {msDropOpen&&msDropOpen.gid===goal.id&&msDropOpen.mi===i&&(
+                        <div className="ms-status-drop">
+                          {[["notstarted","Not started"],["inprogress","In progress"],["completed","Completed"]].map(([v,l])=>(
+                            <div key={v} className="ms-status-opt" onClick={()=>updateMsStatus(goal.id,i,v)}>{l}</div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <span className="ms2-date">{m.done&&m.doneDate?fmtDate(m.doneDate):""}</span>
                   </div>
                 );})}
@@ -2791,25 +2826,28 @@ export default function App() {
           )}
           {/* Recent Wins + Tips */}
           <div className="recent-wins-grid">
-            <div>
+            <div className="rw-card">
               <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16,display:"flex",alignItems:"center",gap:6}}>Recent Wins <span style={{color:"var(--gold)"}}>✦</span></div>
               {recentGoalWins.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>Complete your first milestone to see it here ✦</div>}
               {recentGoalWins.map((w,i)=>{const cm=catMeta(w.cat);return(
                 <div key={i} className="rw-item">
                   <div className="rw-icon" style={{background:cm.bg}}><div style={{transform:"scale(0.8)",transformOrigin:"center"}}>{goalIconEl(w.goalIcon)}</div></div>
                   <span className="rw-text">{w.text}</span>
-                  <span className="rw-date">{w.doneDate}</span>
+                  <span className="rw-date">{fmtDate(w.doneDate)}</span>
                 </div>
               );})}
             </div>
-            <div>
-              <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16}}>Tips for this month</div>
-              {[["✓","Focus on consistency, not perfection."],["✦","Track small wins to stay motivated."],["↺","Review and adjust your plan weekly."]].map(([ic,tip],i)=>(
-                <div key={i} className="tip-item">
-                  <div className="tip-icon">{ic}</div>
-                  <span style={{fontSize:13,color:"var(--ink)"}}>{tip}</span>
-                </div>
-              ))}
+            <div className="tips-card" style={{backgroundImage:`url(${tipsBg})`}}>
+              <div className="tips-card-overlay"/>
+              <div className="tips-card-content">
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",marginBottom:16}}>Tips for this month</div>
+                {(MONTHLY_TIPS[NOW.getMonth()]||MONTHLY_TIPS[4]).map(([ic,tip],i)=>(
+                  <div key={i} className="tip-item">
+                    <div className="tip-icon">{ic}</div>
+                    <span style={{fontSize:13,color:"var(--ink)"}}>{tip}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <div className="goal-page-footer">✦ Big goals are achieved one small step at a time. ♡</div>
