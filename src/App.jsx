@@ -3161,7 +3161,8 @@ export default function App() {
               {/* Gentle reminder quote */}
               <div className="cal-qc">
                 <div className="cal-qc-lbl">A gentle reminder</div>
-                <div className="cal-qc-txt">{QUOTE}</div>
+                <div className="cal-qc-txt">{QUOTE.text}</div>
+                <div style={{fontSize:11,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",marginTop:6}}>— {QUOTE.attr}</div>
               </div>
             </div>
           </div>
