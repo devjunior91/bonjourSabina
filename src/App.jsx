@@ -2967,7 +2967,7 @@ export default function App() {
           const nextDay=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()+1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
           const dayLbl=new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
           const wkLbl=MONTHS[new Date(wkStart+"T00:00:00").getMonth()]+" "+new Date(wkStart+"T00:00:00").getFullYear();
-          const upcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,5);})();
+          const calUpcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,5);})();
           const miniFirst=fdm(calYear,calMonth);
           const miniDays=dim(calYear,calMonth);
           return <>
@@ -3089,8 +3089,8 @@ export default function App() {
               </div>
               <div className="cal-upcoming">
                 <div className="cal-up-title">Upcoming</div>
-                {upcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
-                {upcoming.map((e,i)=>{const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
+                {calUpcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
+                {calUpcoming.map((e,i)=>{const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
                   <div key={i} className="cal-up-item" onClick={ev=>openEditEv(e,ev)}>
                     <div className="cal-up-dot" style={{background:catColor(e.category)||e.color||"#c9a87c"}}/>
                     <div className="cal-up-info">
