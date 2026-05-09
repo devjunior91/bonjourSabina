@@ -664,8 +664,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cvt-btn{padding:8px 18px;background:transparent;border:none;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;border-right:1px solid var(--border);}
 .cvt-btn:last-child{border-right:none;}
 .cvt-btn.active{background:var(--ink);color:#f4ede3;}
-.cal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;}
-.cal-nav-grp{display:flex;gap:6px;align-items:center;}
+.cal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+.cal-nav-grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .cal-add-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--ink);color:#f4ede3;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;}
 .cal-add-btn:hover{background:var(--gold-deep);}
 .cal-week-wrap{overflow:hidden;border-radius:12px;border:1px solid var(--border);}
@@ -977,7 +977,6 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
   .ms2-row{grid-template-columns:20px 1fr 90px;}
   .goal-filter-row{flex-wrap:wrap;gap:8px;}
   .goal-modal-box{padding:20px;}
-  .hab-main{padding:0 8px 64px;}
 }
 @media(max-width:480px){
   .goal-stats-row{grid-template-columns:1fr;}
@@ -1652,22 +1651,22 @@ export default function App() {
         </div>
         <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
-        {/* ── MOBILE BOTTOM NAV ── */}
-        <nav className="mob-nav">
-          {[
-            {id:"dashboard",label:"Home",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
-            {id:"habits",label:"Habits",icon:<S><polyline points="23 4 23 10 17 10"/><path d="M1 20l6-6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></S>},
-            {id:"todos",label:"To-Do",icon:<S><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/></S>},
-            {id:"goals",label:"Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
-            {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
-            {id:"cleaning",label:"Rituel",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></S>},
-          ].map(item=>(
-            <button key={item.id} className={`mob-nav-btn${page===item.id?" active":""}`} onClick={()=>setPage(item.id)}>
-              {item.icon}
-              <span className="mob-nav-label">{item.label}</span>
-            </button>
-          ))}
-        </nav>
+
+      <nav className="mob-nav">
+        {[
+          {id:"dashboard",label:"Home",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>},
+          {id:"habits",label:"Habits",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>},
+          {id:"todos",label:"To-Do",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/></svg>},
+          {id:"goals",label:"Goals",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},
+          {id:"gratitude",label:"Gratitude",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>},
+          {id:"cleaning",label:"Rituel",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></svg>},
+        ].map(item=>(
+          <button key={item.id} className={"mob-nav-btn"+(page===item.id?" active":"")} onClick={()=>setPage(item.id)}>
+            {item.ic}
+            <span className="mob-nav-label">{item.label}</span>
+          </button>
+        ))}
+      </nav>
       <main className="main">
 
         {/* ── HABITS ── */}
@@ -2967,7 +2966,7 @@ export default function App() {
           const prevDay=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()-1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
           const nextDay=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()+1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
           const dayLbl=new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
-          const wkLbl=(()=>{const a=new Date(wkStart+"T00:00:00"),b=new Date(wkStart+"T00:00:00");b.setDate(b.getDate()+6);return MONTHS[a.getMonth()]+" "+a.getFullYear();})();
+          const wkLbl=MONTHS[new Date(wkStart+"T00:00:00").getMonth()]+" "+new Date(wkStart+"T00:00:00").getFullYear();
           const upcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,5);})();
           const miniFirst=fdm(calYear,calMonth);
           const miniDays=dim(calYear,calMonth);
@@ -2987,15 +2986,12 @@ export default function App() {
               {calView==="month"&&<><button className="cnb" onClick={prevCal}>&#8249;</button><button className="cnb" onClick={goToday}>Today</button><button className="cnb" onClick={nextCal}>&#8250;</button></>}
               {calView==="week"&&<><button className="cnb" onClick={prevWeek}>&#8249;</button><button className="cnb" onClick={goToday}>Today</button><button className="cnb" onClick={nextWeek}>&#8250;</button></>}
               {calView==="day"&&<><button className="cnb" onClick={prevDay}>&#8249;</button><button className="cnb" onClick={goToday}>Today</button><button className="cnb" onClick={nextDay}>&#8250;</button></>}
-              <span style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",minWidth:160,textAlign:"center"}}>{calView==="month"?calLabel:calView==="week"?wkLbl:dayLbl}</span>
+              <span style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",minWidth:140,textAlign:"center"}}>{calView==="month"?calLabel:calView==="week"?wkLbl:dayLbl}</span>
             </div>
-            <button className="cal-add-btn" onClick={()=>openAddEv(calView==="day"?calDayDate:TODAY)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add Event
-            </button>
+            <button className="cal-add-btn" onClick={()=>openAddEv(calView==="day"?calDayDate:TODAY)}>+ Add Event</button>
           </div>
           <div className="cal-wrap">
-            <div className="cal-main">
+            <div>
               {calView==="month"&&(
                 <div className="card" style={{padding:0,overflow:"hidden"}}>
                   <div className="cagd">
@@ -3028,15 +3024,15 @@ export default function App() {
                       {wkDates.map(ds=>{const de=evOn(ds);return(
                         <div key={ds} className="cal-day-cells" style={{background:ds===TODAY?"rgba(201,168,124,.04)":"transparent"}}>
                           {CAL_HOURS.map(h=><div key={h} className="cal-hour-line" onClick={()=>openAddEv(ds,String(h).padStart(2,"0")+":00")}/>)}
-                          {de.filter(e=>!e.allDay&&e.time).map(e=>{const top=evTop(e.time);if(top===null||top<0)return null;const ht=evHt(e.time,e.endTime);const col=catColor(e.category)||e.color||"#c9a87c";return(
-                            <div key={e.id} className="cal-ev-block" style={{top:top,height:ht,background:col}} onClick={ev=>openEditEv(e,ev)}>
+                          {de.filter(e=>!e.allDay&&e.time).map(e=>{const top=evTop(e.time);if(top===null||top<0)return null;const ht=evHt(e.time,e.endTime);return(
+                            <div key={e.id} className="cal-ev-block" style={{top:top,height:ht,background:catColor(e.category)||e.color||"#c9a87c"}} onClick={ev=>openEditEv(e,ev)}>
                               <span style={{fontWeight:500}}>{e.title}</span>
                               <span className="cal-ev-time">{fmtT(e.time)}{e.endTime?"–"+fmtT(e.endTime):""}</span>
                             </div>
                           );})}
-                          {de.filter(e=>e.allDay).map((e,i)=>{const col=catColor(e.category)||e.color||"#c9a87c";return(
-                            <div key={e.id} style={{position:"absolute",left:3,right:3,top:i*22,height:20,background:col,borderRadius:5,padding:"2px 6px",color:"white",fontSize:10,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",cursor:"pointer",zIndex:2}} onClick={ev=>openEditEv(e,ev)}>{e.title}</div>
-                          );})}
+                          {de.filter(e=>e.allDay).map((e,i)=>(
+                            <div key={e.id} style={{position:"absolute",left:3,right:3,top:i*22,height:20,background:catColor(e.category)||e.color||"#c9a87c",borderRadius:5,padding:"2px 6px",color:"white",fontSize:10,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",cursor:"pointer",zIndex:2}} onClick={ev=>openEditEv(e,ev)}>{e.title}</div>
+                          ))}
                         </div>
                       );})}
                     </div>
@@ -3057,16 +3053,15 @@ export default function App() {
                       <div className="cal-time-col">{CAL_HOURS.map(h=><div key={h} className="cal-time-label">{fmtH(h)}</div>)}</div>
                       <div className="cal-day-cells" style={{background:calDayDate===TODAY?"rgba(201,168,124,.04)":"transparent"}}>
                         {CAL_HOURS.map(h=><div key={h} className="cal-hour-line" onClick={()=>openAddEv(calDayDate,String(h).padStart(2,"0")+":00")}/>)}
-                        {evOn(calDayDate).filter(e=>!e.allDay&&e.time).map(e=>{const top=evTop(e.time);if(top===null||top<0)return null;const ht=evHt(e.time,e.endTime);const col=catColor(e.category)||e.color||"#c9a87c";return(
-                          <div key={e.id} className="cal-ev-block" style={{top:top,height:ht,background:col}} onClick={ev=>openEditEv(e,ev)}>
+                        {evOn(calDayDate).filter(e=>!e.allDay&&e.time).map(e=>{const top=evTop(e.time);if(top===null||top<0)return null;const ht=evHt(e.time,e.endTime);return(
+                          <div key={e.id} className="cal-ev-block" style={{top:top,height:ht,background:catColor(e.category)||e.color||"#c9a87c"}} onClick={ev=>openEditEv(e,ev)}>
                             <span style={{fontWeight:500}}>{e.title}</span>
                             <span className="cal-ev-time">{fmtT(e.time)}{e.endTime?"–"+fmtT(e.endTime):""}</span>
-                            {e.notes&&<span style={{fontSize:9,opacity:.85,display:"block",marginTop:2}}>{e.notes}</span>}
                           </div>
                         );})}
-                        {evOn(calDayDate).filter(e=>e.allDay).map((e,i)=>{const col=catColor(e.category)||e.color||"#c9a87c";return(
-                          <div key={e.id} style={{position:"absolute",left:3,right:3,top:i*22,height:20,background:col,borderRadius:5,padding:"2px 6px",color:"white",fontSize:10,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",cursor:"pointer",zIndex:2}} onClick={ev=>openEditEv(e,ev)}>{e.title}</div>
-                        );})}
+                        {evOn(calDayDate).filter(e=>e.allDay).map((e,i)=>(
+                          <div key={e.id} style={{position:"absolute",left:3,right:3,top:i*22,height:20,background:catColor(e.category)||e.color||"#c9a87c",borderRadius:5,padding:"2px 6px",color:"white",fontSize:10,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",cursor:"pointer",zIndex:2}} onClick={ev=>openEditEv(e,ev)}>{e.title}</div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -3095,9 +3090,9 @@ export default function App() {
               <div className="cal-upcoming">
                 <div className="cal-up-title">Upcoming</div>
                 {upcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
-                {upcoming.map((e,i)=>{const col=catColor(e.category)||e.color||"#c9a87c";const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
+                {upcoming.map((e,i)=>{const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
                   <div key={i} className="cal-up-item" onClick={ev=>openEditEv(e,ev)}>
-                    <div className="cal-up-dot" style={{background:col}}/>
+                    <div className="cal-up-dot" style={{background:catColor(e.category)||e.color||"#c9a87c"}}/>
                     <div className="cal-up-info">
                       <div className="cal-up-name">{e.title}</div>
                       <div className="cal-up-meta">{dl}{e.time?" · "+fmtT(e.time):""}{e.endTime?"–"+fmtT(e.endTime):""}</div>
@@ -3107,9 +3102,9 @@ export default function App() {
               </div>
               <div className="cal-quote-card">
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,color:"var(--ink)",lineHeight:1.55,fontStyle:"italic"}}>Time is the most precious resource — invest it in what matters.</div>
-                <div style={{fontSize:11,color:"var(--gold-deep)",marginTop:8,fontFamily:"'DM Sans',sans-serif"}}>— Seneca</div>
+                <div style={{fontSize:11,color:"var(--gold-deep)",marginTop:8}}>— Seneca</div>
               </div>
-              <div className="cal-mini-card" style={{paddingBottom:14}}>
+              <div className="cal-mini-card">
                 <div style={{fontSize:11,color:"var(--ink-light)",marginBottom:8,letterSpacing:".06em",textTransform:"uppercase"}}>Categories</div>
                 <div className="cal-cat-legend">
                   {CATS.map(([k,l,c])=><span key={k} className="cal-cat-lbl"><span className="cal-cat-dot" style={{background:c}}/>{l}</span>)}
