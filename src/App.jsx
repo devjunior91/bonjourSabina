@@ -658,60 +658,6 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cac.tc2 .dn2{background:var(--gold);color:white;border-radius:50%;}
 .cep{font-size:10px;padding:2px 6px;border-radius:5px;color:white;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;text-align:left;}
 .cep:hover{opacity:.8;}
-.cal-wrap{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start;}
-.cal-right{display:flex;flex-direction:column;gap:16px;}
-.cal-view-toggle{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--parchment);}
-.cvt-btn{padding:8px 18px;background:transparent;border:none;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;border-right:1px solid var(--border);}
-.cvt-btn:last-child{border-right:none;}
-.cvt-btn.active{background:var(--ink);color:#f4ede3;}
-.cal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
-.cal-nav-grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.cal-add-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--ink);color:#f4ede3;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;}
-.cal-add-btn:hover{background:var(--gold-deep);}
-.cal-week-wrap{overflow:hidden;border-radius:12px;border:1px solid var(--border);}
-.cal-week-hdr{display:grid;grid-template-columns:52px repeat(7,1fr);background:var(--parchment);border-bottom:1px solid var(--border);}
-.cal-day-hdr{display:grid;grid-template-columns:52px 1fr;background:var(--parchment);border-bottom:1px solid var(--border);}
-.cal-hdr-cell{padding:10px 6px;text-align:center;font-size:10px;letter-spacing:.08em;color:var(--ink-light);text-transform:uppercase;font-weight:500;border-right:1px solid var(--border);}
-.cal-hdr-cell:last-child{border-right:none;}
-.cal-hdr-cell.today-col{color:var(--gold-deep);font-weight:700;}
-.cal-hdr-day-num{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);display:block;margin-top:2px;}
-.cal-hdr-day-num.today-num{background:var(--gold);color:white;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;margin-top:2px;}
-.cal-time-body{display:grid;grid-template-columns:52px repeat(7,1fr);background:var(--ivory);}
-.cal-time-body-day{display:grid;grid-template-columns:52px 1fr;background:var(--ivory);}
-.cal-time-col{display:flex;flex-direction:column;}
-.cal-time-label{height:60px;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;font-size:9px;color:var(--ink-light);letter-spacing:.06em;border-right:1px solid var(--border);border-bottom:1px solid rgba(0,0,0,.04);}
-.cal-day-cells{position:relative;border-right:1px solid var(--border);}
-.cal-day-cells:last-child{border-right:none;}
-.cal-hour-line{height:60px;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;transition:background .12s;}
-.cal-hour-line:hover{background:var(--gold-pale);}
-.cal-ev-block{position:absolute;left:3px;right:3px;border-radius:7px;padding:4px 7px;color:white;font-size:11px;cursor:pointer;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.15);z-index:2;}
-.cal-ev-block:hover{opacity:.85;}
-.cal-ev-time{font-size:9px;opacity:.85;display:block;margin-top:1px;}
-.cal-mini-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
-.cal-mini-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.cal-mini-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
-.cal-mini-nav{background:none;border:none;color:var(--ink-light);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:5px;}
-.cal-mini-nav:hover{background:var(--parchment);}
-.cal-mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-mini-dh{font-size:8px;text-align:center;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;padding:3px 0;}
-.cal-mini-d{font-size:10px;text-align:center;padding:4px 2px;border-radius:5px;cursor:pointer;color:var(--ink-light);transition:background .12s;}
-.cal-mini-d:hover{background:var(--gold-pale);}
-.cal-mini-d.today{background:var(--gold);color:white;border-radius:50%;font-weight:600;}
-.cal-mini-d.has-ev{font-weight:600;color:var(--ink);}
-.cal-mini-d.om{opacity:.3;}
-.cal-upcoming{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
-.cal-up-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);margin-bottom:12px;}
-.cal-up-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;}
-.cal-up-item:last-child{border-bottom:none;}
-.cal-up-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
-.cal-up-info{flex:1;}
-.cal-up-name{font-size:12px;color:var(--ink);font-weight:500;}
-.cal-up-meta{font-size:10px;color:var(--ink-light);margin-top:2px;}
-.cal-quote-card{background:var(--parchment);border:1px solid var(--border);border-radius:14px;padding:18px 16px;box-shadow:var(--shadow);}
-.cal-cat-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
-.cal-cat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
-.cal-cat-lbl{font-size:10px;color:var(--ink-light);display:flex;align-items:center;}
-@media(max-width:900px){.cal-wrap{grid-template-columns:1fr;}.cal-right{display:none;}}
 .cm{font-size:10px;color:var(--ink-light);font-family:'Cormorant Garamond',serif;font-style:italic;}
 .mo{position:fixed;inset:0;background:rgba(38,29,18,.45);z-index:800;display:flex;align-items:center;justify-content:center;padding:20px;}
 .mod{background:var(--ivory);border-radius:18px;padding:32px;width:100%;max-width:460px;box-shadow:var(--shadow-lg);position:relative;}
@@ -943,7 +889,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .25s;}
-  .main{margin-left:0;padding:16px 12px 100px;}
+  .main{margin-left:0;padding:16px 10px 80px;}
   .dash-top-row{grid-template-columns:1fr;}
   .dash-combined-row{grid-template-columns:1fr;}
   .dash-right-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -966,27 +912,6 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
   .dash-search{display:none;}
   .streak-big{font-size:36px;}
 }
-@media(max-width:900px){
-  .mob-nav{display:flex;}
-  .goal-card{flex-direction:column;}
-  .goal-card-left{flex:none;width:100%;border-right:none;border-bottom:1px solid rgba(26,20,16,.06);border-radius:14px 14px 0 0;}
-  .goal-card-right{border-radius:0 0 14px 14px;overflow:visible;}
-  .goal-stats-row{grid-template-columns:1fr 1fr;}
-  .recent-wins-grid{grid-template-columns:1fr;}
-  .ms2-date{display:none;}
-  .ms2-row{grid-template-columns:20px 1fr 90px;}
-  .goal-filter-row{flex-wrap:wrap;gap:8px;}
-  .goal-modal-box{padding:20px;}
-}
-@media(max-width:480px){
-  .goal-stats-row{grid-template-columns:1fr;}
-  .mob-nav-label{display:none;}
-}
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#faf7f3;border-top:1px solid rgba(26,20,16,.08);z-index:400;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));justify-content:space-around;align-items:center;}
-.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;cursor:pointer;color:var(--ink-light);padding:4px 6px;border-radius:8px;transition:all .15s;min-width:44px;}
-.mob-nav-btn.active{color:var(--ink);}
-.mob-nav-btn.active svg{stroke:var(--gold-deep);}
-.mob-nav-label{font-family:'DM Sans',sans-serif;font-size:9px;white-space:nowrap;}
 `;
 
 const MONTHLY_TIPS={
@@ -1047,11 +972,8 @@ export default function App() {
   const [editCTxt,setEditCTxt]=useState("");
   const [calYear,setCalYear]=useState(NOW.getFullYear());
   const [calMonth,setCalMonth]=useState(NOW.getMonth());
-  const [calView,setCalView]=useState("month");
-  const [calWeekStart,setCalWeekStart]=useState(TODAY);
-  const [calDayDate,setCalDayDate]=useState(TODAY);
   const [evModal,setEvModal]=useState(null);
-  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",endTime:"",notes:"",color:"#c9a87c",allDay:false,category:"personal"});
+  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",notes:"",color:"#c9a87c",allDay:false});
   const [praise,setPraise]=useState(null);
   const [pomoCount,setPomoCount]=useDB("sab_pomo",0);
   const [habitsWeekKey,setHabitsWeekKey]=useDB("sab_habits_week","");
@@ -1319,8 +1241,8 @@ export default function App() {
   const prevCal=()=>{if(calMonth===0){setCalMonth(11);setCalYear(y=>y-1);}else setCalMonth(m=>m-1);};
   const nextCal=()=>{if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1);};
   const evOn=ds=>events.filter(e=>e.date===ds);
-  const openAddEv=(ds,t)=>{setEvDraft({title:"",date:ds,time:t||"",endTime:"",notes:"",color:"#c9a87c",allDay:!t,category:"personal"});setEvModal({mode:"add"});};
-  const openEditEv=(e,ev)=>{ev.stopPropagation();setEvDraft({title:e.title,date:e.date,time:e.time||"",endTime:e.endTime||"",notes:e.notes||"",color:e.color||"#c9a87c",allDay:e.allDay||false,category:e.category||"personal"});setEvModal({mode:"edit",id:e.id});};
+  const openAddEv=ds=>{setEvDraft({title:"",date:ds,time:"",notes:"",color:"#c9a87c",allDay:false});setEvModal({mode:"add"});};
+  const openEditEv=(e,ev)=>{ev.stopPropagation();setEvDraft({title:e.title,date:e.date,time:e.time||"",notes:e.notes||"",color:e.color||"#c9a87c",allDay:e.allDay||false});setEvModal({mode:"edit",id:e.id});};
   const saveEv=()=>{if(!evDraft.title.trim())return;if(evModal.mode==="add")setEvents(ev=>[...ev,{id:Date.now(),...evDraft}]);else setEvents(ev=>ev.map(e=>e.id===evModal.id?{...e,...evDraft}:e));setEvModal(null);};
   const delEv=id=>{setEvents(ev=>ev.filter(e=>e.id!==id));setEvModal(null);};
 
@@ -1602,23 +1524,16 @@ export default function App() {
             <button className="mcl" onClick={()=>setEvModal(null)}>×</button>
             <div className="mdt">{evModal.mode==="add"?"New Event":"Edit Event"}</div>
             <div className="mf"><div className="mlb">TITLE</div><input className="mi2" placeholder="What's happening?" value={evDraft.title} onChange={e=>setEvDraft(d=>({...d,title:e.target.value}))}/></div>
-            <div className="mf"><div className="mlb">CATEGORY</div><div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-              {[["focus","Focus","#c8887a"],["work","Work","#7090a8"],["wellness","Wellness","#7a9070"],["personal","Personal","#b098c0"],["social","Social","#c9a87c"]].map(([k,l,c])=>(
-                <div key={k} onClick={()=>setEvDraft(d=>({...d,category:k,color:c}))} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:8,border:"2px solid "+(evDraft.category===k?c:"var(--border)"),cursor:"pointer",fontSize:11,background:evDraft.category===k?c+"22":"transparent"}}>
-                  <span style={{width:8,height:8,borderRadius:"50%",background:c,display:"inline-block"}}/>{l}
-                </div>
-              ))}
-            </div></div>
             <div className="fr">
               <div className="mf" style={{flex:1}}><div className="mlb">DATE</div><input className="mi2" type="date" value={evDraft.date} onChange={e=>setEvDraft(d=>({...d,date:e.target.value}))}/></div>
-              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">START</div><input className="mi2" type="time" value={evDraft.time} onChange={e=>setEvDraft(d=>({...d,time:e.target.value}))}/></div>}
-              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">END</div><input className="mi2" type="time" value={evDraft.endTime} onChange={e=>setEvDraft(d=>({...d,endTime:e.target.value}))}/></div>}
+              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">TIME</div><input className="mi2" type="time" value={evDraft.time} onChange={e=>setEvDraft(d=>({...d,time:e.target.value}))}/></div>}
             </div>
             <div className="adrow">
-              <input type="checkbox" id="evAllDay" checked={evDraft.allDay} onChange={e=>setEvDraft(d=>({...d,allDay:e.target.checked,time:e.target.checked?"":d.time,endTime:e.target.checked?"":d.endTime}))}/>
+              <input type="checkbox" id="evAllDay" checked={evDraft.allDay} onChange={e=>setEvDraft(d=>({...d,allDay:e.target.checked,time:e.target.checked?"":d.time}))}/>
               <label htmlFor="evAllDay">ALL DAY EVENT</label>
             </div>
             <div className="mf"><div className="mlb">NOTES</div><input className="mi2" placeholder="Details…" value={evDraft.notes} onChange={e=>setEvDraft(d=>({...d,notes:e.target.value}))}/></div>
+            <div className="mf"><div className="mlb">COLOUR</div><div className="cr">{ECOLORS.map(c=><div key={c} className={`cs2 ${evDraft.color===c?"sel":""}`} style={{background:c}} onClick={()=>setEvDraft(d=>({...d,color:c}))}/>)}</div></div>
             <div className="mft">
               {evModal.mode==="edit"?<button className="bc2" style={{color:"#c05050",borderColor:"#fde8e8"}} onClick={()=>delEv(evModal.id)}>Delete</button>:<div/>}
               <div style={{display:"flex",gap:8}}><button className="bc2" onClick={()=>setEvModal(null)}>Cancel</button><button className="bs" onClick={saveEv}>Save ✦</button></div>
@@ -1652,21 +1567,6 @@ export default function App() {
         <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
 
-      <nav className="mob-nav">
-        {[
-          {id:"dashboard",label:"Home",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>},
-          {id:"habits",label:"Habits",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>},
-          {id:"todos",label:"To-Do",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/></svg>},
-          {id:"goals",label:"Goals",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},
-          {id:"gratitude",label:"Gratitude",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>},
-          {id:"cleaning",label:"Rituel",ic:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></svg>},
-        ].map(item=>(
-          <button key={item.id} className={"mob-nav-btn"+(page===item.id?" active":"")} onClick={()=>setPage(item.id)}>
-            {item.ic}
-            <span className="mob-nav-label">{item.label}</span>
-          </button>
-        ))}
-      </nav>
       <main className="main">
 
         {/* ── HABITS ── */}
@@ -2949,171 +2849,23 @@ export default function App() {
         </>);}catch(e){console.error('Goals render error:',e);return(<div style={{padding:'40px',textAlign:'center'}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:'var(--ink)',marginBottom:16}}>Something went wrong ✦</div><p style={{fontSize:13,color:'var(--ink-light)',marginBottom:24}}>Your goals data may need a reset.</p><button onClick={()=>{localStorage.setItem('sab_goals','{}');window.location.reload();}} style={{background:'var(--ink)',color:'#f4ede3',border:'none',borderRadius:10,padding:'10px 24px',fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:'pointer'}}>Reset Goals & Reload</button></div>);}})()}
 
         {/* ── CALENDAR ── */}
-        {page==="calendar"&&(()=>{
-          const CATS=[["focus","Focus","#c8887a"],["work","Work","#7090a8"],["wellness","Wellness","#7a9070"],["personal","Personal","#b098c0"],["social","Social","#c9a87c"]];
-          const catColor=cat=>(CATS.find(c=>c[0]===cat)||["","","#c9a87c"])[2];
-          const CAL_HOURS=Array.from({length:17},(_,i)=>i+6);
-          const fmtH=h=>{const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+p;};
-          const toMins=t=>{if(!t)return null;const[h,m]=t.split(":").map(Number);return h*60+m;};
-          const evTop=t=>{const m=toMins(t);return m===null?null:m-6*60;};
-          const evHt=(s,e)=>{const sm=toMins(s),em=toMins(e);return(sm===null||em===null||em<=sm)?60:Math.max(em-sm,30);};
-          const fmtT=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+":"+String(m).padStart(2,"0")+p;};
-          const wkStart=calWeekStart&&calWeekStart.length===10?calWeekStart:TODAY;
-          const wkDates=Array.from({length:7},(_,i)=>{const d=new Date(wkStart+"T00:00:00");d.setDate(d.getDate()+i);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");});
-          const prevWeek=()=>{const d=new Date(wkStart+"T00:00:00");d.setDate(d.getDate()-7);setCalWeekStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
-          const nextWeek=()=>{const d=new Date(wkStart+"T00:00:00");d.setDate(d.getDate()+7);setCalWeekStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
-          const goToday=()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());setCalWeekStart(TODAY);setCalDayDate(TODAY);};
-          const prevDay=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()-1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
-          const nextDay=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()+1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
-          const dayLbl=new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
-          const wkLbl=MONTHS[new Date(wkStart+"T00:00:00").getMonth()]+" "+new Date(wkStart+"T00:00:00").getFullYear();
-          const calUpcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,5);})();
-          const miniFirst=fdm(calYear,calMonth);
-          const miniDays=dim(calYear,calMonth);
-          return <>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:28}}>
-            <div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div>
-            <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>My <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Calendar</em></h1></div>
-            {headerIcons}
-          </div>
-          <div className="cal-topbar">
-            <div className="cal-view-toggle">
-              {[["month","Month"],["week","Week"],["day","Day"]].map(([v,l])=>(
-                <button key={v} className={"cvt-btn"+(calView===v?" active":"")} onClick={()=>setCalView(v)}>{l}</button>
-              ))}
-            </div>
-            <div className="cal-nav-grp">
-              {calView==="month"&&<><button className="cnb" onClick={prevCal}>&#8249;</button><button className="cnb" onClick={goToday}>Today</button><button className="cnb" onClick={nextCal}>&#8250;</button></>}
-              {calView==="week"&&<><button className="cnb" onClick={prevWeek}>&#8249;</button><button className="cnb" onClick={goToday}>Today</button><button className="cnb" onClick={nextWeek}>&#8250;</button></>}
-              {calView==="day"&&<><button className="cnb" onClick={prevDay}>&#8249;</button><button className="cnb" onClick={goToday}>Today</button><button className="cnb" onClick={nextDay}>&#8250;</button></>}
-              <span style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--ink)",minWidth:140,textAlign:"center"}}>{calView==="month"?calLabel:calView==="week"?wkLbl:dayLbl}</span>
-            </div>
-            <button className="cal-add-btn" onClick={()=>openAddEv(calView==="day"?calDayDate:TODAY)}>+ Add Event</button>
-          </div>
-          <div className="cal-wrap">
-            <div>
-              {calView==="month"&&(
-                <div className="card" style={{padding:0,overflow:"hidden"}}>
-                  <div className="cagd">
-                    {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=><div key={d} className="cadh">{d}</div>)}
-                    {Array.from({length:calFirst}).map((_,i)=><div key={"b"+i} className="cac om"/>)}
-                    {Array.from({length:calDays}).map((_,i)=>{const day=i+1;const ds=calYear+"-"+String(calMonth+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");const de=evOn(ds);const isT=ds===TODAY;return(
-                      <div key={day} className={"cac "+(isT?"tc2":"")} onClick={()=>openAddEv(ds)}>
-                        <div className="dn2">{day}</div>
-                        {de.slice(0,2).map(e=><div key={e.id} className="cep" style={{background:catColor(e.category)||e.color||"#c9a87c"}} onClick={ev=>openEditEv(e,ev)}>{e.allDay?"●":e.time?fmtT(e.time)+" ":""}{e.title}</div>)}
-                        {de.length>2&&<div className="cm">+{de.length-2} more</div>}
-                      </div>
-                    );})}
-                  </div>
+        {page==="calendar"&&<>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>My <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Calendar</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click any day to add an event · click an event to edit or delete</p></div>{headerIcons}</div>
+          <div className="card">
+            <div className="cah"><div className="caml">{calLabel}</div><div style={{display:"flex",gap:8}}><button className="cnb" onClick={prevCal}>← Prev</button><button className="cnb" onClick={()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());}}>Today</button><button className="cnb" onClick={nextCal}>Next →</button></div></div>
+            <div className="cagd">
+              {DAYS.map(d=><div key={d} className="cadh">{d}</div>)}
+              {Array.from({length:calFirst}).map((_,i)=><div key={`e${i}`} className="cac om"/>)}
+              {Array.from({length:calDays}).map((_,i)=>{const day=i+1;const ds=`${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;const de=evOn(ds);const isT=ds===TODAY;return(
+                <div key={day} className={`cac ${isT?"tc2":""}`} onClick={()=>openAddEv(ds)}>
+                  <div className="dn2">{day}</div>
+                  {de.slice(0,2).map(e=><div key={e.id} className="cep" style={{background:e.color}} onClick={ev=>openEditEv(e,ev)}>{e.allDay?"All day":e.time?`${e.time} `:""}{e.title}</div>)}
+                  {de.length>2&&<div className="cm">+{de.length-2} more</div>}
                 </div>
-              )}
-              {calView==="week"&&(
-                <div className="cal-week-wrap">
-                  <div className="cal-week-hdr">
-                    <div className="cal-hdr-cell" style={{background:"var(--parchment)",borderRight:"1px solid var(--border)"}}/>
-                    {wkDates.map(ds=>{const dt=new Date(ds+"T00:00:00");const isT=ds===TODAY;return(
-                      <div key={ds} className={"cal-hdr-cell"+(isT?" today-col":"")}>
-                        {dt.toLocaleDateString("en-GB",{weekday:"short"})}
-                        <span className={"cal-hdr-day-num"+(isT?" today-num":"")}>{dt.getDate()}</span>
-                      </div>
-                    );})}
-                  </div>
-                  <div style={{height:680,overflowY:"auto"}}>
-                    <div className="cal-time-body">
-                      <div className="cal-time-col">{CAL_HOURS.map(h=><div key={h} className="cal-time-label">{fmtH(h)}</div>)}</div>
-                      {wkDates.map(ds=>{const de=evOn(ds);return(
-                        <div key={ds} className="cal-day-cells" style={{background:ds===TODAY?"rgba(201,168,124,.04)":"transparent"}}>
-                          {CAL_HOURS.map(h=><div key={h} className="cal-hour-line" onClick={()=>openAddEv(ds,String(h).padStart(2,"0")+":00")}/>)}
-                          {de.filter(e=>!e.allDay&&e.time).map(e=>{const top=evTop(e.time);if(top===null||top<0)return null;const ht=evHt(e.time,e.endTime);return(
-                            <div key={e.id} className="cal-ev-block" style={{top:top,height:ht,background:catColor(e.category)||e.color||"#c9a87c"}} onClick={ev=>openEditEv(e,ev)}>
-                              <span style={{fontWeight:500}}>{e.title}</span>
-                              <span className="cal-ev-time">{fmtT(e.time)}{e.endTime?"–"+fmtT(e.endTime):""}</span>
-                            </div>
-                          );})}
-                          {de.filter(e=>e.allDay).map((e,i)=>(
-                            <div key={e.id} style={{position:"absolute",left:3,right:3,top:i*22,height:20,background:catColor(e.category)||e.color||"#c9a87c",borderRadius:5,padding:"2px 6px",color:"white",fontSize:10,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",cursor:"pointer",zIndex:2}} onClick={ev=>openEditEv(e,ev)}>{e.title}</div>
-                          ))}
-                        </div>
-                      );})}
-                    </div>
-                  </div>
-                </div>
-              )}
-              {calView==="day"&&(
-                <div className="cal-week-wrap">
-                  <div className="cal-day-hdr">
-                    <div className="cal-hdr-cell" style={{background:"var(--parchment)",borderRight:"1px solid var(--border)"}}/>
-                    <div className={"cal-hdr-cell"+(calDayDate===TODAY?" today-col":"")}>
-                      {new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long"})}
-                      <span className={"cal-hdr-day-num"+(calDayDate===TODAY?" today-num":"")}>{new Date(calDayDate+"T00:00:00").getDate()}</span>
-                    </div>
-                  </div>
-                  <div style={{height:680,overflowY:"auto"}}>
-                    <div className="cal-time-body-day">
-                      <div className="cal-time-col">{CAL_HOURS.map(h=><div key={h} className="cal-time-label">{fmtH(h)}</div>)}</div>
-                      <div className="cal-day-cells" style={{background:calDayDate===TODAY?"rgba(201,168,124,.04)":"transparent"}}>
-                        {CAL_HOURS.map(h=><div key={h} className="cal-hour-line" onClick={()=>openAddEv(calDayDate,String(h).padStart(2,"0")+":00")}/>)}
-                        {evOn(calDayDate).filter(e=>!e.allDay&&e.time).map(e=>{const top=evTop(e.time);if(top===null||top<0)return null;const ht=evHt(e.time,e.endTime);return(
-                          <div key={e.id} className="cal-ev-block" style={{top:top,height:ht,background:catColor(e.category)||e.color||"#c9a87c"}} onClick={ev=>openEditEv(e,ev)}>
-                            <span style={{fontWeight:500}}>{e.title}</span>
-                            <span className="cal-ev-time">{fmtT(e.time)}{e.endTime?"–"+fmtT(e.endTime):""}</span>
-                          </div>
-                        );})}
-                        {evOn(calDayDate).filter(e=>e.allDay).map((e,i)=>(
-                          <div key={e.id} style={{position:"absolute",left:3,right:3,top:i*22,height:20,background:catColor(e.category)||e.color||"#c9a87c",borderRadius:5,padding:"2px 6px",color:"white",fontSize:10,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",cursor:"pointer",zIndex:2}} onClick={ev=>openEditEv(e,ev)}>{e.title}</div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="cal-right">
-              <div className="cal-mini-card">
-                <div className="cal-mini-hdr">
-                  <span className="cal-mini-title">{MONTHS[calMonth]} {calYear}</span>
-                  <div style={{display:"flex",gap:2}}>
-                    <button className="cal-mini-nav" onClick={prevCal}>&#8249;</button>
-                    <button className="cal-mini-nav" onClick={nextCal}>&#8250;</button>
-                  </div>
-                </div>
-                <div className="cal-mini-grid">
-                  {["Su","Mo","Tu","We","Th","Fr","Sa"].map(d=><div key={d} className="cal-mini-dh">{d}</div>)}
-                  {Array.from({length:miniFirst}).map((_,i)=><div key={"e"+i} className="cal-mini-d om"/>)}
-                  {Array.from({length:miniDays}).map((_,i)=>{const day=i+1;const ds=calYear+"-"+String(calMonth+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");const isT=ds===TODAY;const haEv=evOn(ds).length>0;return(
-                    <div key={day} className={"cal-mini-d"+(isT?" today":"")+(haEv?" has-ev":"")} onClick={()=>{if(calView==="day")setCalDayDate(ds);else if(calView==="week"){const wd=new Date(ds+"T00:00:00");wd.setDate(wd.getDate()-wd.getDay());setCalWeekStart(wd.getFullYear()+"-"+String(wd.getMonth()+1).padStart(2,"0")+"-"+String(wd.getDate()).padStart(2,"0"));}openAddEv(ds);}}>
-                      {day}
-                    </div>
-                  );})}
-                </div>
-              </div>
-              <div className="cal-upcoming">
-                <div className="cal-up-title">Upcoming</div>
-                {calUpcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
-                {calUpcoming.map((e,i)=>{const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
-                  <div key={i} className="cal-up-item" onClick={ev=>openEditEv(e,ev)}>
-                    <div className="cal-up-dot" style={{background:catColor(e.category)||e.color||"#c9a87c"}}/>
-                    <div className="cal-up-info">
-                      <div className="cal-up-name">{e.title}</div>
-                      <div className="cal-up-meta">{dl}{e.time?" · "+fmtT(e.time):""}{e.endTime?"–"+fmtT(e.endTime):""}</div>
-                    </div>
-                  </div>
-                );})}
-              </div>
-              <div className="cal-quote-card">
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,color:"var(--ink)",lineHeight:1.55,fontStyle:"italic"}}>Time is the most precious resource — invest it in what matters.</div>
-                <div style={{fontSize:11,color:"var(--gold-deep)",marginTop:8}}>— Seneca</div>
-              </div>
-              <div className="cal-mini-card">
-                <div style={{fontSize:11,color:"var(--ink-light)",marginBottom:8,letterSpacing:".06em",textTransform:"uppercase"}}>Categories</div>
-                <div className="cal-cat-legend">
-                  {CATS.map(([k,l,c])=><span key={k} className="cal-cat-lbl"><span className="cal-cat-dot" style={{background:c}}/>{l}</span>)}
-                </div>
-              </div>
+              );})}
             </div>
           </div>
-          </>;
-        })()}
+        </>}
 
         {/* ── CLEANING SCHEDULE ── */}
         {page==="cleaning"&&<>
