@@ -2981,59 +2981,6 @@ export default function App() {
           const miniFirst=fdm(calYear,calMonth);
 
           // right panel
-          const RightPanel=()=>(
-            <div className="cal-right">
-              {/* mini calendar */}
-              <div className="cal-mini-card">
-                <div className="cal-mini-hdr">
-                  <span className="cal-mini-title">{MONTHS[calMonth]} {calYear}</span>
-                  <div style={{display:"flex",gap:2}}>
-                    <button className="cal-mini-nav" onClick={prevCal}>‹</button>
-                    <button className="cal-mini-nav" onClick={nextCal}>›</button>
-                  </div>
-                </div>
-                <div className="cal-mini-grid">
-                  {["Su","Mo","Tu","We","Th","Fr","Sa"].map(d=><div key={d} className="cal-mini-dh">{d}</div>)}
-                  {Array.from({length:miniFirst}).map((_,i)=><div key={`e${i}`} className="cal-mini-d om"/>)}
-                  {Array.from({length:miniDays}).map((_,i)=>{const day=i+1;const ds=`${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;const isT=ds===TODAY;const haEv=evOn(ds).length>0;const isSel=(calView==="day"&&calDayDate===ds)||(calView==="week"&&wkDates.includes(ds));return(
-                    <div key={day} className={`cal-mini-d${isT?" today":""}${haEv?" has-ev":""}${isSel&&!isT?" sel":""}`}
-                      onClick={()=>{if(calView==="day"){setCalDayDate(ds);}else if(calView==="week"){const wd=new Date(ds+"T00:00:00");wd.setDate(wd.getDate()-wd.getDay());setCalWeekStart(wd.toISOString().slice(0,10));}else{setCalMonth(calMonth);setCalYear(calYear);}openAddEv(ds);}}>
-                      {day}
-                    </div>
-                  );})}
-                </div>
-              </div>
-              {/* upcoming */}
-              <div className="cal-upcoming">
-                <div className="cal-up-title">Upcoming</div>
-                {upcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
-                {upcoming.map((e,i)=>{const col=(ECAT[e.category]?.color)||e.color||"#c9a87c";const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
-                  <div key={i} className="cal-up-item" onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer"}}>
-                    <div className="cal-up-dot" style={{background:col}}/>
-                    <div className="cal-up-info">
-                      <div className="cal-up-name">{e.title}</div>
-                      <div className="cal-up-meta">{dl}{e.time?` · ${fmtTimeLbl(e.time)}`:""}{e.endTime?`–${fmtTimeLbl(e.endTime)}`:""}</div>
-                    </div>
-                  </div>
-                );})}
-              </div>
-              {/* quote */}
-              <div className="cal-quote-card">
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,color:"var(--ink)",lineHeight:1.55,fontStyle:"italic"}}>{CAL_QUOTE.text}</div>
-                <div style={{fontSize:11,color:"var(--gold-deep)",marginTop:8,fontFamily:"'DM Sans',sans-serif"}}>{CAL_QUOTE.author}</div>
-              </div>
-              {/* category legend */}
-              <div className="cal-mini-card" style={{paddingBottom:14}}>
-                <div style={{fontSize:11,color:"var(--ink-light)",marginBottom:8,letterSpacing:".06em",textTransform:"uppercase"}}>Categories</div>
-                <div className="cal-cat-legend">
-                  {Object.entries(ECAT).map(([k,v])=>(
-                    <span key={k} className="cal-cat-lbl"><span className="cal-cat-dot" style={{background:v.color}}/>{v.label}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          );
-
           return <>
           <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:28}}>
             <div>
@@ -3158,7 +3105,56 @@ export default function App() {
             )}
 
             </div>
-            <RightPanel/>
+            <div className="cal-right">
+              {/* mini calendar */}
+              <div className="cal-mini-card">
+                <div className="cal-mini-hdr">
+                  <span className="cal-mini-title">{MONTHS[calMonth]} {calYear}</span>
+                  <div style={{display:"flex",gap:2}}>
+                    <button className="cal-mini-nav" onClick={prevCal}>&#8249;</button>
+                    <button className="cal-mini-nav" onClick={nextCal}>&#8250;</button>
+                  </div>
+                </div>
+                <div className="cal-mini-grid">
+                  {["Su","Mo","Tu","We","Th","Fr","Sa"].map(d=><div key={d} className="cal-mini-dh">{d}</div>)}
+                  {Array.from({length:miniFirst}).map((_,i)=><div key={"e"+i} className="cal-mini-d om"/>)}
+                  {Array.from({length:miniDays}).map((_,i)=>{const day=i+1;const ds=calYear+"-"+String(calMonth+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");const isT=ds===TODAY;const haEv=evOn(ds).length>0;const isSel=(calView==="day"&&calDayDate===ds)||(calView==="week"&&wkDates.includes(ds));return(
+                    <div key={day} className={"cal-mini-d"+(isT?" today":"")+(haEv?" has-ev":"")+(isSel&&!isT?" sel":"")}
+                      onClick={()=>{if(calView==="day"){setCalDayDate(ds);}else if(calView==="week"){const wd=new Date(ds+"T00:00:00");wd.setDate(wd.getDate()-wd.getDay());setCalWeekStart(wd.toISOString().slice(0,10));}openAddEv(ds);}}>
+                      {day}
+                    </div>
+                  );})}
+                </div>
+              </div>
+              {/* upcoming */}
+              <div className="cal-upcoming">
+                <div className="cal-up-title">Upcoming</div>
+                {upcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
+                {upcoming.map((e,i)=>{const col=(ECAT[e.category]&&ECAT[e.category].color)||e.color||"#c9a87c";const dt=new Date(e._ds+"T00:00:00");const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});return(
+                  <div key={i} className="cal-up-item" onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer"}}>
+                    <div className="cal-up-dot" style={{background:col}}/>
+                    <div className="cal-up-info">
+                      <div className="cal-up-name">{e.title}</div>
+                      <div className="cal-up-meta">{dl}{e.time?" · "+fmtTimeLbl(e.time):""}{e.endTime?"–"+fmtTimeLbl(e.endTime):""}</div>
+                    </div>
+                  </div>
+                );})}
+              </div>
+              {/* quote */}
+              <div className="cal-quote-card">
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,color:"var(--ink)",lineHeight:1.55,fontStyle:"italic"}}>{CAL_QUOTE.text}</div>
+                <div style={{fontSize:11,color:"var(--gold-deep)",marginTop:8,fontFamily:"'DM Sans',sans-serif"}}>{CAL_QUOTE.author}</div>
+              </div>
+              {/* categories */}
+              <div className="cal-mini-card" style={{paddingBottom:14}}>
+                <div style={{fontSize:11,color:"var(--ink-light)",marginBottom:8,letterSpacing:".06em",textTransform:"uppercase"}}>Categories</div>
+                <div className="cal-cat-legend">
+                  {Object.entries(ECAT).map(([k,v])=>(
+                    <span key={k} className="cal-cat-lbl"><span className="cal-cat-dot" style={{background:v.color}}/>{v.label}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
           </>;
         })()}
