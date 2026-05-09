@@ -179,6 +179,22 @@ const fmtPomo=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).pad
 const POMO_R=42;
 const POMO_CIRC=2*Math.PI*POMO_R;
 
+const CAL_CATS=[
+  {id:"focus",label:"Focus",color:"#A89880"},
+  {id:"work",label:"Work",color:"#787878"},
+  {id:"wellness",label:"Wellness",color:"#8FAF8A"},
+  {id:"personal",label:"Personal",color:"#D4A5A0"},
+  {id:"social",label:"Social",color:"#C9A87C"},
+];
+const CAL_HOURS=Array.from({length:17},(_,i)=>i+6);
+const calCatColor=cat=>(CAL_CATS.find(c=>c.id===cat)||{color:"#A89880"}).color;
+const fmtHour=h=>{if(h===12)return"12 PM";if(h===0)return"12 AM";return h<12?h+" AM":(h-12)+" PM";};
+const toMins=t=>{if(!t)return null;const[h,m]=t.split(":").map(Number);return h*60+m;};
+const evTopPx=t=>{const m=toMins(t);return m===null?null:m-6*60;};
+const evHtPx=(s,e)=>{const sm=toMins(s),em=toMins(e);return sm===null||em===null||em<=sm?60:Math.max(em-sm,30);};
+const fmtShort=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+(m>0?":"+String(m).padStart(2,"0"):"")+p;};
+const fmtEvTime=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+":"+String(m).padStart(2,"0")+" "+p;};
+
 const CSS=`
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -912,6 +928,81 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
   .dash-search{display:none;}
   .streak-big{font-size:36px;}
 }
+.cal-page{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start;}
+.cal-topbar2{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.cal-nav-btn{background:none;border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--ink-light);line-height:1;}
+.cal-nav-btn:hover{background:var(--parchment);}
+.cal-cur-label{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);font-weight:400;min-width:130px;}
+.cal-today-btn2{padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:none;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;}
+.cal-today-btn2:hover{background:var(--parchment);}
+.cal-view-tgl{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-left:auto;}
+.cvt2{padding:7px 18px;background:none;border:none;border-right:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;}
+.cvt2:last-child{border-right:none;}
+.cvt2.on{background:var(--ink);color:#f4ede3;}
+.cal-add2{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--ink);color:#f4ede3;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;white-space:nowrap;}
+.cal-add2:hover{background:var(--gold-deep);}
+.cal-mth-wrap{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff;}
+.cal-mth-hdr{display:grid;grid-template-columns:repeat(7,1fr);background:var(--parchment);border-bottom:1px solid var(--border);}
+.cal-mth-dh{padding:10px 6px;font-size:10px;letter-spacing:.1em;color:var(--ink-light);text-align:center;text-transform:uppercase;font-weight:500;}
+.cal-mth-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-mth-cell{min-height:88px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px;cursor:pointer;transition:background .12s;}
+.cal-mth-cell:nth-child(7n){border-right:none;}
+.cal-mth-cell.om2{background:#faf9f7;opacity:.6;}
+.cal-mth-cell.tc3{background:rgba(201,168,124,.05);}
+.cal-mth-cell:hover{background:var(--gold-pale);}
+.cal-mth-dn{font-size:12px;font-weight:500;color:var(--ink-light);margin-bottom:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.cal-mth-dn.tn2{background:var(--gold);color:#fff;font-weight:600;}
+.cal-mth-ev{font-size:10px;padding:2px 6px;border-radius:5px;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.cal-mth-ev:hover{opacity:.85;}
+.cal-wk-wrap{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff;}
+.cal-wk-hdr{display:grid;background:var(--parchment);border-bottom:1px solid var(--border);}
+.cal-wh-empty2{border-right:1px solid var(--border);}
+.cal-wh-cell2{padding:10px 6px;text-align:center;border-right:1px solid var(--border);}
+.cal-wh-cell2:last-child{border-right:none;}
+.cal-wh-day2{font-size:9px;letter-spacing:.1em;color:var(--ink-light);text-transform:uppercase;font-weight:600;}
+.cal-wh-num2{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);display:block;margin-top:2px;}
+.cal-wh-num2.tn3{background:var(--gold);color:#fff;border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;}
+.cal-tgrid{display:grid;background:var(--ivory);}
+.cal-tcol{display:flex;flex-direction:column;border-right:1px solid var(--border);}
+.cal-tlbl{height:60px;display:flex;align-items:flex-start;padding:5px 6px 0;justify-content:flex-end;font-size:9px;color:var(--ink-light);letter-spacing:.04em;border-bottom:1px solid rgba(0,0,0,.04);}
+.cal-dcol{position:relative;border-right:1px solid var(--border);}
+.cal-dcol:last-child{border-right:none;}
+.cal-hslot{height:60px;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;transition:background .12s;}
+.cal-hslot:hover{background:rgba(201,168,124,.07);}
+.cal-epill{position:absolute;left:3px;right:3px;border-radius:7px;padding:5px 7px;color:#fff;font-size:11px;cursor:pointer;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.14);z-index:2;}
+.cal-epill:hover{opacity:.88;}
+.cal-epill-t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.cal-epill-m{font-size:9px;opacity:.9;margin-top:2px;white-space:nowrap;}
+.cal-rp{display:flex;flex-direction:column;gap:16px;}
+.cal-mc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.cal-mc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-mc-mo{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
+.cal-mc-nav{background:none;border:none;color:var(--ink-light);cursor:pointer;padding:2px 8px;border-radius:5px;font-size:15px;}
+.cal-mc-nav:hover{background:var(--parchment);}
+.cal-mc-dh{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px;}
+.cal-mc-dhc{font-size:8px;text-align:center;color:var(--ink-light);letter-spacing:.06em;padding:2px 0;}
+.cal-mc-dg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-mc-d{font-size:10px;text-align:center;padding:4px 0;border-radius:50%;cursor:pointer;color:var(--ink-light);transition:background .12s;width:26px;height:26px;display:flex;align-items:center;justify-content:center;margin:auto;}
+.cal-mc-d:hover{background:var(--gold-pale);}
+.cal-mc-d.tm{background:var(--gold);color:#fff;font-weight:600;}
+.cal-mc-d.hev{font-weight:600;color:var(--ink);}
+.cal-uc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.cal-uc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-uc-ttl{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
+.cal-uc-va{font-size:11px;color:var(--gold-deep);background:none;border:none;cursor:pointer;}
+.cal-uc-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.cal-uc-item:last-child{border-bottom:none;}
+.cal-uc-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.cal-uc-nm{font-size:12px;color:var(--ink);font-weight:500;margin-bottom:2px;}
+.cal-uc-mt{font-size:10px;color:var(--ink-light);}
+.cal-qc{background:var(--parchment);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
+.cal-qc-lbl{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+.cal-qc-txt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--ink);line-height:1.65;}
+.cal-leg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;padding:10px 0;}
+.cal-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-light);}
+.cal-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+@media(max-width:1100px){.cal-page{grid-template-columns:1fr;}.cal-rp{display:none;}}
+@media(max-width:700px){.cal-wk-hdr{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tgrid{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tlbl{font-size:8px;padding:4px 3px 0;}.cal-epill-m{display:none;}}
 `;
 
 const MONTHLY_TIPS={
@@ -972,8 +1063,11 @@ export default function App() {
   const [editCTxt,setEditCTxt]=useState("");
   const [calYear,setCalYear]=useState(NOW.getFullYear());
   const [calMonth,setCalMonth]=useState(NOW.getMonth());
+  const [calView,setCalView]=useState("month");
+  const [calWkStart,setCalWkStart]=useState(TODAY);
+  const [calDayDate,setCalDayDate]=useState(TODAY);
   const [evModal,setEvModal]=useState(null);
-  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",notes:"",color:"#c9a87c",allDay:false});
+  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",endTime:"",notes:"",color:CAL_CATS[3].color,allDay:false,category:"personal"});
   const [praise,setPraise]=useState(null);
   const [pomoCount,setPomoCount]=useDB("sab_pomo",0);
   const [habitsWeekKey,setHabitsWeekKey]=useDB("sab_habits_week","");
@@ -1241,8 +1335,22 @@ export default function App() {
   const prevCal=()=>{if(calMonth===0){setCalMonth(11);setCalYear(y=>y-1);}else setCalMonth(m=>m-1);};
   const nextCal=()=>{if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1);};
   const evOn=ds=>events.filter(e=>e.date===ds);
-  const openAddEv=ds=>{setEvDraft({title:"",date:ds,time:"",notes:"",color:"#c9a87c",allDay:false});setEvModal({mode:"add"});};
-  const openEditEv=(e,ev)=>{ev.stopPropagation();setEvDraft({title:e.title,date:e.date,time:e.time||"",notes:e.notes||"",color:e.color||"#c9a87c",allDay:e.allDay||false});setEvModal({mode:"edit",id:e.id});};
+
+  // Calendar view computed (always run — never inside IIFE)
+  const calWkDates=Array.from({length:7},(_,i)=>{const d=new Date(calWkStart+"T00:00:00");d.setDate(d.getDate()+i);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");});
+  const calWkLabel=MONTHS[new Date(calWkStart+"T00:00:00").getMonth()]+" "+new Date(calWkStart+"T00:00:00").getFullYear();
+  const calDayLabel=new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  const calMiniFirst=fdm(calYear,calMonth);
+  const calMiniDays=dim(calYear,calMonth);
+  const calUpcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,6);})();
+  const prevWk=()=>{const d=new Date(calWkStart+"T00:00:00");d.setDate(d.getDate()-7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const nextWk=()=>{const d=new Date(calWkStart+"T00:00:00");d.setDate(d.getDate()+7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const goToday=()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());setCalWkStart(TODAY);setCalDayDate(TODAY);};
+  const prevDayD=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()-1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const nextDayD=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()+1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+
+  const openAddEv=(ds,t)=>{setEvDraft({title:"",date:ds,time:t||"",endTime:"",notes:"",color:CAL_CATS[3].color,allDay:!t,category:"personal"});setEvModal({mode:"add"});};
+  const openEditEv=(e,ev)=>{ev.stopPropagation();setEvDraft({title:e.title,date:e.date,time:e.time||"",endTime:e.endTime||"",notes:e.notes||"",color:e.color||CAL_CATS[3].color,allDay:e.allDay||false,category:e.category||"personal"});setEvModal({mode:"edit",id:e.id});};
   const saveEv=()=>{if(!evDraft.title.trim())return;if(evModal.mode==="add")setEvents(ev=>[...ev,{id:Date.now(),...evDraft}]);else setEvents(ev=>ev.map(e=>e.id===evModal.id?{...e,...evDraft}:e));setEvModal(null);};
   const delEv=id=>{setEvents(ev=>ev.filter(e=>e.id!==id));setEvModal(null);};
 
@@ -1524,16 +1632,17 @@ export default function App() {
             <button className="mcl" onClick={()=>setEvModal(null)}>×</button>
             <div className="mdt">{evModal.mode==="add"?"New Event":"Edit Event"}</div>
             <div className="mf"><div className="mlb">TITLE</div><input className="mi2" placeholder="What's happening?" value={evDraft.title} onChange={e=>setEvDraft(d=>({...d,title:e.target.value}))}/></div>
+            <div className="mf"><div className="mlb">CATEGORY</div><div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:2}}>{CAL_CATS.map(c=><div key={c.id} onClick={()=>setEvDraft(d=>({...d,category:c.id,color:c.color}))} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"2px solid "+(evDraft.category===c.id?c.color:"var(--border)"),cursor:"pointer",fontSize:11,background:evDraft.category===c.id?c.color+"22":"transparent",transition:"all .15s"}}><span style={{width:7,height:7,borderRadius:"50%",background:c.color,display:"inline-block"}}/>{c.label}</div>)}</div></div>
             <div className="fr">
               <div className="mf" style={{flex:1}}><div className="mlb">DATE</div><input className="mi2" type="date" value={evDraft.date} onChange={e=>setEvDraft(d=>({...d,date:e.target.value}))}/></div>
-              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">TIME</div><input className="mi2" type="time" value={evDraft.time} onChange={e=>setEvDraft(d=>({...d,time:e.target.value}))}/></div>}
+              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">START</div><input className="mi2" type="time" value={evDraft.time} onChange={e=>setEvDraft(d=>({...d,time:e.target.value}))}/></div>}
+              {!evDraft.allDay&&<div className="mf" style={{flex:1}}><div className="mlb">END</div><input className="mi2" type="time" value={evDraft.endTime} onChange={e=>setEvDraft(d=>({...d,endTime:e.target.value}))}/></div>}
             </div>
             <div className="adrow">
-              <input type="checkbox" id="evAllDay" checked={evDraft.allDay} onChange={e=>setEvDraft(d=>({...d,allDay:e.target.checked,time:e.target.checked?"":d.time}))}/>
+              <input type="checkbox" id="evAllDay" checked={evDraft.allDay} onChange={e=>setEvDraft(d=>({...d,allDay:e.target.checked,time:e.target.checked?"":d.time,endTime:e.target.checked?"":d.endTime}))}/>
               <label htmlFor="evAllDay">ALL DAY EVENT</label>
             </div>
             <div className="mf"><div className="mlb">NOTES</div><input className="mi2" placeholder="Details…" value={evDraft.notes} onChange={e=>setEvDraft(d=>({...d,notes:e.target.value}))}/></div>
-            <div className="mf"><div className="mlb">COLOUR</div><div className="cr">{ECOLORS.map(c=><div key={c} className={`cs2 ${evDraft.color===c?"sel":""}`} style={{background:c}} onClick={()=>setEvDraft(d=>({...d,color:c}))}/>)}</div></div>
             <div className="mft">
               {evModal.mode==="edit"?<button className="bc2" style={{color:"#c05050",borderColor:"#fde8e8"}} onClick={()=>delEv(evModal.id)}>Delete</button>:<div/>}
               <div style={{display:"flex",gap:8}}><button className="bc2" onClick={()=>setEvModal(null)}>Cancel</button><button className="bs" onClick={saveEv}>Save ✦</button></div>
@@ -2850,19 +2959,213 @@ export default function App() {
 
         {/* ── CALENDAR ── */}
         {page==="calendar"&&<>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>My <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Calendar</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Click any day to add an event · click an event to edit or delete</p></div>{headerIcons}</div>
-          <div className="card">
-            <div className="cah"><div className="caml">{calLabel}</div><div style={{display:"flex",gap:8}}><button className="cnb" onClick={prevCal}>← Prev</button><button className="cnb" onClick={()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());}}>Today</button><button className="cnb" onClick={nextCal}>Next →</button></div></div>
-            <div className="cagd">
-              {DAYS.map(d=><div key={d} className="cadh">{d}</div>)}
-              {Array.from({length:calFirst}).map((_,i)=><div key={`e${i}`} className="cac om"/>)}
-              {Array.from({length:calDays}).map((_,i)=>{const day=i+1;const ds=`${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;const de=evOn(ds);const isT=ds===TODAY;return(
-                <div key={day} className={`cac ${isT?"tc2":""}`} onClick={()=>openAddEv(ds)}>
-                  <div className="dn2">{day}</div>
-                  {de.slice(0,2).map(e=><div key={e.id} className="cep" style={{background:e.color}} onClick={ev=>openEditEv(e,ev)}>{e.allDay?"All day":e.time?`${e.time} `:""}{e.title}</div>)}
-                  {de.length>2&&<div className="cm">+{de.length-2} more</div>}
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24}}>
+            <div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div>
+              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Calendar</h1>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,color:"var(--ink-light)",marginTop:4}}>Plan your days. Stay aligned with what matters.</p>
+            </div>
+            {headerIcons}
+          </div>
+
+          {/* ── Top bar: nav + label + view toggle + add button ── */}
+          <div className="cal-topbar2">
+            <button className="cal-nav-btn" onClick={calView==="month"?prevCal:calView==="week"?prevWk:prevDayD}>‹</button>
+            <button className="cal-nav-btn" onClick={calView==="month"?nextCal:calView==="week"?nextWk:nextDayD}>›</button>
+            <span className="cal-cur-label">{calView==="month"?calLabel:calView==="week"?calWkLabel:calDayLabel}</span>
+            <button className="cal-today-btn2" onClick={goToday}>Today</button>
+            <div className="cal-view-tgl">
+              {[["month","Month"],["week","Week"],["day","Day"]].map(([v,l])=>(
+                <button key={v} className={"cvt2"+(calView===v?" on":"")} onClick={()=>setCalView(v)}>{l}</button>
+              ))}
+            </div>
+            <button className="cal-add2" onClick={()=>openAddEv(calView==="day"?calDayDate:TODAY)}>+ Add Event</button>
+          </div>
+
+          {/* ── Two-column layout: main + right panel ── */}
+          <div className="cal-page">
+            {/* ── LEFT: Main calendar area ── */}
+            <div>
+              {/* MONTH VIEW */}
+              {calView==="month"&&<div className="cal-mth-wrap">
+                <div className="cal-mth-hdr">
+                  {DAYS.map(d=><div key={d} className="cal-mth-dh">{d}</div>)}
                 </div>
-              );})}
+                <div className="cal-mth-grid">
+                  {Array.from({length:calFirst}).map((_,i)=><div key={"ep"+i} className="cal-mth-cell om2"/>)}
+                  {Array.from({length:calDays}).map((_,i)=>{
+                    const day=i+1;
+                    const ds=calYear+"-"+String(calMonth+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+                    const de=evOn(ds);
+                    const isT=ds===TODAY;
+                    return(
+                      <div key={day} className={"cal-mth-cell"+(isT?" tc3":"")} onClick={()=>openAddEv(ds)}>
+                        <div className={"cal-mth-dn"+(isT?" tn2":"")}>{day}</div>
+                        {de.slice(0,3).map(e=>(
+                          <div key={e.id} className="cal-mth-ev" style={{background:calCatColor(e.category)||e.color}} onClick={ev=>{ev.stopPropagation();openEditEv(e,ev);}}>
+                            {e.allDay?"● ":e.time?fmtShort(e.time)+" ":""}{e.title}
+                          </div>
+                        ))}
+                        {de.length>3&&<div style={{fontSize:10,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>+{de.length-3} more</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>}
+
+              {/* WEEK VIEW */}
+              {calView==="week"&&<div className="cal-wk-wrap">
+                <div className="cal-wk-hdr" style={{gridTemplateColumns:"52px repeat(7,1fr)"}}>
+                  <div className="cal-wh-empty2" style={{height:64}}/>
+                  {calWkDates.map(ds=>{
+                    const d=new Date(ds+"T00:00:00");
+                    const isT=ds===TODAY;
+                    const dayIdx=d.getDay()===0?6:d.getDay()-1;
+                    return(
+                      <div key={ds} className="cal-wh-cell2">
+                        <div className="cal-wh-day2">{DAYS[dayIdx]}</div>
+                        <span className={"cal-wh-num2"+(isT?" tn3":"")}>{d.getDate()}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="cal-tgrid" style={{gridTemplateColumns:"52px repeat(7,1fr)"}}>
+                  <div className="cal-tcol">
+                    {CAL_HOURS.map(h=><div key={h} className="cal-tlbl">{fmtHour(h)}</div>)}
+                  </div>
+                  {calWkDates.map(ds=>{
+                    const isT=ds===TODAY;
+                    const de=evOn(ds).filter(e=>!e.allDay&&e.time);
+                    return(
+                      <div key={ds} className="cal-dcol" style={{background:isT?"rgba(201,168,124,.03)":"transparent"}}>
+                        {CAL_HOURS.map(h=>(
+                          <div key={h} className="cal-hslot" onClick={()=>openAddEv(ds,String(h).padStart(2,"0")+":00")}/>
+                        ))}
+                        {de.map(e=>{
+                          const top=evTopPx(e.time);
+                          if(top===null||top<0)return null;
+                          const ht=evHtPx(e.time,e.endTime);
+                          return(
+                            <div key={e.id} className="cal-epill" style={{top:top,height:ht,background:calCatColor(e.category)||e.color}} onClick={ev=>openEditEv(e,ev)}>
+                              <div className="cal-epill-t">{e.title}</div>
+                              <div className="cal-epill-m">{fmtShort(e.time)}{e.endTime?" – "+fmtShort(e.endTime):""}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>}
+
+              {/* DAY VIEW */}
+              {calView==="day"&&<div className="cal-wk-wrap">
+                <div className="cal-wk-hdr" style={{gridTemplateColumns:"52px 1fr"}}>
+                  <div className="cal-wh-empty2" style={{height:64}}/>
+                  <div className="cal-wh-cell2">
+                    <div className="cal-wh-day2">{new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long"}).toUpperCase()}</div>
+                    <span className={"cal-wh-num2"+(calDayDate===TODAY?" tn3":"")}>{new Date(calDayDate+"T00:00:00").getDate()}</span>
+                  </div>
+                </div>
+                <div className="cal-tgrid" style={{gridTemplateColumns:"52px 1fr"}}>
+                  <div className="cal-tcol">
+                    {CAL_HOURS.map(h=><div key={h} className="cal-tlbl">{fmtHour(h)}</div>)}
+                  </div>
+                  <div className="cal-dcol">
+                    {CAL_HOURS.map(h=>(
+                      <div key={h} className="cal-hslot" onClick={()=>openAddEv(calDayDate,String(h).padStart(2,"0")+":00")}/>
+                    ))}
+                    {evOn(calDayDate).filter(e=>!e.allDay&&e.time).map(e=>{
+                      const top=evTopPx(e.time);
+                      if(top===null||top<0)return null;
+                      const ht=evHtPx(e.time,e.endTime);
+                      return(
+                        <div key={e.id} className="cal-epill" style={{top:top,height:ht,background:calCatColor(e.category)||e.color}} onClick={ev=>openEditEv(e,ev)}>
+                          <div className="cal-epill-t">{e.title}</div>
+                          <div className="cal-epill-m">{fmtShort(e.time)}{e.endTime?" – "+fmtShort(e.endTime):""}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>}
+
+              {/* Legend */}
+              <div className="cal-leg">
+                {CAL_CATS.map(c=>(
+                  <div key={c.id} className="cal-leg-item">
+                    <div className="cal-leg-dot" style={{background:c.color}}/>
+                    {c.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── RIGHT PANEL ── */}
+            <div className="cal-rp">
+              {/* Mini calendar */}
+              <div className="cal-mc">
+                <div className="cal-mc-hdr">
+                  <span className="cal-mc-mo">{MONTHS[calMonth]} {calYear}</span>
+                  <div style={{display:"flex",gap:2}}>
+                    <button className="cal-mc-nav" onClick={prevCal}>‹</button>
+                    <button className="cal-mc-nav" onClick={nextCal}>›</button>
+                  </div>
+                </div>
+                <div className="cal-mc-dh">
+                  {["M","T","W","T","F","S","S"].map((d,i)=><div key={i} className="cal-mc-dhc">{d}</div>)}
+                </div>
+                <div className="cal-mc-dg">
+                  {Array.from({length:calMiniFirst}).map((_,i)=><div key={"me"+i}/>)}
+                  {Array.from({length:calMiniDays}).map((_,i)=>{
+                    const day=i+1;
+                    const ds=calYear+"-"+String(calMonth+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+                    const isT=ds===TODAY;
+                    const haEv=evOn(ds).length>0;
+                    return(
+                      <div key={day} className={"cal-mc-d"+(isT?" tm":haEv?" hev":"")} onClick={()=>{
+                        if(calView==="day"){setCalDayDate(ds);}
+                        else if(calView==="week"){
+                          const wd=new Date(ds+"T00:00:00");
+                          const dow=wd.getDay();
+                          const diff=dow===0?-6:1-dow;
+                          wd.setDate(wd.getDate()+diff);
+                          setCalWkStart(wd.getFullYear()+"-"+String(wd.getMonth()+1).padStart(2,"0")+"-"+String(wd.getDate()).padStart(2,"0"));
+                        }
+                        openAddEv(ds);
+                      }}>{day}</div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Upcoming events */}
+              <div className="cal-uc">
+                <div className="cal-uc-hdr">
+                  <span className="cal-uc-ttl">Upcoming</span>
+                  <button className="cal-uc-va">View all</button>
+                </div>
+                {calUpcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
+                {calUpcoming.map((e,i)=>{
+                  const dt=new Date(e._ds+"T00:00:00");
+                  const dl=dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+                  return(
+                    <div key={e.id||i} className="cal-uc-item" onClick={ev=>openEditEv(e,ev)}>
+                      <div className="cal-uc-dot" style={{background:calCatColor(e.category)||e.color}}/>
+                      <div>
+                        <div className="cal-uc-nm">{e.title}</div>
+                        <div className="cal-uc-mt">{dl}{e.time?" · "+fmtEvTime(e.time):""}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Gentle reminder quote */}
+              <div className="cal-qc">
+                <div className="cal-qc-lbl">A gentle reminder</div>
+                <div className="cal-qc-txt">{QUOTE}</div>
+              </div>
             </div>
           </div>
         </>}
