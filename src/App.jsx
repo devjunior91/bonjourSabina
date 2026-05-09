@@ -179,22 +179,6 @@ const fmtPomo=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).pad
 const POMO_R=42;
 const POMO_CIRC=2*Math.PI*POMO_R;
 
-const CAL_CATS=[
-  {id:"focus",label:"Focus",color:"#A89880"},
-  {id:"work",label:"Work",color:"#787878"},
-  {id:"wellness",label:"Wellness",color:"#8FAF8A"},
-  {id:"personal",label:"Personal",color:"#D4A5A0"},
-  {id:"social",label:"Social",color:"#C9A87C"},
-];
-const CAL_HOURS=Array.from({length:17},(_,i)=>i+6);
-const calCatColor=cat=>(CAL_CATS.find(c=>c.id===cat)||{color:"#A89880"}).color;
-const fmtHour=h=>{if(h===12)return"12 PM";if(h===0)return"12 AM";return h<12?h+" AM":(h-12)+" PM";};
-const toMins=t=>{if(!t)return null;const[h,m]=t.split(":").map(Number);return h*60+m;};
-const evTopPx=t=>{const m=toMins(t);return m===null?null:m-6*60;};
-const evHtPx=(s,e)=>{const sm=toMins(s),em=toMins(e);return sm===null||em===null||em<=sm?60:Math.max(em-sm,30);};
-const fmtShort=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+(m>0?":"+String(m).padStart(2,"0"):"")+p;};
-const fmtEvTime=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+":"+String(m).padStart(2,"0")+" "+p;};
-
 const CSS=`
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -1064,10 +1048,10 @@ export default function App() {
   const [calYear,setCalYear]=useState(NOW.getFullYear());
   const [calMonth,setCalMonth]=useState(NOW.getMonth());
   const [calView,setCalView]=useState("month");
-  const [calWkStart,setCalWkStart]=useState(()=>TODAY);
-  const [calDayDate,setCalDayDate]=useState(()=>TODAY);
+  const [calWkStart,setCalWkStart]=useState("");
+  const [calDayDate,setCalDayDate]=useState("");
   const [evModal,setEvModal]=useState(null);
-  const [evDraft,setEvDraft]=useState(()=>({title:"",date:"",time:"",endTime:"",notes:"",color:CAL_CATS[3].color,allDay:false,category:"personal"}));
+  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",endTime:"",notes:"",color:"#D4A5A0",allDay:false,category:"personal"});
   const [praise,setPraise]=useState(null);
   const [pomoCount,setPomoCount]=useDB("sab_pomo",0);
   const [habitsWeekKey,setHabitsWeekKey]=useDB("sab_habits_week","");
@@ -1336,20 +1320,33 @@ export default function App() {
   const nextCal=()=>{if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1);};
   const evOn=ds=>events.filter(e=>e.date===ds);
 
+  // Calendar helpers — defined inside component to avoid rolldown ordering bugs
+  const CAL_CATS=[{id:"focus",label:"Focus",color:"#A89880"},{id:"work",label:"Work",color:"#787878"},{id:"wellness",label:"Wellness",color:"#8FAF8A"},{id:"personal",label:"Personal",color:"#D4A5A0"},{id:"social",label:"Social",color:"#C9A87C"}];
+  const CAL_HOURS=[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+  const calCatColor=cat=>(CAL_CATS.find(c=>c.id===cat)||{color:"#A89880"}).color;
+  const fmtHour=h=>{if(h===12)return"12 PM";if(h===0)return"12 AM";return h<12?h+" AM":(h-12)+" PM";};
+  const toMins=t=>{if(!t)return null;const[h,m]=t.split(":").map(Number);return h*60+m;};
+  const evTopPx=t=>{const m=toMins(t);return m===null?null:m-6*60;};
+  const evHtPx=(s,e)=>{const sm=toMins(s),em=toMins(e);return sm===null||em===null||em<=sm?60:Math.max(em-sm,30);};
+  const fmtShort=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+(m>0?":"+String(m).padStart(2,"0"):"")+p;};
+  const fmtEvTime=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);const p=h<12?"AM":"PM";const h12=h===0?12:h>12?h-12:h;return h12+":"+String(m).padStart(2,"0")+" "+p;};
+
   // Calendar view computed (always run — never inside IIFE)
-  const calWkDates=Array.from({length:7},(_,i)=>{const d=new Date(calWkStart+"T00:00:00");d.setDate(d.getDate()+i);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");});
-  const calWkLabel=MONTHS[new Date(calWkStart+"T00:00:00").getMonth()]+" "+new Date(calWkStart+"T00:00:00").getFullYear();
-  const calDayLabel=new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  const effWkStart=calWkStart||TODAY;
+  const effDayDate=calDayDate||TODAY;
+  const calWkDates=Array.from({length:7},(_,i)=>{const d=new Date(effWkStart+"T00:00:00");d.setDate(d.getDate()+i);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");});
+  const calWkLabel=MONTHS[new Date(effWkStart+"T00:00:00").getMonth()]+" "+new Date(effWkStart+"T00:00:00").getFullYear();
+  const calDayLabel=new Date(effDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
   const calMiniFirst=fdm(calYear,calMonth);
   const calMiniDays=dim(calYear,calMonth);
   const calUpcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,6);})();
-  const prevWk=()=>{const d=new Date(calWkStart+"T00:00:00");d.setDate(d.getDate()-7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
-  const nextWk=()=>{const d=new Date(calWkStart+"T00:00:00");d.setDate(d.getDate()+7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const prevWk=()=>{const d=new Date(effWkStart+"T00:00:00");d.setDate(d.getDate()-7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const nextWk=()=>{const d=new Date(effWkStart+"T00:00:00");d.setDate(d.getDate()+7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
   const goToday=()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());setCalWkStart(TODAY);setCalDayDate(TODAY);};
-  const prevDayD=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()-1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
-  const nextDayD=()=>{const d=new Date(calDayDate+"T00:00:00");d.setDate(d.getDate()+1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const prevDayD=()=>{const d=new Date(effDayDate+"T00:00:00");d.setDate(d.getDate()-1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
+  const nextDayD=()=>{const d=new Date(effDayDate+"T00:00:00");d.setDate(d.getDate()+1);setCalDayDate(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
 
-  const openAddEv=(ds,t)=>{setEvDraft({title:"",date:ds,time:t||"",endTime:"",notes:"",color:CAL_CATS[3].color,allDay:!t,category:"personal"});setEvModal({mode:"add"});};
+  const openAddEv=(ds,t)=>{setEvDraft({title:"",date:ds,time:t||"",endTime:"",notes:"",color:"#D4A5A0",allDay:!t,category:"personal"});setEvModal({mode:"add"});};
   const openEditEv=(e,ev)=>{ev.stopPropagation();setEvDraft({title:e.title,date:e.date,time:e.time||"",endTime:e.endTime||"",notes:e.notes||"",color:e.color||CAL_CATS[3].color,allDay:e.allDay||false,category:e.category||"personal"});setEvModal({mode:"edit",id:e.id});};
   const saveEv=()=>{if(!evDraft.title.trim())return;if(evModal.mode==="add")setEvents(ev=>[...ev,{id:Date.now(),...evDraft}]);else setEvents(ev=>ev.map(e=>e.id===evModal.id?{...e,...evDraft}:e));setEvModal(null);};
   const delEv=id=>{setEvents(ev=>ev.filter(e=>e.id!==id));setEvModal(null);};
@@ -2979,7 +2976,7 @@ export default function App() {
                 <button key={v} className={"cvt2"+(calView===v?" on":"")} onClick={()=>setCalView(v)}>{l}</button>
               ))}
             </div>
-            <button className="cal-add2" onClick={()=>openAddEv(calView==="day"?calDayDate:TODAY)}>+ Add Event</button>
+            <button className="cal-add2" onClick={()=>openAddEv(calView==="day"?effDayDate:TODAY)}>+ Add Event</button>
           </div>
 
           {/* ── Two-column layout: main + right panel ── */}
@@ -3063,8 +3060,8 @@ export default function App() {
                 <div className="cal-wk-hdr" style={{gridTemplateColumns:"52px 1fr"}}>
                   <div className="cal-wh-empty2" style={{height:64}}/>
                   <div className="cal-wh-cell2">
-                    <div className="cal-wh-day2">{new Date(calDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long"}).toUpperCase()}</div>
-                    <span className={"cal-wh-num2"+(calDayDate===TODAY?" tn3":"")}>{new Date(calDayDate+"T00:00:00").getDate()}</span>
+                    <div className="cal-wh-day2">{new Date(effDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long"}).toUpperCase()}</div>
+                    <span className={"cal-wh-num2"+(effDayDate===TODAY?" tn3":"")}>{new Date(effDayDate+"T00:00:00").getDate()}</span>
                   </div>
                 </div>
                 <div className="cal-tgrid" style={{gridTemplateColumns:"52px 1fr"}}>
@@ -3073,9 +3070,9 @@ export default function App() {
                   </div>
                   <div className="cal-dcol">
                     {CAL_HOURS.map(h=>(
-                      <div key={h} className="cal-hslot" onClick={()=>openAddEv(calDayDate,String(h).padStart(2,"0")+":00")}/>
+                      <div key={h} className="cal-hslot" onClick={()=>openAddEv(effDayDate,String(h).padStart(2,"0")+":00")}/>
                     ))}
-                    {evOn(calDayDate).filter(e=>!e.allDay&&e.time).map(e=>{
+                    {evOn(effDayDate).filter(e=>!e.allDay&&e.time).map(e=>{
                       const top=evTopPx(e.time);
                       if(top===null||top<0)return null;
                       const ht=evHtPx(e.time,e.endTime);
