@@ -889,7 +889,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .25s;}
-  .main{margin-left:0;padding:16px 10px 80px;}
+  .main{margin-left:0;padding:16px 12px 100px;}
   .dash-top-row{grid-template-columns:1fr;}
   .dash-combined-row{grid-template-columns:1fr;}
   .dash-right-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -912,6 +912,28 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
   .dash-search{display:none;}
   .streak-big{font-size:36px;}
 }
+@media(max-width:900px){
+  .mob-nav{display:flex;}
+  .goal-card{flex-direction:column;}
+  .goal-card-left{flex:none;width:100%;border-right:none;border-bottom:1px solid rgba(26,20,16,.06);border-radius:14px 14px 0 0;}
+  .goal-card-right{border-radius:0 0 14px 14px;overflow:visible;}
+  .goal-stats-row{grid-template-columns:1fr 1fr;}
+  .recent-wins-grid{grid-template-columns:1fr;}
+  .ms2-date{display:none;}
+  .ms2-row{grid-template-columns:20px 1fr 90px;}
+  .goal-filter-row{flex-wrap:wrap;gap:8px;}
+  .goal-modal-box{padding:20px;}
+  .hab-main{padding:0 8px 64px;}
+}
+@media(max-width:480px){
+  .goal-stats-row{grid-template-columns:1fr;}
+  .mob-nav-label{display:none;}
+}
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#faf7f3;border-top:1px solid rgba(26,20,16,.08);z-index:400;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));justify-content:space-around;align-items:center;}
+.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;cursor:pointer;color:var(--ink-light);padding:4px 6px;border-radius:8px;transition:all .15s;min-width:44px;}
+.mob-nav-btn.active{color:var(--ink);}
+.mob-nav-btn.active svg{stroke:var(--gold-deep);}
+.mob-nav-label{font-family:'DM Sans',sans-serif;font-size:9px;white-space:nowrap;}
 `;
 
 const MONTHLY_TIPS={
@@ -1566,7 +1588,22 @@ export default function App() {
         </div>
         <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
-
+        {/* ── MOBILE BOTTOM NAV ── */}
+        <nav className="mob-nav">
+          {[
+            {id:"dashboard",label:"Home",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
+            {id:"habits",label:"Habits",icon:<S><polyline points="23 4 23 10 17 10"/><path d="M1 20l6-6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></S>},
+            {id:"todos",label:"To-Do",icon:<S><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/></S>},
+            {id:"goals",label:"Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
+            {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
+            {id:"cleaning",label:"Rituel",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></S>},
+          ].map(item=>(
+            <button key={item.id} className={`mob-nav-btn${page===item.id?" active":""}`} onClick={()=>setPage(item.id)}>
+              {item.icon}
+              <span className="mob-nav-label">{item.label}</span>
+            </button>
+          ))}
+        </nav>
       <main className="main">
 
         {/* ── HABITS ── */}
