@@ -1064,10 +1064,10 @@ export default function App() {
   const [calYear,setCalYear]=useState(NOW.getFullYear());
   const [calMonth,setCalMonth]=useState(NOW.getMonth());
   const [calView,setCalView]=useState("month");
-  const [calWkStart,setCalWkStart]=useState(TODAY);
-  const [calDayDate,setCalDayDate]=useState(TODAY);
+  const [calWkStart,setCalWkStart]=useState(()=>TODAY);
+  const [calDayDate,setCalDayDate]=useState(()=>TODAY);
   const [evModal,setEvModal]=useState(null);
-  const [evDraft,setEvDraft]=useState({title:"",date:"",time:"",endTime:"",notes:"",color:CAL_CATS[3].color,allDay:false,category:"personal"});
+  const [evDraft,setEvDraft]=useState(()=>({title:"",date:"",time:"",endTime:"",notes:"",color:CAL_CATS[3].color,allDay:false,category:"personal"}));
   const [praise,setPraise]=useState(null);
   const [pomoCount,setPomoCount]=useDB("sab_pomo",0);
   const [habitsWeekKey,setHabitsWeekKey]=useDB("sab_habits_week","");
