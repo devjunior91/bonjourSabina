@@ -912,7 +912,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
   .dash-search{display:none;}
   .streak-big{font-size:36px;}
 }
-.cal-page{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start;}
+.cal-page{display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start;padding:0 28px;}
 .cal-topbar2{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
 .cal-nav-btn{background:none;border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--ink-light);line-height:1;}
 .cal-nav-btn:hover{background:var(--parchment);}
@@ -926,10 +926,10 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-add2{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--ink);color:#f4ede3;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;white-space:nowrap;}
 .cal-add2:hover{background:var(--gold-deep);}
 .cal-mth-wrap{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff;}
-.cal-mth-hdr{display:grid;grid-template-columns:repeat(7,1fr);background:var(--parchment);border-bottom:1px solid var(--border);}
+.cal-mth-hdr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--parchment);border-bottom:1px solid var(--border);}
 .cal-mth-dh{padding:10px 6px;font-size:10px;letter-spacing:.1em;color:var(--ink-light);text-align:center;text-transform:uppercase;font-weight:500;}
-.cal-mth-grid{display:grid;grid-template-columns:repeat(7,1fr);}
-.cal-mth-cell{min-height:88px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px;cursor:pointer;transition:background .12s;}
+.cal-mth-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
+.cal-mth-cell{min-height:110px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px;cursor:pointer;transition:background .12s;min-width:0;overflow:hidden;}
 .cal-mth-cell:nth-child(7n){border-right:none;}
 .cal-mth-cell.om2{background:#faf9f7;opacity:.6;}
 .cal-mth-cell.tc3{background:rgba(201,168,124,.05);}
@@ -982,7 +982,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-qc{background:var(--parchment);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
 .cal-qc-lbl{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .cal-qc-txt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--ink);line-height:1.65;}
-.cal-leg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;padding:10px 0;}
+.cal-leg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;padding:10px 28px;}
 .cal-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-light);}
 .cal-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 @media(max-width:1100px){.cal-page{grid-template-columns:1fr;}.cal-rp{display:none;}}
@@ -1339,7 +1339,7 @@ export default function App() {
   const calDayLabel=new Date(effDayDate+"T00:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
   const calMiniFirst=fdm(calYear,calMonth);
   const calMiniDays=dim(calYear,calMonth);
-  const calUpcoming=(()=>{const r=[];for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>r.push({...e,_ds:ds}));}return r.slice(0,6);})();
+  const calUpcoming=(()=>{const r=[];const nowMins=NOW.getHours()*60+NOW.getMinutes();for(let i=0;i<14;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");evOn(ds).forEach(e=>{if(i===0){const em=toMins(e.endTime);const sm=toMins(e.time);if(em!==null&&em<nowMins)return;if(em===null&&sm!==null&&sm<nowMins)return;}r.push({...e,_ds:ds});});}return r.slice(0,6);})();
   const prevWk=()=>{const d=new Date(effWkStart+"T00:00:00");d.setDate(d.getDate()-7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
   const nextWk=()=>{const d=new Date(effWkStart+"T00:00:00");d.setDate(d.getDate()+7);setCalWkStart(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"));};
   const goToday=()=>{setCalMonth(NOW.getMonth());setCalYear(NOW.getFullYear());setCalWkStart(TODAY);setCalDayDate(TODAY);};
@@ -2956,7 +2956,7 @@ export default function App() {
 
         {/* ── CALENDAR ── */}
         {page==="calendar"&&<>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24}}>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24,padding:"0 28px"}}>
             <div>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your schedule</div>
               <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Calendar</h1>
@@ -2966,7 +2966,7 @@ export default function App() {
           </div>
 
           {/* ── Top bar: nav + label + view toggle + add button ── */}
-          <div className="cal-topbar2">
+          <div className="cal-topbar2" style={{padding:"0 28px 0"}}
             <button className="cal-nav-btn" onClick={calView==="month"?prevCal:calView==="week"?prevWk:prevDayD}>‹</button>
             <button className="cal-nav-btn" onClick={calView==="month"?nextCal:calView==="week"?nextWk:nextDayD}>›</button>
             <span className="cal-cur-label">{calView==="month"?calLabel:calView==="week"?calWkLabel:calDayLabel}</span>
