@@ -2966,7 +2966,7 @@ export default function App() {
           </div>
 
           {/* ── Top bar: nav + label + view toggle + add button ── */}
-          <div className="cal-topbar2" style={{padding:"0 28px 0"}}
+          <div className="cal-topbar2" style={{padding:"0 28px 0"}}>
             <button className="cal-nav-btn" onClick={calView==="month"?prevCal:calView==="week"?prevWk:prevDayD}>‹</button>
             <button className="cal-nav-btn" onClick={calView==="month"?nextCal:calView==="week"?nextWk:nextDayD}>›</button>
             <span className="cal-cur-label">{calView==="month"?calLabel:calView==="week"?calWkLabel:calDayLabel}</span>
