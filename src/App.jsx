@@ -970,7 +970,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-mc-d:hover{background:var(--gold-pale);}
 .cal-mc-d.tm{background:var(--gold);color:#fff;font-weight:600;}
 .cal-mc-d.hev{font-weight:600;color:var(--ink);}
-.cal-uc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.cal-uc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);max-height:280px;display:flex;flex-direction:column;}
+.cal-uc-scroll{overflow-y:auto;flex:1;}
 .cal-uc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .cal-uc-ttl{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
 .cal-uc-va{font-size:11px;color:var(--gold-deep);background:none;border:none;cursor:pointer;}
@@ -1916,7 +1917,7 @@ export default function App() {
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
-<div style={{padding:"0 8px"}}>
+<div style={{padding:"0 24px"}}>
   {/* Dashboard Add Task Modal */}
   {showDashModal&&(
     <div className="mov" onClick={()=>setShowDashModal(false)}>
@@ -3142,6 +3143,7 @@ export default function App() {
                   <span className="cal-uc-ttl">Upcoming</span>
                   <button className="cal-uc-va">View all</button>
                 </div>
+                <div className="cal-uc-scroll">
                 {calUpcoming.length===0&&<div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>No events in the next two weeks ✦</div>}
                 {calUpcoming.map((e,i)=>{
                   const dt=new Date(e._ds+"T00:00:00");
@@ -3156,6 +3158,7 @@ export default function App() {
                     </div>
                   );
                 })}
+                </div>
               </div>
 
               {/* Gentle reminder quote */}
