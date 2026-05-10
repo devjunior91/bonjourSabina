@@ -386,7 +386,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hab-stat-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-light);margin-top:2px;}
 .hab-body{display:grid;grid-template-columns:1fr 280px;align-items:start;}
 .hab-main{padding:0 24px 64px;}
-.hab-side{padding:14px 20px 64px;border-left:1px solid rgba(26,20,16,.08);background:#faf7f3;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 280px);}
+.hab-side{padding:14px 20px 64px;border-left:1px solid rgba(26,20,16,.08);background:transparent;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 280px);}
 .hab-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:visible;box-shadow:var(--shadow);}
 .hab-card-hd{padding:14px 18px 10px;border-bottom:1px solid rgba(26,20,16,.06);}
 .hab-card-ttl{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);}
@@ -990,7 +990,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @media(max-width:1100px){.cal-page{grid-template-columns:1fr;}.cal-rp{display:none;}}
 @media(max-width:700px){.cal-wk-hdr{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tgrid{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tlbl{font-size:8px;padding:4px 3px 0;}.cal-epill-m{display:none;}}
 /* ── HOME RESET v2 ── */
-.hr-wrap{padding:28px 24px 64px;}
+.hr-wrap{padding:0 24px 64px;}
 .hr-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
 .hr-top-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 220px 260px;overflow:hidden;margin-bottom:20px;min-height:220px;}
 .hr-top-prog{padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border);}
@@ -1546,9 +1546,12 @@ export default function App() {
     if(!hab)return 0;
     let s=0;
     const todayIdx=DAYS.indexOf(TODAY_DAY);
-    let di=todayIdx;
-    while(di>=0&&hab.days[di]){s++;di--;}
-    if(di>=0)return s;
+    // If today not yet done, start counting from yesterday so streak doesn't show 0 all morning
+    let di=hab.days[todayIdx]?todayIdx:todayIdx-1;
+    if(di>=0){
+      while(di>=0&&hab.days[di]){s++;di--;}
+      if(di>=0)return s;
+    }
     let wo=1;
     while(wo<=26){
       const dd=new Date(TODAY+"T12:00:00");dd.setDate(dd.getDate()-7*wo);
@@ -1896,7 +1899,7 @@ export default function App() {
       {/* Right sidebar */}
       <div className="hab-side">
         {/* Longest streaks */}
-        <div style={{padding:"4px 0"}}>
+        <div className="hab-card" style={{padding:"16px 18px"}}>
           <div className="side-ttl" style={{marginBottom:12}}>Longest Streaks</div>
           {longestStreaks.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Complete habits to build streaks ✦</div>}
           {longestStreaks.map((h,i)=>(
@@ -2777,7 +2780,7 @@ export default function App() {
           const recentGoalWins=mGoals.flatMap(g=>(g.milestones||[]).filter(m=>m.done&&m.doneDate).map(m=>({...m,goalTitle:g.title,goalIcon:g.icon,cat:g.category}))).sort((a,b)=>(b.doneDate||"").localeCompare(a.doneDate||"")).slice(0,4);
           const CIRC=2*Math.PI*38;
           const donutDash=`${(mAvgPct/100)*CIRC} ${CIRC}`;
-          return(<>
+          return(<div style={{padding:"0 24px 64px"}}>
           {/* Add/Edit Goal Modal */}
           {showGoalModal&&(
             <div className="goal-modal-ov" onClick={()=>setShowGoalModal(false)}>
@@ -3012,7 +3015,7 @@ export default function App() {
             </div>
           </div>
           <div className="goal-page-footer">✦ Big goals are achieved one small step at a time. ♡</div>
-        </>);}catch(e){console.error('Goals render error:',e);return(<div style={{padding:'40px',textAlign:'center'}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:'var(--ink)',marginBottom:16}}>Something went wrong ✦</div><p style={{fontSize:13,color:'var(--ink-light)',marginBottom:24}}>Your goals data may need a reset.</p><button onClick={()=>{localStorage.setItem('sab_goals','{}');window.location.reload();}} style={{background:'var(--ink)',color:'#f4ede3',border:'none',borderRadius:10,padding:'10px 24px',fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:'pointer'}}>Reset Goals & Reload</button></div>);}})()}
+        </div>);}catch(e){console.error('Goals render error:',e);return(<div style={{padding:'40px',textAlign:'center'}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:'var(--ink)',marginBottom:16}}>Something went wrong ✦</div><p style={{fontSize:13,color:'var(--ink-light)',marginBottom:24}}>Your goals data may need a reset.</p><button onClick={()=>{localStorage.setItem('sab_goals','{}');window.location.reload();}} style={{background:'var(--ink)',color:'#f4ede3',border:'none',borderRadius:10,padding:'10px 24px',fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:'pointer'}}>Reset Goals & Reload</button></div>);}})()}
 
         {/* ── CALENDAR ── */}
         {page==="calendar"&&<>
