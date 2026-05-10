@@ -1608,12 +1608,12 @@ export default function App() {
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
   const NAV=[
     {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
+    {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
     {id:"todos",label:"To-Do",icon:<S><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/><polyline points="4 12 5 13 7 11"/><polyline points="4 18 5 19 7 17"/></S>},
     {id:"habits",label:"Habits",icon:<S><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></S>},
     {id:"cleaning",label:"Home Reset",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/><path d="M19 6l2-1.5M19 9l2 1.5M21 7.5h-2"/></S>},
     {id:"goals",label:"Monthly Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
     {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
-    {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
   ];
 
   // ── HEADER ICONS (bell + settings, reused in every page header) ──
@@ -2629,7 +2629,7 @@ export default function App() {
 
         {/* ── BILAN ── */}
         {page==="bilan"&&<>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Your personal review</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Bilan <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>✦</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>A weekly and monthly look at your progress, habits, and achievements</p></div>{headerIcons}</div>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Bilan</h1><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>A weekly and monthly look at your progress, habits, and achievements.</div></div>{headerIcons}</div>
           <div className="bil-tabs">
             {[["week","This Week"],["month","This Month"],["trends","Trends"]].map(([v,l])=><button key={v} className={`bil-tab ${bilView===v?"on":""}`} onClick={()=>setBilView(v)}>{l}</button>)}
           </div>
@@ -2838,8 +2838,8 @@ export default function App() {
           {/* Page header */}
           <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24,padding:"0"}}>
             <div>
-              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:30,fontWeight:400,color:"var(--ink)",display:"flex",alignItems:"center",gap:8}}>Monthly Goals <span style={{color:"var(--gold)"}}>✦</span></h1>
-              <p style={{fontSize:13,color:"var(--ink-light)",marginTop:4,fontFamily:"'DM Sans',sans-serif"}}>Focus on what matters this month and make it happen.</p>
+              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Monthly Goals</h1>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Focus on what matters this month and make it happen.</div>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
               <div style={{display:"flex",alignItems:"center",gap:4,border:"1px solid var(--border)",borderRadius:10,padding:"5px 10px",background:"#fff",fontSize:13}}>
@@ -3034,7 +3034,7 @@ export default function App() {
           <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24,padding:"0 28px"}}>
             <div>
               <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Calendar</h1>
-              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,color:"var(--ink-light)",marginTop:4}}>Plan your days. Stay aligned with what matters.</p>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Plan your days. Stay aligned with what matters.</div>
             </div>
             {headerIcons}
           </div>
@@ -3287,7 +3287,7 @@ export default function App() {
             {/* Header */}
             <div className="hr-hd-row">
               <div>
-                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:34,fontWeight:400,color:"var(--ink)"}}>Home Reset ✦</h1>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Home Reset</h1>
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>A clean space, a clear mind.</div>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
