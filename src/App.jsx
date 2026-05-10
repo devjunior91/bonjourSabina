@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import sabinaPhoto from "./assets/sabina.jpg";
 import tipsBg from "./assets/image.png";
+import homePhilImg from "./assets/image2.png";
 import { createClient } from "@supabase/supabase-js";
 
 // ── Change this to your own password ──
@@ -988,43 +989,53 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 @media(max-width:1100px){.cal-page{grid-template-columns:1fr;}.cal-rp{display:none;}}
 @media(max-width:700px){.cal-wk-hdr{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tgrid{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tlbl{font-size:8px;padding:4px 3px 0;}.cal-epill-m{display:none;}}
-/* ── HOME RESET ── */
+/* ── HOME RESET v2 ── */
 .hr-wrap{padding:28px 24px 64px;}
-.hr-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
-.hr-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
-.hr-left{display:flex;flex-direction:column;gap:20px;}
-.hr-right{display:flex;flex-direction:column;gap:20px;}
-.hr-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);}
-.hr-prog-card{padding:24px 28px;}
-.hr-prog-nums{display:flex;align-items:baseline;gap:4px;margin-bottom:2px;}
-.hr-prog-big{font-family:'Playfair Display',serif;font-size:40px;font-weight:400;color:var(--ink);line-height:1;}
-.hr-prog-sep{font-size:22px;color:var(--ink-light);padding:0 2px;}
-.hr-prog-tot{font-size:22px;color:var(--ink-light);font-family:'Playfair Display',serif;}
-.hr-prog-lbl{font-size:11px;color:var(--ink-light);letter-spacing:.04em;}
-.hr-phil-card{padding:22px 24px;display:flex;align-items:flex-start;gap:14px;}
-.hr-phil-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--ink);line-height:1.65;margin-top:4px;}
-.hr-tasks-card{overflow:hidden;}
-.hr-tasks-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 6px;}
-.hr-task-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid var(--border);transition:background .12s;}
-.hr-task-row:hover{background:#faf9f7;}
-.hr-task-chk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.hr-task-chk.done{background:var(--gold);border-color:var(--gold);}
-.hr-task-nm{flex:1;font-size:14px;color:var(--ink);transition:color .2s;}
+.hr-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
+.hr-top-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;margin-bottom:20px;min-height:200px;}
+.hr-top-prog{padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;}
+.hr-top-phil{position:relative;overflow:hidden;}
+.hr-top-phil-img{width:100%;height:100%;object-fit:cover;display:block;}
+.hr-top-phil-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 25%,rgba(0,0,0,.62));display:flex;flex-direction:column;justify-content:flex-end;padding:22px;}
+.hr-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+.hr-left{display:flex;flex-direction:column;gap:0;}
+.hr-right{display:flex;flex-direction:column;gap:16px;}
+.hr-tasks-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+.hr-day-nav{display:flex;align-items:center;border-bottom:1px solid var(--border);}
+.hr-day-nav-btn{background:none;border:none;padding:12px 18px;cursor:pointer;font-size:20px;color:var(--ink-light);transition:color .15s;flex-shrink:0;line-height:1;}
+.hr-day-nav-btn:hover{color:var(--ink);}
+.hr-day-nav-lbl{flex:1;text-align:center;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);font-weight:500;padding:12px 0;}
+.hr-task-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .12s;}
+.hr-task-row:hover{background:#fafaf8;}
+.hr-task-chk{width:22px;height:22px;border-radius:6px;border:1.5px solid #c8d0ba;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.hr-task-chk.done{background:#5c6b4a;border-color:#5c6b4a;}
+.hr-task-nm{flex:1;font-size:13.5px;color:var(--ink);}
 .hr-task-nm.done{text-decoration:line-through;color:var(--ink-light);}
-.hr-task-cat{font-size:10px;color:var(--ink-light);min-width:80px;text-align:right;}
-.hr-task-dur{font-size:11px;color:var(--ink-light);min-width:40px;text-align:right;white-space:nowrap;}
-.hr-add-row{display:flex;align-items:center;justify-content:center;padding:14px;border-top:1px solid var(--border);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);cursor:pointer;transition:background .12s;gap:6px;}
+.hr-task-badge{font-size:10px;color:#666;background:#f2f2f0;border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0;}
+.hr-task-dur{font-size:11px;color:var(--ink-light);white-space:nowrap;margin-left:4px;flex-shrink:0;}
+.hr-add-row{display:flex;align-items:center;justify-content:center;padding:14px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);cursor:pointer;transition:background .12s;gap:6px;border-top:1px solid var(--border);}
 .hr-add-row:hover{background:#faf9f7;}
-.hr-upnext{padding:18px 20px;}
-.hr-un-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.hr-un-item:last-child{border-bottom:none;}
-.hr-un-ico{width:30px;height:30px;border-radius:50%;background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:var(--ink-light);}
-.hr-un-nm{font-size:13px;color:var(--ink);margin-bottom:2px;}
-.hr-un-when{font-size:11px;color:var(--ink-light);}
-.hr-un-dur{font-size:11px;color:var(--ink-light);margin-left:auto;white-space:nowrap;padding-left:8px;}
+.hr-prog-bar-bg{height:6px;border-radius:3px;background:#e8ede4;overflow:hidden;margin:8px 0 2px;}
+.hr-prog-bar-fill{height:100%;border-radius:3px;background:#5c6b4a;transition:width .5s;}
+.hr-wk-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:20px;}
+.hr-wk-days{display:flex;justify-content:space-between;margin:14px 0 10px;}
+.hr-wk-day{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.hr-wk-d-lbl{font-size:9px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;}
+.hr-wk-d-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;}
+.hr-wk-d-circle.done{background:#5c6b4a;color:#fff;}
+.hr-wk-d-circle.today{border:2px solid #5c6b4a;color:#5c6b4a;background:#fff;}
+.hr-wk-d-circle.past{background:#e8e8e4;color:var(--ink-light);}
+.hr-wk-d-circle.future{background:#f5f5f3;color:var(--ink-light);}
+.hr-up-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+.hr-up-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);}
+.hr-up-item:last-child{border-bottom:none;}
+.hr-up-date{width:38px;flex-shrink:0;text-align:center;background:#f5f5f3;border-radius:8px;padding:5px 3px;}
+.hr-up-day-abbr{font-size:9px;text-transform:uppercase;color:var(--ink-light);letter-spacing:.05em;}
+.hr-up-day-num{font-size:16px;font-weight:600;color:var(--ink);line-height:1.2;}
 .hr-modal{position:fixed;inset:0;background:rgba(26,20,16,.45);z-index:1000;display:flex;align-items:center;justify-content:center;}
 .hr-mbox{background:#fff;border-radius:18px;padding:28px;width:400px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,.18);}
-@media(max-width:960px){.hr-grid{grid-template-columns:1fr;}.hr-right{display:none;}}
+@media(max-width:960px){.hr-layout{grid-template-columns:1fr;}.hr-right{display:none;}}
+@media(max-width:640px){.hr-top-card{grid-template-columns:1fr;}.hr-top-phil{display:none;}}
 `;
 
 const MONTHLY_TIPS={
@@ -1085,6 +1096,7 @@ export default function App() {
   const [editCTxt,setEditCTxt]=useState("");
   const [hrModal,setHrModal]=useState(false);
   const [hrDraft,setHrDraft]=useState({text:"",category:"General",duration:10});
+  const [hrDayOffset,setHrDayOffset]=useState(0);
   const [calYear,setCalYear]=useState(NOW.getFullYear());
   const [calMonth,setCalMonth]=useState(NOW.getMonth());
   const [calView,setCalView]=useState("month");
@@ -1350,7 +1362,7 @@ export default function App() {
   const toggleClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,done:!t.done}:t)}));
   const delClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].filter((_,i)=>i!==idx)}));
   const addClean=day=>{if(!cInputs[day].trim())return;setCleaning(c=>({...c,[day]:[...c[day],{text:cInputs[day],done:false}]}));setCInputs(ci=>({...ci,[day]:""}));};
-  const addHrTask=()=>{if(!hrDraft.text.trim())return;setCleaning(c=>({...c,[TODAY_DAY]:[...(c[TODAY_DAY]||[]),{text:hrDraft.text.trim(),done:false,category:hrDraft.category,duration:hrDraft.duration}]}));setHrDraft({text:"",category:"General",duration:10});setHrModal(false);};
+  const addHrTask=()=>{if(!hrDraft.text.trim())return;const _vd=new Date(NOW);_vd.setDate(NOW.getDate()+hrDayOffset);const _vDayName=DAYS[_vd.getDay()===0?6:_vd.getDay()-1];setCleaning(c=>({...c,[_vDayName]:[...(c[_vDayName]||[]),{text:hrDraft.text.trim(),done:false,category:hrDraft.category,duration:hrDraft.duration}]}));setHrDraft({text:"",category:"General",duration:10});setHrModal(false);};
   const startEC=(day,idx,text)=>{setEditC({day,idx});setEditCTxt(text);};
   const saveEC=()=>{if(!editC)return;const{day,idx}=editC;if(editCTxt.trim())setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,text:editCTxt}:t)}));setEditC(null);};
 
@@ -3211,125 +3223,157 @@ export default function App() {
           </div>
         </>}
 
-        {/* ── HOME RESET ── */}
+        {/* ── HOME RESET v2 ── */}
         {page==="cleaning"&&(()=>{
           const HOME_PHILOSOPHY=["Little by little creates a home you love.","Order is the shape upon which beauty depends.","A tidy home reflects a clear mind.","Your home should tell the story of who you are.","Clean surroundings nurture calm thinking.","The details of your home are the poetry of your life.","A clean home is a happy home.","Simplicity is the ultimate form of sophistication.","Every corner you tend becomes a corner that tends you.","Home is not a place — it's a feeling. Make it beautiful.","Small acts of care add up to a beautiful life.","A serene home is the foundation of a serene life."];
           const homePhil=HOME_PHILOSOPHY[NOW.getDate()%HOME_PHILOSOPHY.length];
-          const todayIdx=DAYS.indexOf(TODAY_DAY);
-          const hrUpNext=(()=>{const r=[];for(let i=1;i<=6&&r.length<5;i++){const di=(todayIdx+i)%7;const day=DAYS[di];const tasks=(cleaning[day]||[]).filter(t=>!t.done);if(!tasks.length)continue;const d=new Date(NOW);d.setDate(NOW.getDate()+i);const dlbl=i===1?"Tomorrow":d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});tasks.slice(0,2).forEach(t=>r.push({...t,day,dlbl}));}return r.slice(0,5);})();
           const HR_CATS=["Kitchen","Living Room","Bedroom","Bathroom","General","Laundry","Garden","Office"];
           const HR_DURS=[5,10,15,20,30,45,60];
-          const todayLabel=new Date(NOW).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-          const dotPct=cleaningTotalToday>0?(cleaningDoneToday/cleaningTotalToday)*100:0;
+          // Viewed day
+          const viewDate=new Date(NOW);viewDate.setDate(NOW.getDate()+hrDayOffset);
+          const viewDayName=DAYS[viewDate.getDay()===0?6:viewDate.getDay()-1];
+          const isHrToday=hrDayOffset===0;
+          const hrDayLabel=hrDayOffset===0?"Today":hrDayOffset===-1?"Yesterday":hrDayOffset===1?"Tomorrow":viewDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+          const viewTasks=cleaning[viewDayName]||[];
+          const viewDone=viewTasks.filter(t=>t.done).length;
+          // Today's progress for top card
+          const todayTasksHR=cleaning[TODAY_DAY]||[];
+          const todayDoneHR=todayTasksHR.filter(t=>t.done).length;
+          const todayTotalHR=todayTasksHR.length;
+          // Week summary
+          const todayDowHR=NOW.getDay()===0?6:NOW.getDay()-1;
+          const wkSummary=DAYS.map((day,i)=>{
+            const diff=i-todayDowHR;
+            const tasks=cleaning[day]||[];
+            const done=tasks.filter(t=>t.done).length;
+            const total=tasks.length;
+            return{day:day.slice(0,1),done,total,allDone:total>0&&done===total,isPast:diff<0,isToday:diff===0,isFuture:diff>0};
+          });
+          const wkTotalDone=wkSummary.reduce((s,d)=>s+d.done,0);
+          const wkTotalAll=wkSummary.reduce((s,d)=>s+d.total,0);
+          const wkPct=wkTotalAll>0?Math.round(wkTotalDone/wkTotalAll*100):0;
+          // Upcoming tasks (next days)
+          const hrUpcoming=(()=>{const r=[];for(let i=1;i<=6&&r.length<4;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const dn=DAYS[d.getDay()===0?6:d.getDay()-1];const tasks=(cleaning[dn]||[]).filter(t=>!t.done);if(!tasks.length)continue;const abbr=d.toLocaleDateString("en-GB",{weekday:"short"});const num=d.getDate();tasks.slice(0,2).forEach(t=>r.push({...t,abbr,num}));}return r.slice(0,4);})();
           return(<div className="hr-wrap">
             {/* Header */}
             <div className="hr-hd-row">
-              <div>
-                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Home Reset</h1>
-                <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--ink-light)",marginTop:4}}>A clean space, a clear mind.</p>
-              </div>
+              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:34,fontWeight:400,color:"var(--ink)"}}>Home Reset ✦</h1>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
                 <button onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Task</button>
                 {headerIcons}
               </div>
             </div>
 
-            <div className="hr-grid">
-              {/* LEFT column */}
-              <div className="hr-left">
-                {/* Today's Progress */}
-                <div className="hr-card hr-prog-card">
-                  <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:16}}>
-                    <div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)",marginBottom:3}}>Today's Progress</div>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{cleaningDoneToday>0?"You're keeping your space beautiful.":"Let's get started ✦"}</div>
-                    </div>
-                    <div style={{textAlign:"right"}}>
-                      <div className="hr-prog-nums">
-                        <span className="hr-prog-big">{cleaningDoneToday}</span>
-                        <span className="hr-prog-sep">/</span>
-                        <span className="hr-prog-tot">{cleaningTotalToday}</span>
-                      </div>
-                      <div className="hr-prog-lbl">tasks completed</div>
-                    </div>
+            {/* Top card: Progress + Philosophy */}
+            <div className="hr-top-card">
+              <div className="hr-top-prog">
+                <div>
+                  <div style={{fontSize:11,color:"var(--ink-light)",textTransform:"uppercase",letterSpacing:".1em",fontFamily:"'DM Sans',sans-serif",marginBottom:12}}>Today's Progress</div>
+                  <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:6}}>
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:400,color:"var(--ink)",lineHeight:1}}>{todayDoneHR}</span>
+                    <span style={{fontSize:22,color:"var(--ink-light)",margin:"0 2px"}}>/</span>
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:26,color:"var(--ink-light)"}}>{todayTotalHR}</span>
                   </div>
-                  {/* Progress dots */}
-                  {cleaningTotalToday>0&&(
-                    <div style={{position:"relative",height:22,margin:"8px 0"}}>
-                      <div style={{position:"absolute",top:"50%",left:11,right:11,height:2,background:"var(--border)",transform:"translateY(-50%)"}}/>
-                      {cleaningDoneToday>0&&<div style={{position:"absolute",top:"50%",left:11,height:2,background:"var(--gold)",transform:"translateY(-50%)",width:`calc(${Math.min(dotPct,100)}% - 22px)`,transition:"width .5s"}}/>}
-                      <div style={{display:"flex",alignItems:"center",height:22,position:"relative"}}>
-                        {cleaningTodayArr.flatMap((_,i)=>{
-                          const done=i<cleaningDoneToday;
-                          const dot=<div key={"d"+i} style={{width:22,height:22,borderRadius:"50%",border:`2px solid ${done?"var(--gold)":"var(--border)"}`,background:done?"var(--gold)":"#fff",zIndex:2,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .3s"}}>
-                            {done&&<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                          </div>;
-                          return i===0?[dot]:[<div key={"g"+i} style={{flex:1}}/>,dot];
-                        })}
-                      </div>
-                    </div>
-                  )}
-                  {cleaningTotalToday===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:8}}>No tasks added for today yet ✦</div>}
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>{todayDoneHR===todayTotalHR&&todayTotalHR>0?"All done — beautiful ✦":todayDoneHR>0?"Keep going, you're doing great.":"Let's get started ✦"}</div>
                 </div>
-
-                {/* Today's tasks */}
-                <div className="hr-card hr-tasks-card">
-                  <div className="hr-tasks-hd">
-                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{todayLabel}</div>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)"}}>{cleaningDoneToday} / {cleaningTotalToday} completed</div>
-                  </div>
-                  <div style={{fontSize:11,color:"var(--ink-light)",padding:"0 20px 10px",fontFamily:"'DM Sans',sans-serif",letterSpacing:".04em"}}>Daily Resets</div>
-                  {cleaningTodayArr.map((task,i)=>(
-                    <div key={i} className="hr-task-row">
-                      <div className={"hr-task-chk"+(task.done?" done":"")} onClick={()=>toggleClean(TODAY_DAY,i)}>
-                        {task.done&&<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                      </div>
-                      {editC&&editC.day===TODAY_DAY&&editC.idx===i
-                        ?<input className="inp" style={{fontSize:13,flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>
-                        :<span className={"hr-task-nm"+(task.done?" done":"")} onDoubleClick={()=>{setEditC({day:TODAY_DAY,idx:i});setEditCTxt(task.text);}}>{task.text}</span>
-                      }
-                      <span className="hr-task-cat">{task.category||""}</span>
-                      <span className="hr-task-dur">{task.duration?task.duration+" min":""}</span>
-                      <button onClick={()=>delClean(TODAY_DAY,i)} style={{background:"none",border:"none",color:"var(--ink-light)",cursor:"pointer",fontSize:16,padding:"0 2px",opacity:.4,lineHeight:1,flexShrink:0}}>×</button>
+                {todayTotalHR>0&&(
+                  <div style={{marginTop:24}}>
+                    <div style={{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}}>
+                      {todayTasksHR.map((_,i)=>(
+                        <div key={i} style={{width:13,height:13,borderRadius:"50%",background:i<todayDoneHR?"#5c6b4a":"#dde5d4",transition:"background .3s"}}/>
+                      ))}
                     </div>
-                  ))}
-                  {cleaningTodayArr.length===0&&<div style={{padding:"20px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>No tasks for today — add one to get started ✦</div>}
-                  <div className="hr-add-row" onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}}>
-                    + Add Task
+                    <div className="hr-prog-bar-bg" style={{marginTop:12}}>
+                      <div className="hr-prog-bar-fill" style={{width:(todayDoneHR/todayTotalHR*100)+"%"}}/>
+                    </div>
                   </div>
+                )}
+                {todayTotalHR===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:20}}>No tasks yet — add one to begin ✦</div>}
+              </div>
+              <div className="hr-top-phil">
+                <img src={homePhilImg} alt="" className="hr-top-phil-img"/>
+                <div className="hr-top-phil-overlay">
+                  <div style={{fontSize:10,color:"rgba(255,255,255,.65)",textTransform:"uppercase",letterSpacing:".14em",fontFamily:"'DM Sans',sans-serif",marginBottom:7}}>Home Philosophy</div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:16,color:"#fff",lineHeight:1.55}}>{homePhil}</div>
+                  <div style={{marginTop:8,color:"rgba(255,255,255,.55)",fontSize:15}}>♡</div>
                 </div>
               </div>
+            </div>
 
-              {/* RIGHT column */}
-              <div className="hr-right">
-                {/* Home Philosophy */}
-                <div className="hr-card hr-phil-card">
-                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0,marginTop:2}}><circle cx="14" cy="14" r="14" fill="#F3ECE4"/><path d="M14 18V10" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 13C12.8 12 11.2 11.5 9.8 11.7" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 15C15.2 14 16.8 13.5 18.2 13.7" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 10C15 8.8 16.5 8.2 18 8.2" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/></svg>
-                  <div style={{flex:1}}>
-                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)",marginBottom:8}}>Home Philosophy</div>
-                    <div className="hr-phil-text">{homePhil}</div>
-                  </div>
-                </div>
-
-                {/* Up Next */}
-                <div className="hr-card">
-                  <div className="hr-upnext">
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
-                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Up Next</span>
-                      <button style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>View all →</button>
+            <div className="hr-layout">
+              {/* LEFT: Day Nav + Tasks */}
+              <div className="hr-left">
+                <div className="hr-tasks-card">
+                  <div className="hr-day-nav">
+                    <button className="hr-day-nav-btn" onClick={()=>setHrDayOffset(o=>o-1)}>‹</button>
+                    <div className="hr-day-nav-lbl">
+                      {isHrToday&&<span style={{marginRight:5}}>📅</span>}
+                      <span style={{fontWeight:600}}>{hrDayLabel}</span>
+                      {!isHrToday&&<span style={{fontSize:11,color:"var(--ink-light)",marginLeft:7}}>
+                        {viewDate.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}
+                      </span>}
                     </div>
-                    {hrUpNext.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",paddingTop:12}}>Nothing scheduled ahead ✦</div>}
-                    {hrUpNext.map((t,i)=>(
-                      <div key={i} className="hr-un-item">
-                        <div className="hr-un-ico">✦</div>
-                        <div style={{flex:1,minWidth:0}}>
-                          <div className="hr-un-nm">{t.text}</div>
-                          <div className="hr-un-when">{t.dlbl}</div>
+                    <button className="hr-day-nav-btn" onClick={()=>setHrDayOffset(o=>o+1)}>›</button>
+                    {!isHrToday&&<button style={{background:"#5c6b4a",color:"#fff",border:"none",borderRadius:20,padding:"5px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer",marginRight:10,flexShrink:0}} onClick={()=>setHrDayOffset(0)}>← Today</button>}
+                  </div>
+                  <div>
+                    {viewTasks.length===0&&<div style={{padding:"20px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>No tasks for {hrDayLabel.toLowerCase()} — add one ✦</div>}
+                    {viewTasks.map((task,i)=>(
+                      <div key={i} className="hr-task-row">
+                        <div className={"hr-task-chk"+(task.done?" done":"")} onClick={()=>toggleClean(viewDayName,i)}>
+                          {task.done&&<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                         </div>
-                        {t.duration&&<div className="hr-un-dur">{t.duration} min</div>}
+                        {editC&&editC.day===viewDayName&&editC.idx===i
+                          ?<input className="inp" style={{fontSize:13,flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>
+                          :<span className={"hr-task-nm"+(task.done?" done":"")} onDoubleClick={()=>{setEditC({day:viewDayName,idx:i});setEditCTxt(task.text);}}>{task.text}</span>
+                        }
+                        {task.category&&<span className="hr-task-badge">{task.category}</span>}
+                        {task.duration&&<span className="hr-task-dur">{task.duration} min</span>}
+                        <button onClick={()=>delClean(viewDayName,i)} style={{background:"none",border:"none",color:"var(--ink-light)",cursor:"pointer",fontSize:16,padding:"0 2px",opacity:.4,lineHeight:1,flexShrink:0}}>×</button>
                       </div>
                     ))}
                   </div>
+                  <div className="hr-add-row" onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}}>+ Add Task</div>
+                </div>
+              </div>
+
+              {/* RIGHT: This Week + Upcoming */}
+              <div className="hr-right">
+                <div className="hr-wk-card">
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>This Week</div>
+                  <div className="hr-wk-days">
+                    {wkSummary.map((d,i)=>{
+                      const cls=d.allDone?"done":d.isToday?"today":d.isPast?"past":"future";
+                      return(
+                        <div key={i} className="hr-wk-day">
+                          <div className="hr-wk-d-lbl">{d.day}</div>
+                          <div className={"hr-wk-d-circle "+cls}>{d.done||""}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{wkTotalDone}/{wkTotalAll} tasks completed</div>
+                  <div className="hr-prog-bar-bg">
+                    <div className="hr-prog-bar-fill" style={{width:wkPct+"%"}}/>
+                  </div>
+                </div>
+
+                <div className="hr-up-card">
+                  <div style={{padding:"16px 16px 8px",fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Upcoming Tasks</div>
+                  {hrUpcoming.length===0&&<div style={{padding:"4px 16px 16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>All clear ahead ✦</div>}
+                  {hrUpcoming.map((t,i)=>(
+                    <div key={i} className="hr-up-item">
+                      <div className="hr-up-date">
+                        <div className="hr-up-day-abbr">{t.abbr}</div>
+                        <div className="hr-up-day-num">{t.num}</div>
+                      </div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:13,color:"var(--ink)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{t.text}</div>
+                        {t.category&&<div style={{fontSize:10,color:"var(--ink-light)",marginTop:1}}>{t.category}</div>}
+                      </div>
+                      {t.duration&&<div style={{fontSize:11,color:"var(--ink-light)",flexShrink:0,paddingLeft:8}}>{t.duration} min</div>}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
