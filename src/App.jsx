@@ -992,50 +992,57 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 /* ── HOME RESET v2 ── */
 .hr-wrap{padding:28px 24px 64px;}
 .hr-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
-.hr-top-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;margin-bottom:20px;min-height:200px;}
-.hr-top-prog{padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;}
-.hr-top-phil{position:relative;overflow:hidden;}
-.hr-top-phil-img{width:100%;height:100%;object-fit:cover;display:block;}
-.hr-top-phil-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 25%,rgba(0,0,0,.62));display:flex;flex-direction:column;justify-content:flex-end;padding:22px;}
+.hr-top-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 220px 260px;overflow:hidden;margin-bottom:20px;min-height:220px;}
+.hr-top-prog{padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border);}
+.hr-top-img-col{overflow:hidden;border-right:1px solid var(--border);}
+.hr-top-img-col img{width:100%;height:100%;object-fit:cover;display:block;}
+.hr-top-phil-col{padding:24px 22px;display:flex;flex-direction:column;justify-content:space-between;}
 .hr-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
 .hr-left{display:flex;flex-direction:column;gap:0;}
 .hr-right{display:flex;flex-direction:column;gap:16px;}
 .hr-tasks-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
-.hr-day-nav{display:flex;align-items:center;border-bottom:1px solid var(--border);}
-.hr-day-nav-btn{background:none;border:none;padding:12px 18px;cursor:pointer;font-size:20px;color:var(--ink-light);transition:color .15s;flex-shrink:0;line-height:1;}
-.hr-day-nav-btn:hover{color:var(--ink);}
-.hr-day-nav-lbl{flex:1;text-align:center;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);font-weight:500;padding:12px 0;}
-.hr-task-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .12s;}
+.hr-day-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.hr-day-nav-prev{font-size:13px;color:var(--ink-light);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.hr-day-nav-prev:hover{color:var(--ink);}
+.hr-day-nav-next{font-size:13px;color:#5c6b4a;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.hr-day-nav-next:hover{opacity:.75;}
+.hr-day-nav-center{text-align:center;flex:1;padding:0 12px;}
+.hr-day-nav-date{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;}
+.hr-day-nav-wk{font-size:11px;color:var(--ink-light);margin-top:2px;cursor:pointer;}
+.hr-task-row{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);transition:background .12s;}
 .hr-task-row:hover{background:#fafaf8;}
-.hr-task-chk{width:22px;height:22px;border-radius:6px;border:1.5px solid #c8d0ba;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.hr-task-chk{width:24px;height:24px;border-radius:50%;border:1.5px solid #c8d0ba;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .hr-task-chk.done{background:#5c6b4a;border-color:#5c6b4a;}
-.hr-task-nm{flex:1;font-size:13.5px;color:var(--ink);}
+.hr-task-nm{flex:1;font-size:14px;color:var(--ink);}
 .hr-task-nm.done{text-decoration:line-through;color:var(--ink-light);}
-.hr-task-badge{font-size:10px;color:#666;background:#f2f2f0;border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0;}
-.hr-task-dur{font-size:11px;color:var(--ink-light);white-space:nowrap;margin-left:4px;flex-shrink:0;}
+.hr-task-badge{font-size:11px;color:#666;background:#f0f0ee;border-radius:20px;padding:3px 10px;white-space:nowrap;flex-shrink:0;}
+.hr-task-dur{font-size:12px;color:var(--ink-light);white-space:nowrap;flex-shrink:0;min-width:44px;text-align:right;}
+.hr-tasks-lbl{padding:12px 20px 4px;font-size:11px;color:var(--ink-light);font-family:'DM Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;}
 .hr-add-row{display:flex;align-items:center;justify-content:center;padding:14px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);cursor:pointer;transition:background .12s;gap:6px;border-top:1px solid var(--border);}
 .hr-add-row:hover{background:#faf9f7;}
-.hr-prog-bar-bg{height:6px;border-radius:3px;background:#e8ede4;overflow:hidden;margin:8px 0 2px;}
+.hr-prog-bar-bg{height:5px;border-radius:3px;background:#e8ede4;overflow:hidden;margin:6px 0 0;}
 .hr-prog-bar-fill{height:100%;border-radius:3px;background:#5c6b4a;transition:width .5s;}
 .hr-wk-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:20px;}
-.hr-wk-days{display:flex;justify-content:space-between;margin:14px 0 10px;}
+.hr-wk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.hr-wk-days{display:flex;justify-content:space-between;margin:12px 0 10px;}
 .hr-wk-day{display:flex;flex-direction:column;align-items:center;gap:5px;}
 .hr-wk-d-lbl{font-size:9px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;}
-.hr-wk-d-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;}
+.hr-wk-d-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .hr-wk-d-circle.done{background:#5c6b4a;color:#fff;}
 .hr-wk-d-circle.today{border:2px solid #5c6b4a;color:#5c6b4a;background:#fff;}
-.hr-wk-d-circle.past{background:#e8e8e4;color:var(--ink-light);}
+.hr-wk-d-circle.past{background:#ebebea;color:var(--ink-light);}
 .hr-wk-d-circle.future{background:#f5f5f3;color:var(--ink-light);}
 .hr-up-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
-.hr-up-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);}
-.hr-up-item:last-child{border-bottom:none;}
-.hr-up-date{width:38px;flex-shrink:0;text-align:center;background:#f5f5f3;border-radius:8px;padding:5px 3px;}
-.hr-up-day-abbr{font-size:9px;text-transform:uppercase;color:var(--ink-light);letter-spacing:.05em;}
-.hr-up-day-num{font-size:16px;font-weight:600;color:var(--ink);line-height:1.2;}
+.hr-up-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 10px;}
+.hr-up-item{display:flex;align-items:center;gap:14px;padding:10px 16px;border-top:1px solid var(--border);}
+.hr-up-date{width:40px;flex-shrink:0;text-align:center;background:#f5f5f3;border-radius:8px;padding:5px 3px;}
+.hr-up-day-abbr{font-size:9px;text-transform:uppercase;color:var(--ink-light);letter-spacing:.05em;font-weight:500;}
+.hr-up-day-num{font-size:17px;font-weight:700;color:var(--ink);line-height:1.1;}
 .hr-modal{position:fixed;inset:0;background:rgba(26,20,16,.45);z-index:1000;display:flex;align-items:center;justify-content:center;}
 .hr-mbox{background:#fff;border-radius:18px;padding:28px;width:400px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,.18);}
+@media(max-width:1100px){.hr-top-card{grid-template-columns:1fr 180px 220px;}}
 @media(max-width:960px){.hr-layout{grid-template-columns:1fr;}.hr-right{display:none;}}
-@media(max-width:640px){.hr-top-card{grid-template-columns:1fr;}.hr-top-phil{display:none;}}
+@media(max-width:700px){.hr-top-card{grid-template-columns:1fr;}.hr-top-img-col,.hr-top-phil-col{display:none;}}
 `;
 
 const MONTHLY_TIPS={
@@ -3254,49 +3261,70 @@ export default function App() {
           const wkPct=wkTotalAll>0?Math.round(wkTotalDone/wkTotalAll*100):0;
           // Upcoming tasks (next days)
           const hrUpcoming=(()=>{const r=[];for(let i=1;i<=6&&r.length<4;i++){const d=new Date(NOW);d.setDate(NOW.getDate()+i);const dn=DAYS[d.getDay()===0?6:d.getDay()-1];const tasks=(cleaning[dn]||[]).filter(t=>!t.done);if(!tasks.length)continue;const abbr=d.toLocaleDateString("en-GB",{weekday:"short"});const num=d.getDate();tasks.slice(0,2).forEach(t=>r.push({...t,abbr,num}));}return r.slice(0,4);})();
+          // Day nav labels
+          const prevDate=new Date(viewDate);prevDate.setDate(viewDate.getDate()-1);
+          const nextDate=new Date(viewDate);nextDate.setDate(viewDate.getDate()+1);
+          const prevLabel=hrDayOffset===1?"Yesterday":hrDayOffset===0?"Yesterday":prevDate.toLocaleDateString("en-GB",{weekday:"long"});
+          const nextLabel=hrDayOffset===-1?"Tomorrow":hrDayOffset===0?"Tomorrow":nextDate.toLocaleDateString("en-GB",{weekday:"long"});
+          const navDateLabel=isHrToday?viewDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}):viewDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+          const chkSvg=<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.8L9 3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>;
           return(<div className="hr-wrap">
             {/* Header */}
             <div className="hr-hd-row">
-              <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:34,fontWeight:400,color:"var(--ink)"}}>Home Reset ✦</h1>
+              <div>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:34,fontWeight:400,color:"var(--ink)"}}>Home Reset ✦</h1>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>A clean space, a clear mind.</div>
+              </div>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
                 <button onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Task</button>
                 {headerIcons}
               </div>
             </div>
 
-            {/* Top card: Progress + Philosophy */}
+            {/* Top card: 3 columns — Progress | Image | Philosophy */}
             <div className="hr-top-card">
+              {/* Col 1: Today's Progress */}
               <div className="hr-top-prog">
                 <div>
-                  <div style={{fontSize:11,color:"var(--ink-light)",textTransform:"uppercase",letterSpacing:".1em",fontFamily:"'DM Sans',sans-serif",marginBottom:12}}>Today's Progress</div>
-                  <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:6}}>
+                  <div style={{fontSize:11,color:"var(--ink-light)",textTransform:"uppercase",letterSpacing:".1em",fontFamily:"'DM Sans',sans-serif",marginBottom:14}}>Today's Progress</div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginBottom:10}}>{todayDoneHR===todayTotalHR&&todayTotalHR>0?"You've completed everything ✦":todayDoneHR>0?"You're keeping your space beautiful.":"Let's get started ✦"}</div>
+                  <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:4}}>
                     <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:400,color:"var(--ink)",lineHeight:1}}>{todayDoneHR}</span>
-                    <span style={{fontSize:22,color:"var(--ink-light)",margin:"0 2px"}}>/</span>
+                    <span style={{fontSize:20,color:"var(--ink-light)",margin:"0 3px"}}>/</span>
                     <span style={{fontFamily:"'Playfair Display',serif",fontSize:26,color:"var(--ink-light)"}}>{todayTotalHR}</span>
                   </div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>{todayDoneHR===todayTotalHR&&todayTotalHR>0?"All done — beautiful ✦":todayDoneHR>0?"Keep going, you're doing great.":"Let's get started ✦"}</div>
+                  <div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>tasks completed</div>
                 </div>
+                {/* Timeline dots */}
                 {todayTotalHR>0&&(
-                  <div style={{marginTop:24}}>
-                    <div style={{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}}>
-                      {todayTasksHR.map((_,i)=>(
-                        <div key={i} style={{width:13,height:13,borderRadius:"50%",background:i<todayDoneHR?"#5c6b4a":"#dde5d4",transition:"background .3s"}}/>
-                      ))}
+                  <div style={{marginTop:20}}>
+                    <div style={{display:"flex",alignItems:"center",height:18,position:"relative"}}>
+                      {todayTasksHR.flatMap((_,i)=>{
+                        const done=i<todayDoneHR;
+                        const dot=<div key={"d"+i} style={{width:16,height:16,borderRadius:"50%",background:done?"#5c6b4a":"#fff",border:`2px solid ${done?"#5c6b4a":"#c8d0ba"}`,flexShrink:0,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .3s"}}>
+                          {done&&<svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d="M1 3.5l1.8 2L6 1.5" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                        </div>;
+                        return i===0?[dot]:[<div key={"l"+i} style={{flex:1,height:2,background:i<=todayDoneHR?"#5c6b4a":"#dde5d4",transition:"background .3s"}}/>,dot];
+                      })}
                     </div>
-                    <div className="hr-prog-bar-bg" style={{marginTop:12}}>
+                    <div className="hr-prog-bar-bg" style={{marginTop:14}}>
                       <div className="hr-prog-bar-fill" style={{width:(todayDoneHR/todayTotalHR*100)+"%"}}/>
                     </div>
                   </div>
                 )}
                 {todayTotalHR===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:20}}>No tasks yet — add one to begin ✦</div>}
               </div>
-              <div className="hr-top-phil">
-                <img src={homePhilImg} alt="" className="hr-top-phil-img"/>
-                <div className="hr-top-phil-overlay">
-                  <div style={{fontSize:10,color:"rgba(255,255,255,.65)",textTransform:"uppercase",letterSpacing:".14em",fontFamily:"'DM Sans',sans-serif",marginBottom:7}}>Home Philosophy</div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:16,color:"#fff",lineHeight:1.55}}>{homePhil}</div>
-                  <div style={{marginTop:8,color:"rgba(255,255,255,.55)",fontSize:15}}>♡</div>
+              {/* Col 2: Image */}
+              <div className="hr-top-img-col">
+                <img src={homePhilImg} alt="Home philosophy"/>
+              </div>
+              {/* Col 3: Philosophy */}
+              <div className="hr-top-phil-col">
+                <div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:400,color:"var(--ink)",marginBottom:12}}>Home Philosophy</div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:17,color:"var(--ink)",lineHeight:1.65}}>{homePhil}</div>
                 </div>
+                <div style={{fontSize:18,color:"var(--ink-light)"}}>♡</div>
               </div>
             </div>
 
@@ -3304,35 +3332,37 @@ export default function App() {
               {/* LEFT: Day Nav + Tasks */}
               <div className="hr-left">
                 <div className="hr-tasks-card">
+                  {/* Day navigator — text style */}
                   <div className="hr-day-nav">
-                    <button className="hr-day-nav-btn" onClick={()=>setHrDayOffset(o=>o-1)}>‹</button>
-                    <div className="hr-day-nav-lbl">
-                      {isHrToday&&<span style={{marginRight:5}}>📅</span>}
-                      <span style={{fontWeight:600}}>{hrDayLabel}</span>
-                      {!isHrToday&&<span style={{fontSize:11,color:"var(--ink-light)",marginLeft:7}}>
-                        {viewDate.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}
-                      </span>}
-                    </div>
-                    <button className="hr-day-nav-btn" onClick={()=>setHrDayOffset(o=>o+1)}>›</button>
-                    {!isHrToday&&<button style={{background:"#5c6b4a",color:"#fff",border:"none",borderRadius:20,padding:"5px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer",marginRight:10,flexShrink:0}} onClick={()=>setHrDayOffset(0)}>← Today</button>}
-                  </div>
-                  <div>
-                    {viewTasks.length===0&&<div style={{padding:"20px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>No tasks for {hrDayLabel.toLowerCase()} — add one ✦</div>}
-                    {viewTasks.map((task,i)=>(
-                      <div key={i} className="hr-task-row">
-                        <div className={"hr-task-chk"+(task.done?" done":"")} onClick={()=>toggleClean(viewDayName,i)}>
-                          {task.done&&<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                        </div>
-                        {editC&&editC.day===viewDayName&&editC.idx===i
-                          ?<input className="inp" style={{fontSize:13,flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>
-                          :<span className={"hr-task-nm"+(task.done?" done":"")} onDoubleClick={()=>{setEditC({day:viewDayName,idx:i});setEditCTxt(task.text);}}>{task.text}</span>
-                        }
-                        {task.category&&<span className="hr-task-badge">{task.category}</span>}
-                        {task.duration&&<span className="hr-task-dur">{task.duration} min</span>}
-                        <button onClick={()=>delClean(viewDayName,i)} style={{background:"none",border:"none",color:"var(--ink-light)",cursor:"pointer",fontSize:16,padding:"0 2px",opacity:.4,lineHeight:1,flexShrink:0}}>×</button>
+                    <span className="hr-day-nav-prev" onClick={()=>setHrDayOffset(o=>o-1)}>← {prevLabel}</span>
+                    <div className="hr-day-nav-center">
+                      <div className="hr-day-nav-date">
+                        <span>📅</span>
+                        <span>{navDateLabel}</span>
                       </div>
-                    ))}
+                      {!isHrToday&&<div className="hr-day-nav-wk" onClick={()=>setHrDayOffset(0)}>← Back to Today</div>}
+                      {isHrToday&&<div className="hr-day-nav-wk">View week ↓</div>}
+                    </div>
+                    <span className="hr-day-nav-next" onClick={()=>setHrDayOffset(o=>o+1)}>{nextLabel} →</span>
                   </div>
+                  {/* Task section label */}
+                  <div className="hr-tasks-lbl">Daily Tasks</div>
+                  {/* Tasks */}
+                  {viewTasks.length===0&&<div style={{padding:"16px 20px 20px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>No tasks for {hrDayLabel.toLowerCase()} — add one ✦</div>}
+                  {viewTasks.map((task,i)=>(
+                    <div key={i} className="hr-task-row">
+                      <div className={"hr-task-chk"+(task.done?" done":"")} onClick={()=>toggleClean(viewDayName,i)}>
+                        {task.done&&chkSvg}
+                      </div>
+                      {editC&&editC.day===viewDayName&&editC.idx===i
+                        ?<input className="inp" style={{fontSize:13,flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>
+                        :<span className={"hr-task-nm"+(task.done?" done":"")} onDoubleClick={()=>{setEditC({day:viewDayName,idx:i});setEditCTxt(task.text);}}>{task.text}</span>
+                      }
+                      {task.category&&<span className="hr-task-badge">{task.category}</span>}
+                      {task.duration&&<span className="hr-task-dur">{task.duration} min</span>}
+                      <button onClick={()=>delClean(viewDayName,i)} style={{background:"none",border:"none",color:"var(--ink-light)",cursor:"pointer",fontSize:16,padding:"0 2px",opacity:.35,lineHeight:1,flexShrink:0}}>×</button>
+                    </div>
+                  ))}
                   <div className="hr-add-row" onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}}>+ Add Task</div>
                 </div>
               </div>
@@ -3340,26 +3370,36 @@ export default function App() {
               {/* RIGHT: This Week + Upcoming */}
               <div className="hr-right">
                 <div className="hr-wk-card">
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>This Week</div>
+                  <div className="hr-wk-hdr">
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>This Week</span>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all</span>
+                  </div>
+                  <div style={{fontSize:11,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif",marginBottom:0}}>Progress</div>
+                  <div style={{fontSize:13,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",marginTop:2}}>{wkTotalDone} / {wkTotalAll} tasks completed</div>
+                  <div className="hr-prog-bar-bg">
+                    <div className="hr-prog-bar-fill" style={{width:wkPct+"%"}}/>
+                  </div>
                   <div className="hr-wk-days">
                     {wkSummary.map((d,i)=>{
                       const cls=d.allDone?"done":d.isToday?"today":d.isPast?"past":"future";
                       return(
                         <div key={i} className="hr-wk-day">
                           <div className="hr-wk-d-lbl">{d.day}</div>
-                          <div className={"hr-wk-d-circle "+cls}>{d.done||""}</div>
+                          <div className={"hr-wk-d-circle "+cls}>
+                            {d.allDone&&chkSvg}
+                            {d.isToday&&!d.allDone&&<div style={{width:8,height:8,borderRadius:"50%",background:"#5c6b4a"}}/>}
+                          </div>
                         </div>
                       );
                     })}
                   </div>
-                  <div style={{fontSize:12,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{wkTotalDone}/{wkTotalAll} tasks completed</div>
-                  <div className="hr-prog-bar-bg">
-                    <div className="hr-prog-bar-fill" style={{width:wkPct+"%"}}/>
-                  </div>
                 </div>
 
                 <div className="hr-up-card">
-                  <div style={{padding:"16px 16px 8px",fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Upcoming Tasks</div>
+                  <div className="hr-up-hdr">
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Upcoming Tasks</span>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all</span>
+                  </div>
                   {hrUpcoming.length===0&&<div style={{padding:"4px 16px 16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>All clear ahead ✦</div>}
                   {hrUpcoming.map((t,i)=>(
                     <div key={i} className="hr-up-item">
@@ -3368,10 +3408,10 @@ export default function App() {
                         <div className="hr-up-day-num">{t.num}</div>
                       </div>
                       <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontSize:13,color:"var(--ink)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{t.text}</div>
+                        <div style={{fontSize:13.5,color:"var(--ink)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{t.text}</div>
                         {t.category&&<div style={{fontSize:10,color:"var(--ink-light)",marginTop:1}}>{t.category}</div>}
                       </div>
-                      {t.duration&&<div style={{fontSize:11,color:"var(--ink-light)",flexShrink:0,paddingLeft:8}}>{t.duration} min</div>}
+                      {t.duration&&<div style={{fontSize:12,color:"var(--ink-light)",flexShrink:0,paddingLeft:8}}>{t.duration} min</div>}
                     </div>
                   ))}
                 </div>
