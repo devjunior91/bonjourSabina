@@ -2020,7 +2020,7 @@ export default function App() {
   {/* Page header */}
   <div className="dash-page-header">
     <div>
-      <div className="dash-page-title">Bonjour, <em>Sabina</em></div>
+      <div className="dash-page-title">Bonjour, <em>Sabina</em> ✦</div>
       <div className="dash-page-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</div>
     </div>
     <div className="dash-search">
@@ -2033,298 +2033,251 @@ export default function App() {
     </div>
   </div>
 
-  {/* Top row: Progress card + Quote */}
-  <div className="dash-top-row">
-    <div className="prog-card">
-      {/* 1 — Photo with circular progress ring */}
-      <div className="prog-ring-col" style={{position:"relative"}}>
-        {(()=>{
-          const R=46,C=2*Math.PI*R;
-          const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";
-          return(
-            <svg width="120" height="120" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
-              <circle cx="60" cy="60" r={R} fill="none" stroke="var(--parchment)" strokeWidth="6"/>
-              <circle cx="60" cy="60" r={R} fill="none" stroke={rc} strokeWidth="6"
-                strokeDasharray={C} strokeDashoffset={C*(1-dayPct/100)}
-                strokeLinecap="round" transform="rotate(-90 60 60)" style={{transition:"stroke-dashoffset .6s"}}/>
-              <clipPath id="ppClip"><circle cx="60" cy="60" r="36"/></clipPath>
-              <image href={userPhoto||sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
-            </svg>
-          );
-        })()}
-        {/* Camera overlay for photo upload */}
+  {/* ── NEW DASHBOARD LAYOUT ── */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:16,alignItems:"start"}}>
+  {/* LEFT COLUMN */}
+  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+
+  {/* Progress Card */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"20px 24px 0",boxShadow:"var(--shadow)"}}>
+    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",marginBottom:14}}>Today's Progress</div>
+    <div style={{display:"flex",gap:20,alignItems:"center",marginBottom:16}}>
+      {/* Photo ring */}
+      <div style={{position:"relative",flexShrink:0}}>
+        {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
+          <svg width="120" height="120" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
+            <circle cx="60" cy="60" r={R} fill="none" stroke="var(--parchment)" strokeWidth="6"/>
+            <circle cx="60" cy="60" r={R} fill="none" stroke={rc} strokeWidth="6" strokeDasharray={C} strokeDashoffset={C*(1-dayPct/100)} strokeLinecap="round" transform="rotate(-90 60 60)" style={{transition:"stroke-dashoffset .6s"}}/>
+            <clipPath id="ppClip"><circle cx="60" cy="60" r="36"/></clipPath>
+            <image href={userPhoto||sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
+          </svg>
+        );})()}
         <div onClick={()=>photoInputRef.current&&photoInputRef.current.click()} style={{position:"absolute",bottom:4,right:4,width:22,height:22,borderRadius:"50%",background:"var(--gold)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.2)",zIndex:2}}>
           <span style={{color:"#fff",fontSize:16,lineHeight:1,fontWeight:300,marginTop:"-1px"}}>+</span>
         </div>
         <input ref={photoInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoChange}/>
       </div>
-      {/* 2 — Big % number + bar */}
-      <div className="prog-center">
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",letterSpacing:".06em",marginBottom:2}}>Today's Progress</div>
-        <div style={{display:"flex",alignItems:"baseline",gap:4,margin:"2px 0 4px"}}>
-          <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"var(--gold-deep)":"var(--ink)"}}>{dayPct}</span>
+      {/* Big % */}
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:4}}>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
           <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink-light)",fontWeight:400}}>%</span>
         </div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:12}}>{dayDone} of {dayTotal} tasks completed</div>
-        <div style={{height:6,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}>
-          <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",borderRadius:4,transition:"width .6s"}}/>
-        </div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
       </div>
-      {/* 3 — Category bullets */}
-      <div className="prog-bullets">
+      {/* Bullets */}
+      <div style={{display:"flex",flexDirection:"column",gap:10,justifyContent:"center",minWidth:160,flexShrink:0}}>
         {[
           {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
           {label:"Home Reset",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+          {label:"Gratitude",done:todayGrat.length,total:GRAT_TARGET,color:"#b0889a"},
         ].map(row=>(
-          <div key={row.label} className="prog-bullet-row">
-            <div style={{width:7,height:7,borderRadius:"50%",background:row.color}}/>
-            <div style={{fontSize:11,color:"var(--ink)"}}>{row.label}</div>
+          <div key={row.label} style={{display:"grid",gridTemplateColumns:"10px 1fr auto",alignItems:"center",gap:6}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+            <div style={{fontSize:11,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif"}}>{row.label}</div>
             <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)"}}>{row.done}/{row.total}</div>
           </div>
         ))}
       </div>
     </div>
-
-    {/* Quote - light */}
-    <div className="qc-light">
-      <div className="qc-mark">"</div>
-      <div className="qc-light-text">{QUOTE.text}</div>
-      <div className="qc-light-dash"/>
+    {/* Progress bar flush at bottom */}
+    <div style={{height:7,background:"var(--parchment)",borderRadius:"0 0 14px 14px",overflow:"hidden",margin:"0 -24px"}}>
+      <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",transition:"width .6s"}}/>
     </div>
   </div>
 
-  {/* Activity row + Calendar */}
-  {/* Combined activity + mid section — shared 320px right column */}
-  <div className="dash-combined-row">
-    {/* Left: activity cards + priorities/habits */}
-    <div className="dash-left-col">
-      {/* Activity row: Move | Exercise | Stand */}
-      <div className="dash-act-sub">
-        {[
-          {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C8.3 22 5.5 19.2 5.5 15.6C5.5 12.7 7.2 10.6 9.1 8.7C10.4 7.4 11.4 5.9 11.6 3.8C11.7 3.1 12.6 2.8 13.1 3.3C15.3 5.5 18.5 9.1 18.5 14.8C18.5 19 15.6 22 12 22Z" fill="#B89576"/><path d="M12.1 19.4C10.3 19.4 9 18.1 9 16.4C9 15.1 9.8 14.1 10.7 13.2C11.3 12.6 11.8 11.9 11.9 10.9C12 10.4 12.6 10.2 13 10.6C14 11.7 15.2 13.3 15.2 15.8C15.2 17.9 13.8 19.4 12.1 19.4Z" fill="#F4EFE8"/></svg>,label:"Move",val:todayFit&&fitMove!=null?Math.round(fitMove):null,goal:moveGoal,unit:"cal",color:"#B89576",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
-          {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M17.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M4 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M20 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M7.5 12H16.5" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/></svg>,label:"Exercise",val:todayFit&&fitEx!=null?Math.round(fitEx):null,goal:exGoal,unit:"min",color:"#A9B39F",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
-          {icon:<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2" fill="#9BAFC7"/><path d="M12 8V15" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M8.5 10.5H15.5" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 21L12 15L14 21" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"Stand",val:todayFit&&standHrs!=null?standHrs:null,goal:standGoal,unit:"hrs",color:"#9BAFC7",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
-        ].map(s=>(
-          <div key={s.label} className="act-card">
-            <div className="act-label">{s.label}</div>
-            <div className="act-icon">{s.icon}</div>
-            <div className="act-val">{s.val!=null?s.val:"—"}</div>
-            <div className="act-goal">/{s.goal}{s.unit}</div>
-            <svg className="act-wave" viewBox="0 0 180 50" preserveAspectRatio="none" height="22">
-              <path d={s.wave} fill={s.color}/>
-            </svg>
-          </div>
-        ))}
+  {/* Activity Row */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+    {[
+      {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 22C8.3 22 5.5 19.2 5.5 15.6C5.5 12.7 7.2 10.6 9.1 8.7C10.4 7.4 11.4 5.9 11.6 3.8C11.7 3.1 12.6 2.8 13.1 3.3C15.3 5.5 18.5 9.1 18.5 14.8C18.5 19 15.6 22 12 22Z" fill="#B89576"/><path d="M12.1 19.4C10.3 19.4 9 18.1 9 16.4C9 15.1 9.8 14.1 10.7 13.2C11.3 12.6 11.8 11.9 11.9 10.9C12 10.4 12.6 10.2 13 10.6C14 11.7 15.2 13.3 15.2 15.8C15.2 17.9 13.8 19.4 12.1 19.4Z" fill="#F4EFE8"/></svg>,label:"MOVE",val:todayFit&&fitMove!=null?Math.round(fitMove):null,unit:"kcal burned",color:"#B89576",bg:"rgba(184,149,118,.12)",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
+      {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M17.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M4 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M20 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M7.5 12H16.5" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/></svg>,label:"EXERCISE",val:todayFit&&fitEx!=null?Math.round(fitEx):null,unit:"sessions",color:"#A9B39F",bg:"rgba(169,179,159,.12)",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
+      {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="2" fill="#9BAFC7"/><path d="M12 8V15" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M8.5 10.5H15.5" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 21L12 15L14 21" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"STAND",val:todayFit&&standHrs!=null?standHrs:null,unit:"hours",color:"#9BAFC7",bg:"rgba(155,175,199,.12)",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
+    ].map(s=>(
+      <div key={s.label} style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 16px 0",boxShadow:"var(--shadow)",overflow:"hidden",position:"relative",minHeight:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+          <div style={{width:32,height:32,borderRadius:"50%",background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
+          <span style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".08em",fontFamily:"'DM Sans',sans-serif"}}>{s.label}</span>
+        </div>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",lineHeight:1,marginBottom:2}}>{s.val!=null?s.val:"—"}</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:26}}>{s.unit}</div>
+        <svg viewBox="0 0 180 50" preserveAspectRatio="none" height="22" style={{position:"absolute",bottom:0,left:0,right:0,width:"100%",opacity:.32}}><path d={s.wave} fill={s.color}/></svg>
       </div>
+    ))}
+  </div>
 
-      {/* Today's Tasks — matching to-do list page design */}
-      <div className="todo-card">
-        <div className="todo-chd">
-          <div style={{flex:1,fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)",display:"flex",alignItems:"center",gap:8}}>
-            Today's Tasks
-            <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>!t.done&&t.date===TODAY).length}</span>
-          </div>
-          <div className="todo-cpri">Priority</div>
-          <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer",marginLeft:8,whiteSpace:"nowrap"}}>View all</button>
-        </div>
-        <div style={{maxHeight:360,overflowY:"auto"}}>
-          {byPri(todos.filter(t=>!t.done&&t.date===TODAY)).map((todo)=>(
-            <div key={todo.id}>
-              <div className="tr2">
-                <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
-                  {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
-                </div>
-                <div className="tr2-body">
-                  <div className={`tr2-txt ${todo.done?"done":""}`}>{todo.text}</div>
-                  <span className={`tg ${todo.tag}`} style={{marginTop:3,display:"inline-block"}}>{todo.tag}</span>
-                </div>
-                <div className="tr2-pri">{pflag(todo.priority)}</div>
-                <button className="tr2-sub-btn" title="Add subtask" onClick={e=>{e.stopPropagation();addSubtask(todo.id);}}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
-              </div>
-              {(todo.subtasks||[]).map(sub=>(
-                <div key={sub.id} className="subtask-row2">
-                  <div className={`subtask-ck${sub.done?" done":""}`} onClick={()=>toggleSubtask(todo.id,sub.id)}>
-                    {sub.done&&<span style={{fontSize:7,color:"#fff",lineHeight:1}}>✓</span>}
-                  </div>
-                  {editSubtask&&editSubtask.todoId===todo.id&&editSubtask.subId===sub.id
-                    ?<input autoFocus className="subtask-inp" style={{flex:1}} value={editSubtask.text} onChange={e=>setEditSubtask(s=>({...s,text:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter")saveSubtask(todo.id,sub.id,editSubtask.text);if(e.key==="Escape"){if(!sub.text)delSubtask(todo.id,sub.id);setEditSubtask(null);}}} onBlur={()=>saveSubtask(todo.id,sub.id,editSubtask.text)}/>
-                    :<span className={`subtask-txt${sub.done?" done":""}`} style={{flex:1,fontSize:12}} onClick={()=>!sub.done&&setEditSubtask({todoId:todo.id,subId:sub.id,text:sub.text})}>{sub.text||<em style={{opacity:.5}}>Type subtask…</em>}</span>
-                  }
-                  <button className="subtask-del" onClick={()=>delSubtask(todo.id,sub.id)}>×</button>
-                </div>
-              ))}
-            </div>
-          ))}
-          {todos.filter(t=>!t.done&&t.date===TODAY).length===0&&(
-            <div className="emp" style={{padding:"24px 18px"}}>Nothing planned for today ✦</div>
-          )}
-        </div>
-        <div className="todo-add" onClick={()=>setShowDashModal(true)}>
-          <span style={{fontSize:16,lineHeight:1,marginRight:2}}>+</span> Add Task
-        </div>
+  {/* Today's Tasks */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)"}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
+        <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY).length}</span>
       </div>
-
-      {/* Habits — full width below priorities */}
-      <div className="card">
-        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-          <div className="ct" style={{marginBottom:0}}>Habits</div>
-          <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-        </div>
-        <div className="cs" style={{marginBottom:12}}>This week</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:180,overflowY:"auto"}}>
-          {habits.map(hab=>(
-            <div key={hab.id} className="dh-row">
-              <div className="dh-icon" style={{background:hab.color+"22"}}>{HI(hab.icon,hab.color,16)}</div>
-              <div className="dh-name">{hab.name}</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginRight:6}}>{streak(hab.days)} days</div>
-              <div className="dh-dots">
-                {hab.days.map((done,i)=><div key={i} className={`dh-dot${done?" on":""}`}/>)}
-              </div>
-            </div>
-          ))}
-          {habits.length===0&&<div className="emp">No habits yet ✦</div>}
-        </div>
-      </div>
+      <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all tasks</button>
     </div>
-
-    {/* Right column: Focus Timer + Rituel */}
-    <div className="dash-right-col">
-      {/* Pomodoro timer */}
-      <div className="act-card" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"12px 14px"}}>
-        <div className="act-label" style={{alignSelf:"flex-start"}}>Focus Timer</div>
-        <div className="pomo-presets" style={{gap:3,justifyContent:"center"}}>
-          {POMO_PRESETS.map(p=>(
-            <button key={p.s} className={`pomo-preset${pomoDur===p.s?" on":""}`} onClick={()=>pomoSelect(p.s)}>{p.label}</button>
-          ))}
+    <div style={{maxHeight:280,overflowY:"auto",padding:"0 20px"}}>
+      {byPri(todos.filter(t=>t.date===TODAY)).map(todo=>(
+        <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"1px solid var(--border)"}}>
+          <div onClick={()=>toggleTodo(todo.id)} style={{width:20,height:20,borderRadius:"50%",border:`1.5px solid ${todo.done?"#7a9070":"rgba(26,20,16,.2)"}`,background:todo.done?"#7a9070":"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
+            {todo.done&&<span style={{fontSize:9,color:"#fff",lineHeight:1}}>✓</span>}
+          </div>
+          <div style={{flex:1,minWidth:0,fontSize:13,color:todo.done?"var(--ink-light)":"var(--ink)",textDecoration:todo.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{todo.text}</div>
+          <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
         </div>
-        <svg width="76" height="76" viewBox="0 0 110 110" className="pomo-svg" style={{margin:"2px 0"}}>
-          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7"
-            strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash}
-            strokeLinecap="round" transform="rotate(-90 55 55)"/>
-          <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="14" fontWeight="500" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-          <text x="55" y="64" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="9" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"focus ✦":"ready"}</text>
-        </svg>
-        <div style={{display:"flex",gap:5}}>
-          {!pomoActive
-            ?<button className="pomo-btn start" style={{padding:"5px 14px",fontSize:10}} onClick={pomoStart}>▶ Start</button>
-            :<button className="pomo-btn pause" style={{padding:"5px 14px",fontSize:10}} onClick={pomoPause}>⏸ Pause</button>
-          }
-          <button className="pomo-btn stop" style={{padding:"5px 10px",fontSize:10}} onClick={pomoStop}>↺</button>
-        </div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed</div>
-      </div>
-
-      {/* Rituel */}
-      <div className="card">
-        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-          <div className="ct" style={{marginBottom:0}}>Home Reset</div>
-          <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-        </div>
-        <div className="cs" style={{marginBottom:10}}>{TODAY_DAY}'s tasks</div>
-        <div style={{maxHeight:160,overflowY:"auto",display:"flex",flexDirection:"column",gap:6}}>
-          {cleaningTodayArr.map((task,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",gap:8,paddingBottom:6,borderBottom:"1px solid var(--border)"}}>
-              <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:14,height:14,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(122,98,82,.3)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,transition:"all .15s"}}/>
-              <span style={{fontSize:11.5,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
-            </div>
-          ))}
-          {cleaningTodayArr.length===0&&<div className="emp">Rest day ✦</div>}
-        </div>
-      </div>
-
-      {/* Recent Wins */}
-      <div className="card">
-        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
-          <div className="ct" style={{marginBottom:0}}>Recent Wins</div>
-          <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)"}}>auto</span>
-        </div>
-        <div style={{maxHeight:180,overflowY:"auto",display:"flex",flexDirection:"column",gap:8}}>
-          {recentWins.length===0?(
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center",padding:"16px 0"}}>Complete tasks to unlock wins ✦</div>
-          ):recentWins.map((w,i)=>{
-            const icons={
-              milestone:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12 4.5L13.7 9.2L18.7 9.4L14.8 12.5L16.2 17.3L12 14.6L7.8 17.3L9.2 12.5L5.3 9.4L10.3 9.2L12 4.5Z" fill="#B89576"/></svg>,
-              streak:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><path d="M12.2 21C8.9 21 6.4 18.5 6.4 15.2C6.4 12.7 7.7 10.9 9.3 9.3C10.5 8.1 11.3 6.7 11.5 4.7C11.6 4 12.5 3.7 13 4.2C15 6.2 17.6 9.3 17.6 14.4C17.6 18.3 15.2 21 12.2 21Z" fill="#B89576"/><path d="M12.2 18.6C10.7 18.6 9.6 17.5 9.6 16.1C9.6 15 10.2 14.2 11 13.4C11.5 12.9 11.9 12.2 12 11.4C12.1 10.9 12.7 10.7 13 11.1C13.9 12.1 14.8 13.3 14.8 15.4C14.8 17.3 13.6 18.6 12.2 18.6Z" fill="#FDFBF8"/></svg>,
-              gratitude:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F7EDEA"/><path d="M12 18.5C11.8 18.5 11.6 18.4 11.4 18.3C8.2 16.1 6 14.2 6 11.3C6 9.5 7.4 8.1 9.1 8.1C10.1 8.1 11.1 8.6 11.7 9.4C12.3 8.6 13.3 8.1 14.3 8.1C16 8.1 17.4 9.5 17.4 11.3C17.4 14.2 15.2 16.1 12 18.3Z" fill="#C99A8C"/></svg>,
-              productive:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3EA"/><path d="M7 12.2L10.4 15.6L17.4 8.4" stroke="#A9B39F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-              rituel:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#EEF3F8"/><path d="M8 17.5H16" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 7H14L15 17H9L10 7Z" fill="#9BAFC7"/><path d="M9.5 7H14.5" stroke="#FDFBF8" strokeWidth="1.4" strokeLinecap="round"/></svg>,
-              goal:<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#F3EAE1"/><circle cx="12" cy="12" r="5.5" stroke="#A88B6F" strokeWidth="2"/><circle cx="12" cy="12" r="2" fill="#A88B6F"/><path d="M15.5 8.5L18 6" stroke="#A88B6F" strokeWidth="2" strokeLinecap="round"/></svg>,
-            };
-            return(
-              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 10px",background:"#ffffff",borderRadius:10,border:"1px solid rgba(26,20,16,.06)"}}>
-                <div style={{flexShrink:0,marginTop:1}}>{icons[w.type]||icons.productive}</div>
-                <div>
-                  <div style={{fontSize:10,fontWeight:500,color:"var(--ink-light)",letterSpacing:".06em",textTransform:"uppercase",marginBottom:2}}>{w.title}</div>
-                  <div style={{fontSize:11.5,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.4}}>{w.text}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      ))}
+      {todos.filter(t=>t.date===TODAY).length===0&&(
+        <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"24px 0"}}>Nothing planned for today ✦</div>
+      )}
+    </div>
+    <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"12px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)"}}>
+      <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
     </div>
   </div>
 
-  {/* Bottom row: Upcoming + Goals — equal height */}
-  <div className="dash-bottom-row">
+  {/* Bottom: Upcoming + Gratitude */}
+  {(()=>{const gratMonthCount=Object.keys(gratitude).filter(d=>d.startsWith(TODAY.slice(0,7))).reduce((s,d)=>s+(gratitude[d]||[]).length,0);return(
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
     {/* Upcoming */}
-    <div className="dash-bottom-card">
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
-        <div className="ct" style={{marginBottom:0}}>Upcoming</div>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" style={{color:"var(--ink-light)"}}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Upcoming</div>
+          {upcoming.length>0&&<span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 7px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{upcoming.length}</span>}
+        </div>
         <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
-      {upcoming.length===0&&<div className="emp">No upcoming events ✦</div>}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-        {upcoming.slice(0,2).map(e=>{
+      {upcoming.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No upcoming events ✦</div>}
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        {upcoming.slice(0,3).map(e=>{
           const d=new Date(e.date+"T00:00:00");
+          const dotColors={Health:"#c9a87c",Work:"#7090a8",Personal:"#b0889a",Planning:"#7a9070"};
           return(
-            <div key={e.id} onClick={ev=>openEditEv(e,ev)} style={{cursor:"pointer",background:"var(--parchment)",borderRadius:10,padding:"12px 14px"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-                <div style={{background:"var(--ivory)",borderRadius:6,padding:"4px 8px",textAlign:"center",flexShrink:0}}>
-                  <div style={{fontSize:8,color:"var(--ink-light)",letterSpacing:".1em",textTransform:"uppercase"}}>{MONTHS[d.getMonth()].slice(0,3)}</div>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{d.getDate()}</div>
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:12,color:"var(--ink)",fontWeight:500,lineHeight:1.3,marginBottom:4}}>{e.title}</div>
-                  <span className={`tg ${e.tag||""}`}>{e.tag||"Event"}</span>
-                </div>
+            <div key={e.id} onClick={ev=>openEditEv(e,ev)} style={{display:"flex",alignItems:"flex-start",gap:10,cursor:"pointer"}}>
+              <div style={{width:8,height:8,borderRadius:"50%",background:dotColors[e.tag]||"var(--sage)",flexShrink:0,marginTop:5}}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:13,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,marginBottom:2,lineHeight:1.3}}>{e.title}</div>
+                <div style={{fontSize:11,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>{d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}{!e.allDay&&e.time?`, ${e.time}`:""}</div>
               </div>
-              {!e.allDay&&e.time&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{e.time}</div>}
             </div>
           );
         })}
       </div>
     </div>
-
-    {/* Goals */}
-    <div className="dash-bottom-card">
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:12}}>
-        <div className="ct" style={{marginBottom:0}}>Goals</div>
-        <button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+    {/* Gratitude */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b0889a" strokeWidth="1.75"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Gratitude</div>
       </div>
-      {allGoals.length===0&&<div className="emp">No goals yet ✦</div>}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-        {allGoals.slice(0,2).map(g=>{
-          const msDone=g.milestones.filter(m=>m.done).length;
-          const msTotal=g.milestones.length;
-          return(
-            <div key={g.id} style={{background:"var(--parchment)",borderRadius:10,padding:"12px 14px"}}>
-              <div style={{fontSize:11.5,color:"var(--ink)",fontWeight:500,marginBottom:6,lineHeight:1.3}}>{g.title}</div>
-              <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:g.color||"var(--gold-deep)",lineHeight:1,marginBottom:4}}>{g.progress}%</div>
-              <div style={{height:4,background:"rgba(0,0,0,.08)",borderRadius:2,overflow:"hidden",marginBottom:6}}>
-                <div style={{height:"100%",width:`${g.progress}%`,background:g.color||"var(--gold)",borderRadius:2,transition:"width .5s"}}/>
+      <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,color:"var(--ink)",lineHeight:1,marginBottom:4}}>{gratMonthCount}</div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:18}}>entries this month</div>
+      <button onClick={()=>setPage("gratitude")} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",background:"var(--parchment)",color:"var(--ink)",border:"1px solid var(--border)",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>
+        New Entry
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+    </div>
+  </div>
+  );})()}
+
+  </div>{/* end left column */}
+
+  {/* RIGHT COLUMN */}
+  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+
+  {/* Focus Timer */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
+    <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
+    <div style={{display:"flex",gap:6,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
+      {POMO_PRESETS.map(p=>(
+        <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"6px 14px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
+      ))}
+    </div>
+    <svg width="140" height="140" viewBox="0 0 110 110">
+      <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+      <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
+      <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+      <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
+    </svg>
+    <div style={{display:"flex",gap:8,alignItems:"center"}}>
+      {!pomoActive
+        ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"10px 24px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+        :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"10px 24px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+      }
+      <button onClick={pomoStop} style={{width:38,height:38,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,color:"var(--ink-light)"}}>↺</button>
+    </div>
+    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
+  </div>
+
+  {/* Home Reset */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)"}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 18px 4px"}}>
+      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
+      <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+    </div>
+    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"0 18px 10px"}}>Today's tasks</div>
+    <div style={{display:"flex"}}>
+      <div style={{flex:1,padding:"0 18px 14px",minWidth:0}}>
+        <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
+          {cleaningTodayArr.map((task,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
+              <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:18,height:18,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(26,20,16,.2)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
+                {task.done&&<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
               </div>
-              {msTotal>0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{msDone}/{msTotal} milestones</div>}
+              <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
             </div>
-          );
-        })}
+          ))}
+          {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Rest day ✦</div>}
+        </div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:5}}>{cleaningDoneToday} of {cleaningTotalToday} tasks completed</div>
+        <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
+          <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#7090a8",borderRadius:2,transition:"width .5s"}}/>
+        </div>
+      </div>
+      <div style={{width:86,flexShrink:0,overflow:"hidden",borderLeft:"1px solid var(--border)"}}>
+        <img src={homePhilImg} alt="" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
       </div>
     </div>
   </div>
+
+  {/* Top Habits */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 18px",boxShadow:"var(--shadow)"}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Top Habits</div>
+        <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
+      </div>
+      <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:10,maxHeight:220,overflowY:"auto"}}>
+      {habits.slice(0,5).map(hab=>(
+        <div key={hab.id} style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:28,height:28,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,14)}</div>
+          <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500}}>{hab.name}</div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",whiteSpace:"nowrap",marginRight:6}}>{streak(hab.days)} days</div>
+          <div style={{display:"flex",gap:2,flexShrink:0}}>
+            {hab.days.map((done,i)=><div key={i} style={{width:8,height:8,borderRadius:"50%",background:done?hab.color:"var(--parchment)",transition:"background .2s"}}/>)}
+          </div>
+        </div>
+      ))}
+      {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No habits yet ✦</div>}
+    </div>
+  </div>
+
+  {/* Quote */}
+  <div style={{background:"#f0ebe3",border:"1px solid var(--border)",borderRadius:14,padding:"20px 22px",boxShadow:"var(--shadow)",position:"relative",overflow:"hidden"}}>
+    <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,color:"var(--gold)",lineHeight:1,marginBottom:8,opacity:.5}}>"</div>
+    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:16,color:"var(--ink)",lineHeight:1.6,position:"relative",zIndex:1}}>{QUOTE.text}</div>
+    <div style={{width:24,height:1.5,background:"var(--ink-light)",marginTop:14,opacity:.4}}/>
+    <svg viewBox="0 0 120 140" style={{position:"absolute",bottom:-10,right:-6,width:80,opacity:.07,pointerEvents:"none"}} fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="round">
+      <path d="M60 10 C55 30, 30 40, 28 65 C26 90, 45 108, 60 110 C75 108, 94 90, 92 65 C90 40, 65 30, 60 10Z"/>
+      <path d="M60 30 C57 45, 40 55, 39 70 C38 85, 50 98, 60 100"/>
+      <path d="M57 55 L60 75 M60 75 L53 90 M60 75 L68 88"/>
+    </svg>
+  </div>
+
+  </div>{/* end right column */}
+  </div>{/* end main grid */}
 
 </div>
 )}
