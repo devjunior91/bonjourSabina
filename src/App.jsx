@@ -988,6 +988,43 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 @media(max-width:1100px){.cal-page{grid-template-columns:1fr;}.cal-rp{display:none;}}
 @media(max-width:700px){.cal-wk-hdr{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tgrid{grid-template-columns:40px repeat(7,1fr)!important;}.cal-tlbl{font-size:8px;padding:4px 3px 0;}.cal-epill-m{display:none;}}
+/* ── HOME RESET ── */
+.hr-wrap{padding:28px 24px 64px;}
+.hr-hd-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.hr-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+.hr-left{display:flex;flex-direction:column;gap:20px;}
+.hr-right{display:flex;flex-direction:column;gap:20px;}
+.hr-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);}
+.hr-prog-card{padding:24px 28px;}
+.hr-prog-nums{display:flex;align-items:baseline;gap:4px;margin-bottom:2px;}
+.hr-prog-big{font-family:'Playfair Display',serif;font-size:40px;font-weight:400;color:var(--ink);line-height:1;}
+.hr-prog-sep{font-size:22px;color:var(--ink-light);padding:0 2px;}
+.hr-prog-tot{font-size:22px;color:var(--ink-light);font-family:'Playfair Display',serif;}
+.hr-prog-lbl{font-size:11px;color:var(--ink-light);letter-spacing:.04em;}
+.hr-phil-card{padding:22px 24px;display:flex;align-items:flex-start;gap:14px;}
+.hr-phil-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--ink);line-height:1.65;margin-top:4px;}
+.hr-tasks-card{overflow:hidden;}
+.hr-tasks-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 6px;}
+.hr-task-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid var(--border);transition:background .12s;}
+.hr-task-row:hover{background:#faf9f7;}
+.hr-task-chk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.hr-task-chk.done{background:var(--gold);border-color:var(--gold);}
+.hr-task-nm{flex:1;font-size:14px;color:var(--ink);transition:color .2s;}
+.hr-task-nm.done{text-decoration:line-through;color:var(--ink-light);}
+.hr-task-cat{font-size:10px;color:var(--ink-light);min-width:80px;text-align:right;}
+.hr-task-dur{font-size:11px;color:var(--ink-light);min-width:40px;text-align:right;white-space:nowrap;}
+.hr-add-row{display:flex;align-items:center;justify-content:center;padding:14px;border-top:1px solid var(--border);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);cursor:pointer;transition:background .12s;gap:6px;}
+.hr-add-row:hover{background:#faf9f7;}
+.hr-upnext{padding:18px 20px;}
+.hr-un-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.hr-un-item:last-child{border-bottom:none;}
+.hr-un-ico{width:30px;height:30px;border-radius:50%;background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:var(--ink-light);}
+.hr-un-nm{font-size:13px;color:var(--ink);margin-bottom:2px;}
+.hr-un-when{font-size:11px;color:var(--ink-light);}
+.hr-un-dur{font-size:11px;color:var(--ink-light);margin-left:auto;white-space:nowrap;padding-left:8px;}
+.hr-modal{position:fixed;inset:0;background:rgba(26,20,16,.45);z-index:1000;display:flex;align-items:center;justify-content:center;}
+.hr-mbox{background:#fff;border-radius:18px;padding:28px;width:400px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,.18);}
+@media(max-width:960px){.hr-grid{grid-template-columns:1fr;}.hr-right{display:none;}}
 `;
 
 const MONTHLY_TIPS={
@@ -1046,6 +1083,8 @@ export default function App() {
   const [cInputs,setCInputs]=useState(Object.fromEntries(DAYS.map(d=>[d,""])));
   const [editC,setEditC]=useState(null);
   const [editCTxt,setEditCTxt]=useState("");
+  const [hrModal,setHrModal]=useState(false);
+  const [hrDraft,setHrDraft]=useState({text:"",category:"General",duration:10});
   const [calYear,setCalYear]=useState(NOW.getFullYear());
   const [calMonth,setCalMonth]=useState(NOW.getMonth());
   const [calView,setCalView]=useState("month");
@@ -1311,6 +1350,7 @@ export default function App() {
   const toggleClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,done:!t.done}:t)}));
   const delClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].filter((_,i)=>i!==idx)}));
   const addClean=day=>{if(!cInputs[day].trim())return;setCleaning(c=>({...c,[day]:[...c[day],{text:cInputs[day],done:false}]}));setCInputs(ci=>({...ci,[day]:""}));};
+  const addHrTask=()=>{if(!hrDraft.text.trim())return;setCleaning(c=>({...c,[TODAY_DAY]:[...(c[TODAY_DAY]||[]),{text:hrDraft.text.trim(),done:false,category:hrDraft.category,duration:hrDraft.duration}]}));setHrDraft({text:"",category:"General",duration:10});setHrModal(false);};
   const startEC=(day,idx,text)=>{setEditC({day,idx});setEditCTxt(text);};
   const saveEC=()=>{if(!editC)return;const{day,idx}=editC;if(editCTxt.trim())setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,text:editCTxt}:t)}));setEditC(null);};
 
@@ -1443,7 +1483,7 @@ export default function App() {
       g.milestones.filter(m=>m.done).slice(0,1).forEach(m=>wins.push({type:"milestone",title:"New Milestone",text:`${m.text} in "${g.title}"`}));
       if(g.progress>=50&&g.progress<100) wins.push({type:"goal",title:"Goal Progress",text:`${g.title} is now ${g.progress}% complete`});
     });
-    if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Rituel Complete",text:`All ${TODAY_DAY} rituel tasks done ✦`});
+    if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Home Reset Complete",text:`All ${TODAY_DAY} tasks done ✦`});
     return wins.slice(0,4);
   })();
 
@@ -1548,7 +1588,7 @@ export default function App() {
     {id:"todos",label:"To-Do",icon:<S><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="4 6 5 7 7 5"/><polyline points="4 12 5 13 7 11"/><polyline points="4 18 5 19 7 17"/></S>},
     {id:"goals",label:"Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
-    {id:"cleaning",label:"Rituel",icon:<S><path d="M3 9h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><line x1="16" y1="4" x2="20" y2="2"/><line x1="16" y1="6" x2="21" y2="6"/><line x1="16" y1="8" x2="20" y2="10"/></S>},
+    {id:"cleaning",label:"Home Reset",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/><path d="M19 6l2-1.5M19 9l2 1.5M21 7.5h-2"/></S>},
     {id:"bilan",label:"Bilan",icon:<S><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></S>},
     {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
   ];
@@ -2001,7 +2041,7 @@ export default function App() {
         {[
           {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-          {label:"Ritual",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+          {label:"Home Reset",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
         ].map(row=>(
           <div key={row.label} className="prog-bullet-row">
             <div style={{width:7,height:7,borderRadius:"50%",background:row.color}}/>
@@ -2147,7 +2187,7 @@ export default function App() {
       {/* Rituel */}
       <div className="card">
         <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-          <div className="ct" style={{marginBottom:0}}>Rituel</div>
+          <div className="ct" style={{marginBottom:0}}>Home Reset</div>
           <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
         </div>
         <div className="cs" style={{marginBottom:10}}>{TODAY_DAY}'s tasks</div>
@@ -2573,7 +2613,7 @@ export default function App() {
                   {[
                     {label:"To-Do",pct:bilTodoPct,color:"#7a9070",sub:`${bilWeekDone}/${bilWeekTotal} tasks`},
                     {label:"Habits",pct:bilHabitPct,color:"#c9a87c",sub:`${bilHabitDone}/${bilHabitTotal} day-checks`},
-                    {label:"Rituel",pct:bilCleanPct,color:"#7090a8",sub:`${bilCleanDone}/${bilCleanTotal} tasks`},
+                    {label:"Home Reset",pct:bilCleanPct,color:"#7090a8",sub:`${bilCleanDone}/${bilCleanTotal} tasks`},
                     {label:"Goals",pct:bilGoalPct,color:"#b098c0",sub:`${bilMonthGoals.length} active this month`},
                   ].map(r=>(
                     <div key={r.label}>
@@ -2622,7 +2662,7 @@ export default function App() {
                       <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>total completed</div>
                     </div>
                     <div style={{flex:1}}>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Rituel de Maison</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Home Reset</div>
                       <div style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:600,color:"#7090a8"}}>{bilCleanPct}<span style={{fontSize:16,fontWeight:400}}>%</span></div>
                       <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>{bilCleanDone}/{bilCleanTotal} tasks done</div>
                     </div>
@@ -3171,28 +3211,152 @@ export default function App() {
           </div>
         </>}
 
-        {/* ── CLEANING SCHEDULE ── */}
-        {page==="cleaning"&&<>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--gold)",letterSpacing:".12em",marginBottom:6}}>Une maison propre, un esprit clair</div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Rituel de <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Maison</em></h1><p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,color:"var(--ink-light)",marginTop:6}}>Add, edit or remove tasks for any day · today is highlighted</p></div>{headerIcons}</div>
-          <div className="card"><div className="ct">Routine hebdomadaire</div><div className="cs">Today is {TODAY_DAY} ✦</div>
-            <div className="cg">
-              {DAYS.map(day=>(
-                <div key={day} className={`cd ${day===TODAY_DAY?"td2":""}`}>
-                  <div className="cdn">{day}{day===TODAY_DAY&&<span className="tdb">TODAY</span>}</div>
-                  {(cleaning[day]||[]).map((task,ti)=>(
-                    <div key={ti} className={`ctk ${task.done?"dc":""}`}>
-                      <div className="cck" onClick={()=>toggleClean(day,ti)}/>
-                      {editC&&editC.day===day&&editC.idx===ti?<input className="inp" style={{fontSize:11,padding:"2px 6px",flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>:<span className="ctxt">{task.text}</span>}
-                      <button className="sb2" style={{fontSize:11,padding:"1px 4px",opacity:.7}} onClick={()=>startEC(day,ti,task.text)}>✏️</button>
-                      <button className="cdel" onClick={()=>delClean(day,ti)}>×</button>
+        {/* ── HOME RESET ── */}
+        {page==="cleaning"&&(()=>{
+          const HOME_PHILOSOPHY=["Little by little creates a home you love.","Order is the shape upon which beauty depends.","A tidy home reflects a clear mind.","Your home should tell the story of who you are.","Clean surroundings nurture calm thinking.","The details of your home are the poetry of your life.","A clean home is a happy home.","Simplicity is the ultimate form of sophistication.","Every corner you tend becomes a corner that tends you.","Home is not a place — it's a feeling. Make it beautiful.","Small acts of care add up to a beautiful life.","A serene home is the foundation of a serene life."];
+          const homePhil=HOME_PHILOSOPHY[NOW.getDate()%HOME_PHILOSOPHY.length];
+          const todayIdx=DAYS.indexOf(TODAY_DAY);
+          const hrUpNext=(()=>{const r=[];for(let i=1;i<=6&&r.length<5;i++){const di=(todayIdx+i)%7;const day=DAYS[di];const tasks=(cleaning[day]||[]).filter(t=>!t.done);if(!tasks.length)continue;const d=new Date(NOW);d.setDate(NOW.getDate()+i);const dlbl=i===1?"Tomorrow":d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});tasks.slice(0,2).forEach(t=>r.push({...t,day,dlbl}));}return r.slice(0,5);})();
+          const HR_CATS=["Kitchen","Living Room","Bedroom","Bathroom","General","Laundry","Garden","Office"];
+          const HR_DURS=[5,10,15,20,30,45,60];
+          const todayLabel=new Date(NOW).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+          const dotPct=cleaningTotalToday>0?(cleaningDoneToday/cleaningTotalToday)*100:0;
+          return(<div className="hr-wrap">
+            {/* Header */}
+            <div className="hr-hd-row">
+              <div>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:400,color:"var(--ink)"}}>Home Reset</h1>
+                <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--ink-light)",marginTop:4}}>A clean space, a clear mind.</p>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <button onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Task</button>
+                {headerIcons}
+              </div>
+            </div>
+
+            <div className="hr-grid">
+              {/* LEFT column */}
+              <div className="hr-left">
+                {/* Today's Progress */}
+                <div className="hr-card hr-prog-card">
+                  <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:16}}>
+                    <div>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)",marginBottom:3}}>Today's Progress</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{cleaningDoneToday>0?"You're keeping your space beautiful.":"Let's get started ✦"}</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div className="hr-prog-nums">
+                        <span className="hr-prog-big">{cleaningDoneToday}</span>
+                        <span className="hr-prog-sep">/</span>
+                        <span className="hr-prog-tot">{cleaningTotalToday}</span>
+                      </div>
+                      <div className="hr-prog-lbl">tasks completed</div>
+                    </div>
+                  </div>
+                  {/* Progress dots */}
+                  {cleaningTotalToday>0&&(
+                    <div style={{position:"relative",height:22,margin:"8px 0"}}>
+                      <div style={{position:"absolute",top:"50%",left:11,right:11,height:2,background:"var(--border)",transform:"translateY(-50%)"}}/>
+                      {cleaningDoneToday>0&&<div style={{position:"absolute",top:"50%",left:11,height:2,background:"var(--gold)",transform:"translateY(-50%)",width:`calc(${Math.min(dotPct,100)}% - 22px)`,transition:"width .5s"}}/>}
+                      <div style={{display:"flex",alignItems:"center",height:22,position:"relative"}}>
+                        {cleaningTodayArr.flatMap((_,i)=>{
+                          const done=i<cleaningDoneToday;
+                          const dot=<div key={"d"+i} style={{width:22,height:22,borderRadius:"50%",border:`2px solid ${done?"var(--gold)":"var(--border)"}`,background:done?"var(--gold)":"#fff",zIndex:2,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .3s"}}>
+                            {done&&<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                          </div>;
+                          return i===0?[dot]:[<div key={"g"+i} style={{flex:1}}/>,dot];
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  {cleaningTotalToday===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:8}}>No tasks added for today yet ✦</div>}
+                </div>
+
+                {/* Today's tasks */}
+                <div className="hr-card hr-tasks-card">
+                  <div className="hr-tasks-hd">
+                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{todayLabel}</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)"}}>{cleaningDoneToday} / {cleaningTotalToday} completed</div>
+                  </div>
+                  <div style={{fontSize:11,color:"var(--ink-light)",padding:"0 20px 10px",fontFamily:"'DM Sans',sans-serif",letterSpacing:".04em"}}>Daily Resets</div>
+                  {cleaningTodayArr.map((task,i)=>(
+                    <div key={i} className="hr-task-row">
+                      <div className={"hr-task-chk"+(task.done?" done":"")} onClick={()=>toggleClean(TODAY_DAY,i)}>
+                        {task.done&&<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                      </div>
+                      {editC&&editC.day===TODAY_DAY&&editC.idx===i
+                        ?<input className="inp" style={{fontSize:13,flex:1}} autoFocus value={editCTxt} onChange={e=>setEditCTxt(e.target.value)} onBlur={saveEC} onKeyDown={e=>e.key==="Enter"&&saveEC()}/>
+                        :<span className={"hr-task-nm"+(task.done?" done":"")} onDoubleClick={()=>{setEditC({day:TODAY_DAY,idx:i});setEditCTxt(task.text);}}>{task.text}</span>
+                      }
+                      <span className="hr-task-cat">{task.category||""}</span>
+                      <span className="hr-task-dur">{task.duration?task.duration+" min":""}</span>
+                      <button onClick={()=>delClean(TODAY_DAY,i)} style={{background:"none",border:"none",color:"var(--ink-light)",cursor:"pointer",fontSize:16,padding:"0 2px",opacity:.4,lineHeight:1,flexShrink:0}}>×</button>
                     </div>
                   ))}
-                  <div className="car"><input className="cai" placeholder="Add task…" value={cInputs[day]||""} onChange={e=>setCInputs(ci=>({...ci,[day]:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addClean(day)}/><button className="cab" onClick={()=>addClean(day)}>+</button></div>
+                  {cleaningTodayArr.length===0&&<div style={{padding:"20px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>No tasks for today — add one to get started ✦</div>}
+                  <div className="hr-add-row" onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}}>
+                    + Add Task
+                  </div>
                 </div>
-              ))}
+              </div>
+
+              {/* RIGHT column */}
+              <div className="hr-right">
+                {/* Home Philosophy */}
+                <div className="hr-card hr-phil-card">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0,marginTop:2}}><circle cx="14" cy="14" r="14" fill="#F3ECE4"/><path d="M14 18V10" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 13C12.8 12 11.2 11.5 9.8 11.7" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 15C15.2 14 16.8 13.5 18.2 13.7" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 10C15 8.8 16.5 8.2 18 8.2" stroke="#9C7B5A" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                  <div style={{flex:1}}>
+                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)",marginBottom:8}}>Home Philosophy</div>
+                    <div className="hr-phil-text">{homePhil}</div>
+                  </div>
+                </div>
+
+                {/* Up Next */}
+                <div className="hr-card">
+                  <div className="hr-upnext">
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Up Next</span>
+                      <button style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>View all →</button>
+                    </div>
+                    {hrUpNext.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",paddingTop:12}}>Nothing scheduled ahead ✦</div>}
+                    {hrUpNext.map((t,i)=>(
+                      <div key={i} className="hr-un-item">
+                        <div className="hr-un-ico">✦</div>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div className="hr-un-nm">{t.text}</div>
+                          <div className="hr-un-when">{t.dlbl}</div>
+                        </div>
+                        {t.duration&&<div className="hr-un-dur">{t.duration} min</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </>}
+
+            {/* Add Task Modal */}
+            {hrModal&&<div className="hr-modal" onClick={()=>setHrModal(false)}>
+              <div className="hr-mbox" onClick={e=>e.stopPropagation()}>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--ink)",marginBottom:20}}>Add Task</div>
+                <div className="mf"><div className="mlb">TASK</div><input className="mi2" placeholder="What needs to be done?" value={hrDraft.text} autoFocus onChange={e=>setHrDraft(d=>({...d,text:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addHrTask()}/></div>
+                <div className="mf" style={{marginTop:12}}><div className="mlb">CATEGORY</div>
+                  <select className="sel" value={hrDraft.category} onChange={e=>setHrDraft(d=>({...d,category:e.target.value}))}>
+                    {HR_CATS.map(c=><option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="mf" style={{marginTop:12}}><div className="mlb">DURATION</div>
+                  <select className="sel" value={hrDraft.duration} onChange={e=>setHrDraft(d=>({...d,duration:Number(e.target.value)}))}>
+                    {HR_DURS.map(d=><option key={d} value={d}>{d} min</option>)}
+                  </select>
+                </div>
+                <div style={{display:"flex",gap:8,justifyContent:"flex-end",marginTop:20}}>
+                  <button className="bc2" onClick={()=>setHrModal(false)}>Cancel</button>
+                  <button className="bs" onClick={addHrTask}>Add ✦</button>
+                </div>
+              </div>
+            </div>}
+          </div>);
+        })()}
 
         {/* ── GRATITUDE ── */}
         {page==="gratitude"&&(()=>{
