@@ -1004,7 +1004,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hr-day-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
 .hr-day-nav-prev{font-size:13px;color:var(--ink-light);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .hr-day-nav-prev:hover{color:var(--ink);}
-.hr-day-nav-next{font-size:13px;color:#5c6b4a;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.hr-day-nav-next{font-size:13px;color:#7F8F68;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .hr-day-nav-next:hover{opacity:.75;}
 .hr-day-nav-center{text-align:center;flex:1;padding:0 12px;}
 .hr-day-nav-date{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;}
@@ -1012,7 +1012,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hr-task-row{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);transition:background .12s;}
 .hr-task-row:hover{background:#fafaf8;}
 .hr-task-chk{width:24px;height:24px;border-radius:50%;border:1.5px solid #c8d0ba;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.hr-task-chk.done{background:#5c6b4a;border-color:#5c6b4a;}
+.hr-task-chk.done{background:#7F8F68;border-color:#7F8F68;}
 .hr-task-nm{flex:1;font-size:14px;color:var(--ink);}
 .hr-task-nm.done{text-decoration:line-through;color:var(--ink-light);}
 .hr-task-badge{font-size:11px;color:#666;background:#f0f0ee;border-radius:20px;padding:3px 10px;white-space:nowrap;flex-shrink:0;}
@@ -1021,15 +1021,15 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .hr-add-row{display:flex;align-items:center;justify-content:center;padding:14px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);cursor:pointer;transition:background .12s;gap:6px;border-top:1px solid var(--border);}
 .hr-add-row:hover{background:#faf9f7;}
 .hr-prog-bar-bg{height:5px;border-radius:3px;background:#e8ede4;overflow:hidden;margin:6px 0 0;}
-.hr-prog-bar-fill{height:100%;border-radius:3px;background:#5c6b4a;transition:width .5s;}
+.hr-prog-bar-fill{height:100%;border-radius:3px;background:#A8B29A;transition:width .5s;}
 .hr-wk-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:20px;}
 .hr-wk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
 .hr-wk-days{display:flex;justify-content:space-between;margin:12px 0 10px;}
 .hr-wk-day{display:flex;flex-direction:column;align-items:center;gap:5px;}
 .hr-wk-d-lbl{font-size:9px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;}
 .hr-wk-d-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.hr-wk-d-circle.done{background:#5c6b4a;color:#fff;}
-.hr-wk-d-circle.today{border:2px solid #5c6b4a;color:#5c6b4a;background:#fff;}
+.hr-wk-d-circle.done{background:#7F8F68;color:#fff;}
+.hr-wk-d-circle.today{border:2px solid #7F8F68;color:#7F8F68;background:#fff;}
 .hr-wk-d-circle.past{background:#ebebea;color:var(--ink-light);}
 .hr-wk-d-circle.future{background:#f5f5f3;color:var(--ink-light);}
 .hr-up-card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
@@ -3268,6 +3268,7 @@ export default function App() {
           const nextLabel=hrDayOffset===-1?"Tomorrow":hrDayOffset===0?"Tomorrow":nextDate.toLocaleDateString("en-GB",{weekday:"long"});
           const navDateLabel=isHrToday?viewDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}):viewDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
           const chkSvg=<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.8L9 3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+          const calSvg=<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="6.5" width="14" height="13" rx="2.5" stroke="#8F8A83" strokeWidth="1.7"/><path d="M8 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M16 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M5.5 10H18.5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><circle cx="9" cy="13.5" r="1" fill="#8F8A83"/><circle cx="12" cy="13.5" r="1" fill="#8F8A83"/><circle cx="15" cy="13.5" r="1" fill="#8F8A83"/></svg>;
           return(<div className="hr-wrap">
             {/* Header */}
             <div className="hr-hd-row">
@@ -3301,10 +3302,10 @@ export default function App() {
                     <div style={{display:"flex",alignItems:"center",height:18,position:"relative"}}>
                       {todayTasksHR.flatMap((_,i)=>{
                         const done=i<todayDoneHR;
-                        const dot=<div key={"d"+i} style={{width:16,height:16,borderRadius:"50%",background:done?"#5c6b4a":"#fff",border:`2px solid ${done?"#5c6b4a":"#c8d0ba"}`,flexShrink:0,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .3s"}}>
+                        const dot=<div key={"d"+i} style={{width:16,height:16,borderRadius:"50%",background:done?"#7F8F68":"#fff",border:`2px solid ${done?"#7F8F68":"#c8d0ba"}`,flexShrink:0,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .3s"}}>
                           {done&&<svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d="M1 3.5l1.8 2L6 1.5" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                         </div>;
-                        return i===0?[dot]:[<div key={"l"+i} style={{flex:1,height:2,background:i<=todayDoneHR?"#5c6b4a":"#dde5d4",transition:"background .3s"}}/>,dot];
+                        return i===0?[dot]:[<div key={"l"+i} style={{flex:1,height:2,background:i<=todayDoneHR?"#7F8F68":"#dde5d4",transition:"background .3s"}}/>,dot];
                       })}
                     </div>
                     <div className="hr-prog-bar-bg" style={{marginTop:14}}>
@@ -3337,7 +3338,7 @@ export default function App() {
                     <span className="hr-day-nav-prev" onClick={()=>setHrDayOffset(o=>o-1)}>← {prevLabel}</span>
                     <div className="hr-day-nav-center">
                       <div className="hr-day-nav-date">
-                        <span>📅</span>
+                        {calSvg}
                         <span>{navDateLabel}</span>
                       </div>
                       {!isHrToday&&<div className="hr-day-nav-wk" onClick={()=>setHrDayOffset(0)}>← Back to Today</div>}
@@ -3371,7 +3372,7 @@ export default function App() {
               <div className="hr-right">
                 <div className="hr-wk-card">
                   <div className="hr-wk-hdr">
-                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>This Week</span>
+                    <span style={{display:"flex",alignItems:"center",gap:7,fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{calSvg}This Week</span>
                     <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all</span>
                   </div>
                   <div style={{fontSize:11,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif",marginBottom:0}}>Progress</div>
@@ -3387,7 +3388,7 @@ export default function App() {
                           <div className="hr-wk-d-lbl">{d.day}</div>
                           <div className={"hr-wk-d-circle "+cls}>
                             {d.allDone&&chkSvg}
-                            {d.isToday&&!d.allDone&&<div style={{width:8,height:8,borderRadius:"50%",background:"#5c6b4a"}}/>}
+                            {d.isToday&&!d.allDone&&<div style={{width:8,height:8,borderRadius:"50%",background:"#7F8F68"}}/>}
                           </div>
                         </div>
                       );
@@ -3397,7 +3398,7 @@ export default function App() {
 
                 <div className="hr-up-card">
                   <div className="hr-up-hdr">
-                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>Upcoming Tasks</span>
+                    <span style={{display:"flex",alignItems:"center",gap:7,fontFamily:"'Playfair Display',serif",fontSize:15,color:"var(--ink)"}}>{calSvg}Upcoming Tasks</span>
                     <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer"}}>View all</span>
                   </div>
                   {hrUpcoming.length===0&&<div style={{padding:"4px 16px 16px",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>All clear ahead ✦</div>}
