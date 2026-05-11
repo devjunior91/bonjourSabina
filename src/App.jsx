@@ -2337,6 +2337,9 @@ export default function App() {
 
   </div>{/* end dashboard rows */}
 
+</div>
+)}
+
         {/* ── TO-DO LISTS ── */}
         {page==="todos"&&(()=>{
           // Helpers
