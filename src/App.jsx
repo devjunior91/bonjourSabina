@@ -1089,7 +1089,7 @@ export default function App() {
   const [showGoalModal,setShowGoalModal]=useState(false);
   const [userPhoto,setUserPhoto]=useState(()=>localStorage.getItem("userPhoto")||null);
   const photoInputRef=useRef(null);
-  const handlePhotoChange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const d=ev.target.result;setUserPhoto(d);localStorage.setItem("userPhoto",d);};r.readAsDataURL(f);};
+  const handlePhotoChange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const d=ev.target.result;setUserPhoto(d);localStorage.setItem("userPhoto",d);e.target.value="";};r.readAsDataURL(f);};
   const [goalModalMode,setGoalModalMode]=useState("add");
   const [goalEditId,setGoalEditId]=useState(null);
   const [gDraft,setGDraft]=useState({title:"",description:"",category:"Health",icon:"health",targetDate:"",milestones:[""]});
@@ -1512,13 +1512,29 @@ export default function App() {
   // Recent Wins — computed after all dependencies are defined
   const recentWins=(()=>{
     const wins=[];
-    if(dayTotal>0&&dayPct>=50) wins.push({type:"productive",title:"Productive Day",text:`Completed ${dayPct}% of today's tasks`});
-    habits.forEach(h=>{const s=streak(h.days);if(s>=3)wins.push({type:"streak",title:"Streak",text:`${h.name} — ${s} days in a row`});});
+    if(dayTotal>0){
+      if(dayPct===100)wins.push({icon:"✦",title:"Perfect Day!",text:"Every single task completed today."});
+      else if(dayPct>=75)wins.push({icon:"🔥",title:"Outstanding!",text:`${dayPct}% done — you're crushing it.`});
+      else if(dayPct>=50)wins.push({icon:"⭐",title:"Great Progress",text:`${dayPct}% of today's tasks complete.`});
+      else if(dayPct>0)wins.push({icon:"💪",title:"Getting Started",text:`${dayPct}% done — keep the momentum!`});
+      else wins.push({icon:"✨",title:"Fresh Start",text:"A brand new day full of possibility."});
+    }
+    if(habitsTotal>0){
+      if(habitsDoneToday===habitsTotal)wins.push({icon:"🎯",title:"All Habits Done!",text:`All ${habitsTotal} habits ticked off today.`});
+      else if(habitsDoneToday>0)wins.push({icon:"🌱",title:"Habit Check-In",text:`${habitsDoneToday} of ${habitsTotal} habits completed.`});
+    }
+    const topStreak=habits.map(h=>({name:h.name,s:streak(h.days)})).filter(x=>x.s>=2).sort((a,b)=>b.s-a.s)[0];
+    if(topStreak)wins.push({icon:"🔥",title:"Streak!",text:`${topStreak.name} — ${topStreak.s} days in a row.`});
+    if(todosDoneToday>=3)wins.push({icon:"✅",title:"Task Crusher",text:`${todosDoneToday} to-dos crossed off today.`});
+    else if(todosDoneToday>0)wins.push({icon:"✅",title:"To-Do Progress",text:`${todosDoneToday} task${todosDoneToday>1?"s":""} done — nice work!`});
+    if(cleaningTodayArr.length>0&&cleaningDoneToday===cleaningTotalToday)wins.push({icon:"🏡",title:"Home Reset Done",text:`All ${TODAY_DAY} reset tasks complete ✦`});
+    else if(cleaningDoneToday>0)wins.push({icon:"🧹",title:"Home Reset",text:`${cleaningDoneToday} of ${cleaningTotalToday} reset tasks done.`});
+    if(todayGrat.length>=GRAT_TARGET)wins.push({icon:"💛",title:"Gratitude Complete",text:"Your gratitude journal is full today."});
+    else if(todayGrat.length>0)wins.push({icon:"💛",title:"Grateful Today",text:`${todayGrat.length} gratitude entr${todayGrat.length>1?"ies":"y"} written.`});
     allGoals.forEach(g=>{
-      g.milestones.filter(m=>m.done).slice(0,1).forEach(m=>wins.push({type:"milestone",title:"New Milestone",text:`${m.text} in "${g.title}"`}));
-      if(g.progress>=50&&g.progress<100) wins.push({type:"goal",title:"Goal Progress",text:`${g.title} is now ${g.progress}% complete`});
+      if(g.progress>=100)wins.push({icon:"🏆",title:"Goal Achieved!",text:`"${g.title}" is complete!`});
+      else if(g.progress>=75)wins.push({icon:"🎯",title:"Almost There",text:`"${g.title}" is ${g.progress}% done.`});
     });
-    if(cleaningTodayArr.length>0&&cleaningTodayArr.every(t=>t.done)) wins.push({type:"rituel",title:"Home Reset Complete",text:`All ${TODAY_DAY} tasks done ✦`});
     return wins.slice(0,4);
   })();
 
@@ -2066,7 +2082,7 @@ export default function App() {
             <image href={userPhoto||sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
           </svg>
         );})()}
-        <div onClick={()=>photoInputRef.current&&photoInputRef.current.click()} style={{position:"absolute",bottom:4,right:4,width:22,height:22,borderRadius:"50%",background:"var(--gold)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.2)",zIndex:2}}>
+        <div onClick={()=>photoInputRef.current&&(photoInputRef.current.value="",photoInputRef.current.click())} style={{position:"absolute",bottom:14,right:14,width:22,height:22,borderRadius:"50%",background:"var(--gold)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.2)",zIndex:2}}>
           <span style={{color:"#fff",fontSize:16,lineHeight:1,fontWeight:300,marginTop:"-1px"}}>+</span>
         </div>
         <input ref={photoInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoChange}/>
@@ -2120,37 +2136,67 @@ export default function App() {
     ))}
   </div>
 
-  {/* Today's Tasks */}
-  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)"}}>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
-        <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY).length}</span>
-      </div>
-      <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all tasks</button>
-    </div>
-    <div style={{maxHeight:280,overflowY:"auto",padding:"0 20px"}}>
-      {byPri(todos.filter(t=>t.date===TODAY)).map(todo=>(
-        <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"1px solid var(--border)"}}>
-          <div onClick={()=>toggleTodo(todo.id)} style={{width:20,height:20,borderRadius:"50%",border:`1.5px solid ${todo.done?"#7a9070":"rgba(26,20,16,.2)"}`,background:todo.done?"#7a9070":"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
-            {todo.done&&<span style={{fontSize:9,color:"#fff",lineHeight:1}}>✓</span>}
-          </div>
-          <div style={{flex:1,minWidth:0,fontSize:13,color:todo.done?"var(--ink-light)":"var(--ink)",textDecoration:todo.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{todo.text}</div>
-          <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
+  {/* Today's Tasks + Top Habits — equal width, fixed height */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,alignItems:"stretch"}}>
+
+    {/* Today's Tasks */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:320}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
+          <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY&&!t.done).length}</span>
         </div>
-      ))}
-      {todos.filter(t=>t.date===TODAY).length===0&&(
-        <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"24px 0"}}>Nothing planned for today ✦</div>
-      )}
+        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
+        {byPri(todos.filter(t=>t.date===TODAY&&!t.done)).map(todo=>(
+          <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:"1px solid var(--border)"}}>
+            <div onClick={()=>toggleTodo(todo.id)} style={{width:18,height:18,borderRadius:"50%",border:"1.5px solid rgba(26,20,16,.2)",background:"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}/>
+            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{todo.text}</div>
+            <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
+          </div>
+        ))}
+        {todos.filter(t=>t.date===TODAY&&!t.done).length===0&&(
+          <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"28px 0"}}>
+            {todos.filter(t=>t.date===TODAY).length>0?"All done — great work! ✦":"Nothing planned for today ✦"}
+          </div>
+        )}
+      </div>
+      <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0}}>
+        <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
+      </div>
     </div>
-    <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"12px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)"}}>
-      <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
+
+    {/* Top Habits */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 18px",boxShadow:"var(--shadow)",height:320,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12,flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
+          <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
+        </div>
+        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:9,overflowY:"auto",flex:1,minHeight:0}}>
+        {habits.slice(0,7).map(hab=>(
+          <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
+            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
+            <div style={{display:"flex",gap:3,flexShrink:0}}>
+              {hab.days.map((done,i)=>(
+                <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
+              ))}
+            </div>
+          </div>
+        ))}
+        {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No habits yet ✦</div>}
+      </div>
     </div>
+
   </div>
 
-  {/* Bottom: Upcoming + Gratitude */}
-  {(()=>{const gratMonthCount=Object.keys(gratitude).filter(d=>d.startsWith(TODAY.slice(0,7))).reduce((s,d)=>s+(gratitude[d]||[]).length,0);return(
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+  {/* Bottom: Upcoming | Cleaning Schedule | Recent Wins */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+
     {/* Upcoming */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
@@ -2170,7 +2216,7 @@ export default function App() {
             <div key={e.id} onClick={ev=>openEditEv(e,ev)} style={{display:"flex",alignItems:"flex-start",gap:10,cursor:"pointer"}}>
               <div style={{width:8,height:8,borderRadius:"50%",background:dotColors[e.tag]||"var(--sage)",flexShrink:0,marginTop:5}}/>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:13,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,marginBottom:2,lineHeight:1.3}}>{e.title}</div>
+                <div style={{fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,marginBottom:2,lineHeight:1.3}}>{e.title}</div>
                 <div style={{fontSize:11,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>{d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}{!e.allDay&&e.time?`, ${e.time}`:""}</div>
               </div>
             </div>
@@ -2178,36 +2224,68 @@ export default function App() {
         })}
       </div>
     </div>
-    {/* Gratitude */}
+
+    {/* Cleaning Schedule */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b0889a" strokeWidth="1.75"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Gratitude</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
+        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
       </div>
-      <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:600,color:"var(--ink)",lineHeight:1,marginBottom:4}}>{gratMonthCount}</div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:18}}>entries this month</div>
-      <button onClick={()=>setPage("gratitude")} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",background:"var(--parchment)",color:"var(--ink)",border:"1px solid var(--border)",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>
-        New Entry
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      </button>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
+        {cleaningTodayArr.slice(0,4).map((task,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
+            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(26,20,16,.2)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
+              {task.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+            </div>
+            <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
+          </div>
+        ))}
+        {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Rest day ✦</div>}
+        {cleaningTodayArr.length>4&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>+{cleaningTodayArr.length-4} more</div>}
+      </div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:5}}>{cleaningDoneToday} of {cleaningTotalToday} done</div>
+      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
+        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#7090a8",borderRadius:2,transition:"width .5s"}}/>
+      </div>
     </div>
+
+    {/* Recent Wins */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {recentWins.length===0?(
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
+        ):recentWins.map((w,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
+            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
+            <div>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
   </div>
-  );})()}
 
   </div>{/* end left column */}
 
   {/* RIGHT COLUMN */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
-  {/* Focus Timer */}
-  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
+  {/* Focus Timer — compact to match progress card height */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
     <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
-    <div style={{display:"flex",gap:6,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
+    <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
       {POMO_PRESETS.map(p=>(
-        <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"6px 14px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
+        <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"4px 12px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
       ))}
     </div>
-    <svg width="140" height="140" viewBox="0 0 110 110">
+    <svg width="110" height="110" viewBox="0 0 110 110">
       <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
       <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
       <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
@@ -2215,13 +2293,28 @@ export default function App() {
     </svg>
     <div style={{display:"flex",gap:8,alignItems:"center"}}>
       {!pomoActive
-        ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"10px 24px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
-        :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"10px 24px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+        ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+        :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
       }
-      <button onClick={pomoStop} style={{width:38,height:38,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,color:"var(--ink-light)"}}>↺</button>
+      <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
     </div>
-    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
+    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
   </div>
+
+  {/* Gratitude mini card — same height as activity cards */}
+  {(()=>{const gratMonthCount=Object.keys(gratitude).filter(d=>d.startsWith(TODAY.slice(0,7))).reduce((s,d)=>s+(gratitude[d]||[]).length,0);return(
+  <div style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 16px 0",boxShadow:"var(--shadow)",overflow:"hidden",position:"relative",minHeight:100}}>
+    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+      <div style={{width:32,height:32,borderRadius:"50%",background:"rgba(176,136,154,.12)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b0889a" strokeWidth="1.75"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <span style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".08em",fontFamily:"'DM Sans',sans-serif"}}>GRATITUDE</span>
+    </div>
+    <div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",lineHeight:1,marginBottom:2}}>{gratMonthCount}</div>
+    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:26}}>entries this month</div>
+    <svg viewBox="0 0 180 50" preserveAspectRatio="none" height="22" style={{position:"absolute",bottom:0,left:0,right:0,width:"100%",opacity:.32}}><path d="M0,25 C20,12 40,30 60,18 C80,6 100,28 120,16 C140,4 160,22 180,14 L180,50 L0,50Z" fill="#b0889a"/></svg>
+  </div>
+  );})()}
 
   {/* Home Reset */}
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)"}}>
@@ -2252,42 +2345,6 @@ export default function App() {
         <img src={homePhilImg} alt="" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
       </div>
     </div>
-  </div>
-
-  {/* Top Habits */}
-  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 18px",boxShadow:"var(--shadow)"}}>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Top Habits</div>
-        <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
-      </div>
-      <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-    </div>
-    <div style={{display:"flex",flexDirection:"column",gap:10,maxHeight:220,overflowY:"auto"}}>
-      {habits.slice(0,5).map(hab=>(
-        <div key={hab.id} style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:28,height:28,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,14)}</div>
-          <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500}}>{hab.name}</div>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",whiteSpace:"nowrap",marginRight:6}}>{streak(hab.days)} days</div>
-          <div style={{display:"flex",gap:2,flexShrink:0}}>
-            {hab.days.map((done,i)=><div key={i} style={{width:8,height:8,borderRadius:"50%",background:done?hab.color:"var(--parchment)",transition:"background .2s"}}/>)}
-          </div>
-        </div>
-      ))}
-      {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No habits yet ✦</div>}
-    </div>
-  </div>
-
-  {/* Quote */}
-  <div style={{background:"#f0ebe3",border:"1px solid var(--border)",borderRadius:14,padding:"20px 22px",boxShadow:"var(--shadow)",position:"relative",overflow:"hidden"}}>
-    <div style={{fontFamily:"'Playfair Display',serif",fontSize:44,color:"var(--gold)",lineHeight:1,marginBottom:8,opacity:.5}}>"</div>
-    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:16,color:"var(--ink)",lineHeight:1.6,position:"relative",zIndex:1}}>{QUOTE.text}</div>
-    <div style={{width:24,height:1.5,background:"var(--ink-light)",marginTop:14,opacity:.4}}/>
-    <svg viewBox="0 0 120 140" style={{position:"absolute",bottom:-10,right:-6,width:80,opacity:.07,pointerEvents:"none"}} fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="round">
-      <path d="M60 10 C55 30, 30 40, 28 65 C26 90, 45 108, 60 110 C75 108, 94 90, 92 65 C90 40, 65 30, 60 10Z"/>
-      <path d="M60 30 C57 45, 40 55, 39 70 C38 85, 50 98, 60 100"/>
-      <path d="M57 55 L60 75 M60 75 L53 90 M60 75 L68 88"/>
-    </svg>
   </div>
 
   </div>{/* end right column */}
