@@ -1102,7 +1102,7 @@ export default function App() {
         const canvas=document.createElement("canvas");
         canvas.width=w;canvas.height=h;
         canvas.getContext("2d").drawImage(img,0,0,w,h);
-        const save=(q)=>{const d=canvas.toDataURL("image/jpeg",q);setUserPhoto(d);try{localStorage.setItem("userPhoto",d);}catch{if(q>.3)save(q-.2);}};
+        const save=(q)=>{const d=canvas.toDataURL("image/jpeg",q);setUserPhoto(d);try{localStorage.setItem("userPhoto",d);}catch(err){if(q>.3)save(q-.2);}};
         save(0.85);
       };
       img.src=ev.target.result;
