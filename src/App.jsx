@@ -1129,6 +1129,7 @@ export default function App() {
   const [notifications,setNotifications]=useDB("sab_notifs",[]);
   const [showNotifs,setShowNotifs]=useState(false);
   const [showSettingsMenu,setShowSettingsMenu]=useState(false);
+  const [minuteTick,setMinuteTick]=useState(0);
   const [gratitude,setGratitude]=useDB("sab_gratitude",{});
   const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
   const [gratInput,setGratInput]=useState("");
@@ -1180,6 +1181,7 @@ export default function App() {
     return()=>document.removeEventListener("visibilitychange",onVis);
   },[]);// eslint-disable-line react-hooks/exhaustive-deps
   useEffect(()=>{const t=setInterval(()=>{const d=new Date().toISOString().split("T")[0];setLiveDate(p=>p!==d?d:p);},30000);return()=>clearInterval(t);},[]);
+  useEffect(()=>{const t=setInterval(()=>setMinuteTick(n=>n+1),60000);return()=>clearInterval(t);},[]);
   // Refresh fitness data at 8am, 1pm, 6pm, 9pm
   useEffect(()=>{
     if(!supabase)return;
@@ -1203,24 +1205,32 @@ export default function App() {
   const todayDayIndex=DAYS.indexOf(TODAY_DAY);
 
   // Weekly habit reset — archive last week, reset days to false
+  // Fires at 3am on Monday (or later that day if app was closed overnight)
   useEffect(()=>{
     const wk=isoWeekKey(TODAY);
-    if(habitsWeekKey&&habitsWeekKey!==wk){
+    const now=new Date();
+    const isMonday=now.getDay()===1;
+    const isPast3am=now.getHours()>=3;
+    if(habitsWeekKey&&habitsWeekKey!==wk&&isMonday&&isPast3am){
       setHabitsArchive(a=>({...a,[habitsWeekKey]:habits.map(h=>({id:h.id,name:h.name,days:[...h.days]}))}));
       setHabits(h=>h.map(hab=>({...hab,days:Array(7).fill(false)})));
     }
-    if(!habitsWeekKey||habitsWeekKey!==wk)setHabitsWeekKey(wk);
-  },[TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+    if(!habitsWeekKey||(habitsWeekKey!==wk&&isMonday&&isPast3am))setHabitsWeekKey(wk);
+  },[TODAY,minuteTick]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Weekly cleaning reset — archive last week, uncheck all tasks
+  // Fires at 3am on Monday (or later that day if app was closed overnight)
   useEffect(()=>{
     const wk=isoWeekKey(TODAY);
-    if(cleanWeekKey&&cleanWeekKey!==wk){
+    const now=new Date();
+    const isMonday=now.getDay()===1;
+    const isPast3am=now.getHours()>=3;
+    if(cleanWeekKey&&cleanWeekKey!==wk&&isMonday&&isPast3am){
       setCleanArchive(a=>({...a,[cleanWeekKey]:JSON.parse(JSON.stringify(cleaning))}));
       setCleaning(c=>Object.fromEntries(Object.entries(c).map(([d,ts])=>[d,ts.map(t=>({...t,done:false}))])));
     }
-    if(!cleanWeekKey||cleanWeekKey!==wk)setCleanWeekKey(wk);
-  },[TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+    if(!cleanWeekKey||(cleanWeekKey!==wk&&isMonday&&isPast3am))setCleanWeekKey(wk);
+  },[TODAY,minuteTick]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Habit notification check — if after 8pm and habits unchecked, add notification
   useEffect(()=>{
@@ -1368,7 +1378,11 @@ export default function App() {
   const gMsDel=i=>setGDraft(d=>({...d,milestones:d.milestones.filter((_,j)=>j!==i)}));
   const gMsChange=(i,v)=>setGDraft(d=>({...d,milestones:d.milestones.map((m,j)=>j===i?v:m)}));
 
-  const toggleClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,done:!t.done}:t)}));
+  const toggleClean=(day,idx)=>{
+    const task=cleaning[day]?.[idx];
+    if(task&&!task.done)chime();
+    setCleaning(c=>({...c,[day]:c[day].map((t,i)=>i===idx?{...t,done:!t.done}:t)}));
+  };
   const delClean=(day,idx)=>setCleaning(c=>({...c,[day]:c[day].filter((_,i)=>i!==idx)}));
   const addClean=day=>{if(!cInputs[day].trim())return;setCleaning(c=>({...c,[day]:[...c[day],{text:cInputs[day],done:false}]}));setCInputs(ci=>({...ci,[day]:""}));};
   const addHrTask=()=>{if(!hrDraft.text.trim())return;const _vd=new Date(NOW);_vd.setDate(NOW.getDate()+hrDayOffset);const _vDayName=DAYS[_vd.getDay()===0?6:_vd.getDay()-1];setCleaning(c=>({...c,[_vDayName]:[...(c[_vDayName]||[]),{text:hrDraft.text.trim(),done:false,category:hrDraft.category,duration:hrDraft.duration}]}));setHrDraft({text:"",category:"General",duration:10});setHrModal(false);};
