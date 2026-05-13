@@ -2673,7 +2673,7 @@ export default function App() {
 
           // GitHub-style heatmap (responds to period filter)
           const hmNumWeeks=progressPeriod==="month"?5:progressPeriod==="3months"?14:progressPeriod==="6months"?26:53;
-          const hmCellSize=progressPeriod==="month"?28:progressPeriod==="3months"?18:progressPeriod==="6months"?13:11;
+          const hmRowH=progressPeriod==="month"?30:progressPeriod==="3months"?22:progressPeriod==="6months"?16:12;
           const hmCellGap=progressPeriod==="month"?4:progressPeriod==="3months"?3:2;
           const hmTodayDow=(new Date(TODAY+"T12:00:00").getDay()+6)%7;
           const hmWeekCols=Array.from({length:hmNumWeeks},(_,wi)=>{
@@ -2842,39 +2842,41 @@ export default function App() {
                 <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>1. Consistency Heatmap</span>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 200px",gap:28,alignItems:"start"}}>
-                {/* Left: heatmap — takes at least half the row */}
+                {/* Left: heatmap — stretches to fill 1fr */}
                 <div style={{minWidth:0}}>
-                  <div style={{overflowX:"auto",paddingBottom:4}}>
-                    <div style={{display:"flex",gap:0,minWidth:"fit-content"}}>
-                      <div style={{display:"flex",flexDirection:"column",gap:hmCellGap,marginRight:8,paddingTop:20}}>
-                        {["Mon","","Wed","","Fri","","Sun"].map((d,i)=>(
-                          <div key={i} style={{height:hmCellSize,display:"flex",alignItems:"center",fontFamily:"'DM Sans',sans-serif",fontSize:Math.max(9,Math.min(hmCellSize*0.45,11)),color:"var(--ink-light)",lineHeight:1,whiteSpace:"nowrap"}}>{d}</div>
-                        ))}
-                      </div>
-                      <div style={{display:"flex",gap:hmCellGap}}>
-                        {hmWeekCols.map((wk,wi)=>(
-                          <div key={wi} style={{display:"flex",flexDirection:"column",gap:0}}>
-                            <div style={{height:20,display:"flex",alignItems:"flex-end",paddingBottom:3}}>
-                              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{wk.monthLabel||""}</span>
-                            </div>
-                            <div style={{display:"flex",flexDirection:"column",gap:hmCellGap}}>
-                              {wk.days.map((day,di)=>{
-                                const sc=day.score;
-                                const isFuture=sc===null;
-                                const isToday=day.date===TODAY;
-                                const alpha=(0.12+(sc||0)*0.88).toFixed(2);
-                                const bg=isFuture?"#f4f0eb":sc<0.05?"#ede8e1":("rgba(184,149,118,"+alpha+")");
-                                return(
-                                  <div key={di}
-                                    title={day.date+(isFuture?"":(": "+Math.round((sc||0)*100)+"%"))}
-                                    style={{width:hmCellSize,height:hmCellSize,borderRadius:Math.max(2,hmCellSize*0.2),background:bg,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1,flexShrink:0}}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                  {/* Month labels row */}
+                  <div style={{display:"grid",gridTemplateColumns:"32px 1fr",gap:hmCellGap,marginBottom:4}}>
+                    <div/>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat("+hmNumWeeks+",1fr)",gap:hmCellGap}}>
+                      {hmWeekCols.map((wk,wi)=>(
+                        <div key={wi} style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",overflow:"hidden",whiteSpace:"nowrap"}}>{wk.monthLabel||""}</div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Day labels + cell grid */}
+                  <div style={{display:"grid",gridTemplateColumns:"32px 1fr",gap:8}}>
+                    {/* Day labels */}
+                    <div style={{display:"grid",gridAutoRows:hmRowH,gap:hmCellGap}}>
+                      {["Mon","","Wed","","Fri","","Sun"].map((d,i)=>(
+                        <div key={i} style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",display:"flex",alignItems:"center",lineHeight:1}}>{d}</div>
+                      ))}
+                    </div>
+                    {/* Cells — row-major: di=day row, wi=week col */}
+                    <div style={{display:"grid",gridTemplateColumns:"repeat("+hmNumWeeks+",1fr)",gridAutoRows:hmRowH,gap:hmCellGap}}>
+                      {[0,1,2,3,4,5,6].flatMap(di=>hmWeekCols.map((wk,wi)=>{
+                        const day=wk.days[di];
+                        const sc=day.score;
+                        const isFuture=sc===null;
+                        const isToday=day.date===TODAY;
+                        const alpha=(0.12+(sc||0)*0.88).toFixed(2);
+                        const bg=isFuture?"#f4f0eb":sc<0.05?"#ede8e1":("rgba(184,149,118,"+alpha+")");
+                        return(
+                          <div key={di+"-"+wi}
+                            title={day.date+(isFuture?"":(": "+Math.round((sc||0)*100)+"%"))}
+                            style={{borderRadius:4,background:bg,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1}}
+                          />
+                        );
+                      }))}
                     </div>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginTop:14}}>
