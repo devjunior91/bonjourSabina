@@ -1141,7 +1141,11 @@ export default function App() {
   const [fitEx,setFitEx]=useDB("sab_fitness_ex",null);
   const [fitStand,setFitStand]=useDB("sab_fitness_stand",null);
   const [fitDate,setFitDate]=useDB("sab_fitness_date","");
-  const [bilView,setBilView]=useState("week");
+  const [progressPeriod,setProgressPeriod]=useState("month");
+  const [hmNavMonth,setHmNavMonth]=useState(0);
+  const [actBarGran,setActBarGran]=useState("weekly");
+  const [actBarNav,setActBarNav]=useState(0);
+  const [rhythmTab,setRhythmTab]=useState("weekday");
   const [todoView,setTodoView]=useState("today");
   const [showMonths,setShowMonths]=useState({});
   const [habitViewWeek,setHabitViewWeek]=useState(0); // 0=this week, 1=last week, etc.
@@ -1529,30 +1533,39 @@ export default function App() {
   const dayPct=dayTotal>0?Math.round((dayDoneRaw/dayTotal)*100):0;
 
   // Recent Wins — computed after all dependencies are defined
+  const RW_ICONS={
+    progress:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#F3EAE1"/><path d="M14 6L15.5 11.1L20.8 11.2L16.6 14.3L18.1 19.4L14 16.3L9.9 19.4L11.4 14.3L7.2 11.2L12.5 11.1L14 6Z" fill="#B89576"/></svg>,
+    habit:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#EEF3EA"/><path d="M8 14.2L12 18L20 9.5" stroke="#7F8F68" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    task:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#EEF3EA"/><rect x="8" y="7" width="12" height="14" rx="2" stroke="#7F8F68" strokeWidth="1.8"/><path d="M11 12L13 14L17 10" stroke="#7F8F68" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M11 17H17" stroke="#7F8F68" strokeWidth="1.8" strokeLinecap="round"/></svg>,
+    home:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#EEF3F8"/><path d="M8 13.5L14 8.5L20 13.5V20H16.5V16.2H11.5V20H8V13.5Z" stroke="#7E9AAF" strokeWidth="1.8" strokeLinejoin="round"/><path d="M11 13.8L13 15.8L17 11.5" stroke="#7E9AAF" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    grat:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#F7EDEA"/><path d="M14 20.5C13.8 20.5 13.5 20.4 13.3 20.2C9.7 17.7 7.5 15.7 7.5 12.5C7.5 10.5 9 9 10.9 9C12.1 9 13.2 9.6 14 10.6C14.8 9.6 15.9 9 17.1 9C19 9 20.5 10.5 20.5 12.5C20.5 15.7 18.3 17.7 14.7 20.2C14.5 20.4 14.2 20.5 14 20.5Z" fill="#C98F8F"/></svg>,
+    goal:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#F3EAE1"/><circle cx="14" cy="14" r="6" stroke="#B89576" strokeWidth="2"/><circle cx="14" cy="14" r="2.2" fill="#B89576"/><path d="M17.5 10.5L21 7" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/></svg>,
+    streak:<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#F3EAE1"/><path d="M14.2 23C10.5 23 7.8 20.2 7.8 16.4C7.8 13.7 9.2 11.7 11 9.9C12.2 8.7 13.1 7.2 13.3 5C13.4 4.3 14.3 4 14.8 4.5C17 6.7 20.2 10.5 20.2 15.7C20.2 20.1 17.6 23 14.2 23Z" fill="#B89576"/><path d="M14.2 20.2C12.5 20.2 11.3 19 11.3 17.4C11.3 16.2 12 15.3 12.8 14.5C13.4 13.9 13.8 13.2 13.9 12.2C14 11.7 14.6 11.5 15 11.9C16 13 17 14.4 17 16.7C17 18.8 15.8 20.2 14.2 20.2Z" fill="#FFFDF9"/></svg>,
+  };
   const recentWins=(()=>{
     const wins=[];
     if(dayTotal>0){
-      if(dayPct===100)wins.push({icon:"✦",title:"Perfect Day!",text:"Every single task completed today."});
-      else if(dayPct>=75)wins.push({icon:"🔥",title:"Outstanding!",text:`${dayPct}% done — you're crushing it.`});
-      else if(dayPct>=50)wins.push({icon:"⭐",title:"Great Progress",text:`${dayPct}% of today's tasks complete.`});
-      else if(dayPct>0)wins.push({icon:"💪",title:"Getting Started",text:`${dayPct}% done — keep the momentum!`});
-      else wins.push({icon:"✨",title:"Fresh Start",text:"A brand new day full of possibility."});
+      if(dayPct===100)wins.push({icon:RW_ICONS.progress,title:"Perfect Day!",text:"Every single task completed today."});
+      else if(dayPct>=75)wins.push({icon:RW_ICONS.progress,title:"Outstanding!",text:`${dayPct}% done — you're crushing it.`});
+      else if(dayPct>=50)wins.push({icon:RW_ICONS.progress,title:"Great Progress",text:`${dayPct}% of today's tasks complete.`});
+      else if(dayPct>0)wins.push({icon:RW_ICONS.progress,title:"Getting Started",text:`${dayPct}% done — keep the momentum!`});
+      else wins.push({icon:RW_ICONS.progress,title:"Fresh Start",text:"A brand new day full of possibility."});
     }
     if(habitsTotal>0){
-      if(habitsDoneToday===habitsTotal)wins.push({icon:"🎯",title:"All Habits Done!",text:`All ${habitsTotal} habits ticked off today.`});
-      else if(habitsDoneToday>0)wins.push({icon:"🌱",title:"Habit Check-In",text:`${habitsDoneToday} of ${habitsTotal} habits completed.`});
+      if(habitsDoneToday===habitsTotal)wins.push({icon:RW_ICONS.habit,title:"All Habits Done!",text:`All ${habitsTotal} habits ticked off today.`});
+      else if(habitsDoneToday>0)wins.push({icon:RW_ICONS.habit,title:"Habit Check-In",text:`${habitsDoneToday} of ${habitsTotal} habits completed.`});
     }
     const topStreak=habits.map(h=>({name:h.name,s:streak(h.days)})).filter(x=>x.s>=2).sort((a,b)=>b.s-a.s)[0];
-    if(topStreak)wins.push({icon:"🔥",title:"Streak!",text:`${topStreak.name} — ${topStreak.s} days in a row.`});
-    if(todosDoneToday>=3)wins.push({icon:"✅",title:"Task Crusher",text:`${todosDoneToday} to-dos crossed off today.`});
-    else if(todosDoneToday>0)wins.push({icon:"✅",title:"To-Do Progress",text:`${todosDoneToday} task${todosDoneToday>1?"s":""} done — nice work!`});
-    if(cleaningTodayArr.length>0&&cleaningDoneToday===cleaningTotalToday)wins.push({icon:"🏡",title:"Home Reset Done",text:`All ${TODAY_DAY} reset tasks complete ✦`});
-    else if(cleaningDoneToday>0)wins.push({icon:"🧹",title:"Home Reset",text:`${cleaningDoneToday} of ${cleaningTotalToday} reset tasks done.`});
-    if(todayGrat.length>=GRAT_TARGET)wins.push({icon:"💛",title:"Gratitude Complete",text:"Your gratitude journal is full today."});
-    else if(todayGrat.length>0)wins.push({icon:"💛",title:"Grateful Today",text:`${todayGrat.length} gratitude entr${todayGrat.length>1?"ies":"y"} written.`});
+    if(topStreak)wins.push({icon:RW_ICONS.streak,title:"Streak!",text:`${topStreak.name} — ${topStreak.s} days in a row.`});
+    if(todosDoneToday>=3)wins.push({icon:RW_ICONS.task,title:"Task Crusher",text:`${todosDoneToday} to-dos crossed off today.`});
+    else if(todosDoneToday>0)wins.push({icon:RW_ICONS.task,title:"To-Do Progress",text:`${todosDoneToday} task${todosDoneToday>1?"s":""} done — nice work!`});
+    if(cleaningTodayArr.length>0&&cleaningDoneToday===cleaningTotalToday)wins.push({icon:RW_ICONS.home,title:"Home Reset Done",text:`All ${TODAY_DAY} reset tasks complete ✦`});
+    else if(cleaningDoneToday>0)wins.push({icon:RW_ICONS.home,title:"Home Reset",text:`${cleaningDoneToday} of ${cleaningTotalToday} reset tasks done.`});
+    if(todayGrat.length>=GRAT_TARGET)wins.push({icon:RW_ICONS.grat,title:"Gratitude Complete",text:"Your gratitude journal is full today."});
+    else if(todayGrat.length>0)wins.push({icon:RW_ICONS.grat,title:"Grateful Today",text:`${todayGrat.length} gratitude entr${todayGrat.length>1?"ies":"y"} written.`});
     allGoals.forEach(g=>{
-      if(g.progress>=100)wins.push({icon:"🏆",title:"Goal Achieved!",text:`"${g.title}" is complete!`});
-      else if(g.progress>=75)wins.push({icon:"🎯",title:"Almost There",text:`"${g.title}" is ${g.progress}% done.`});
+      if(g.progress>=100)wins.push({icon:RW_ICONS.goal,title:"Goal Achieved!",text:`"${g.title}" is complete!`});
+      else if(g.progress>=75)wins.push({icon:RW_ICONS.goal,title:"Almost There",text:`"${g.title}" is ${g.progress}% done.`});
     });
     return wins.slice(0,4);
   })();
@@ -1694,7 +1707,7 @@ export default function App() {
             <div className="notif-hd"><span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:"var(--ink)"}}>Settings</span></div>
             <div className="notif-item" style={{cursor:"pointer",display:"flex",alignItems:"center",gap:10}} onClick={()=>{setPage("bilan");setShowSettingsMenu(false);}}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)"}}>Bilan</span>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)"}}>My Progress</span>
             </div>
           </div>
         )}
@@ -2638,150 +2651,494 @@ export default function App() {
         </div>
         );})()}
 
-        {/* ── BILAN ── */}
-        {page==="bilan"&&<>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:32}}><div><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Bilan</h1><div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>A weekly and monthly look at your progress, habits, and achievements.</div></div>{headerIcons}</div>
-          <div className="bil-tabs">
-            {[["week","This Week"],["month","This Month"],["trends","Trends"]].map(([v,l])=><button key={v} className={`bil-tab ${bilView===v?"on":""}`} onClick={()=>setBilView(v)}>{l}</button>)}
-          </div>
+        {/* ── MY PROGRESS ── */}
+        {page==="bilan"&&(()=>{
+          const PERIODS=[["month","Month"],["3months","3 Months"],["6months","6 Months"],["year","Year"]];
+          const periodDays=progressPeriod==="month"?30:progressPeriod==="3months"?90:progressPeriod==="6months"?180:365;
+          const periodDates=Array.from({length:periodDays},(_,i)=>{const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-(periodDays-1-i));return _ld(d);});
 
-          {bilView==="week"&&<>
-            {/* Week score hero */}
-            <div className="card" style={{background:"linear-gradient(135deg,#352e28 0%,#433830 60%,#352e28 100%)",borderColor:"rgba(201,168,124,.2)",marginBottom:18}}>
-              <div style={{display:"flex",alignItems:"center",gap:28}}>
+          // Day score 0-1
+          const getDayScore=(date)=>{
+            const parts=[];
+            const dt=todos.filter(t=>t.date===date);
+            if(dt.length>0)parts.push(dt.filter(t=>t.done).length/dt.length);
+            const wk=isoWeekKey(date);const wkD=weekDatesOf(wk);const dayIdx=wkD.indexOf(date);
+            if(dayIdx>=0&&habits.length>0){
+              const aw=wk===isoWeekKey(TODAY)?habits:(habitsArchive[wk]||null);
+              if(aw&&aw.length>0)parts.push(aw.filter(h=>h.days[dayIdx]).length/aw.length);
+            }
+            parts.push(Math.min((gratitude[date]||[]).length/GRAT_TARGET,1));
+            return parts.length?parts.reduce((s,v)=>s+v,0)/parts.length:0;
+          };
+
+          // Heatmap
+          const hmRef=new Date(TODAY+"T12:00:00");hmRef.setMonth(hmRef.getMonth()+hmNavMonth);
+          const hmYear=hmRef.getFullYear(),hmMon=hmRef.getMonth();
+          const hmLabel=new Date(hmYear,hmMon,1).toLocaleDateString("en-GB",{month:"long",year:"numeric"});
+          const hmDaysInMonth=new Date(hmYear,hmMon+1,0).getDate();
+          const hmDates=Array.from({length:hmDaysInMonth},(_,i)=>_ld(new Date(hmYear,hmMon,i+1)));
+          const hmFirstDow=(new Date(hmYear,hmMon,1).getDay()+6)%7;
+          const hmMonPfx=`${String(hmYear)}-${String(hmMon+1).padStart(2,"0")}`;
+
+          // This month overview
+          const hmTodosDone=todos.filter(t=>t.date.startsWith(hmMonPfx)&&t.done).length;
+          const hmHabitsDone=(()=>{
+            const todayWk=isoWeekKey(TODAY);let total=0;
+            hmDates.forEach(date=>{
+              const wk=isoWeekKey(date);const wkD=weekDatesOf(wk);const idx=wkD.indexOf(date);if(idx<0)return;
+              const aw=wk===todayWk?habits:(habitsArchive[wk]||[]);
+              total+=aw.filter(h=>h.days[idx]).length;
+            });
+            return total;
+          })();
+          const hmGoalsDone=allGoals.reduce((s,g)=>s+(g.milestones||[]).filter(m=>m.done&&(m.doneDate||"").startsWith(hmMonPfx)).length,0);
+          const hmGratTotal=hmDates.reduce((s,d)=>s+(gratitude[d]||[]).length,0);
+          const hmHomeReset=DAYS.reduce((s,dn)=>s+(cleaning[dn]||[]).filter(t=>t.done).length,0);
+
+          // Momentum
+          const momentumPts=periodDates.map((d,i)=>({date:d,score:Math.round(getDayScore(d)*100),i}));
+          const mAvg=momentumPts.length?Math.round(momentumPts.reduce((s,p)=>s+p.score,0)/momentumPts.length):0;
+          const priorDates=Array.from({length:periodDays},(_,i)=>{const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-(periodDays*2-1-i));return _ld(d);});
+          const priorAvg=priorDates.length?Math.round(priorDates.map(d=>getDayScore(d)*100).reduce((s,v)=>s+v,0)/priorDates.length):0;
+          const mChange=mAvg-priorAvg;
+          const prevPeriodLabel=progressPeriod==="month"?"Apr":progressPeriod==="3months"?"prior 3mo":progressPeriod==="6months"?"prior 6mo":"last year";
+
+          // SVG line graph
+          const SVG_W=600,SVG_H=120,PAD_L=36,PAD_R=16,PAD_T=12,PAD_B=24;
+          const plotW=SVG_W-PAD_L-PAD_R,plotH=SVG_H-PAD_T-PAD_B;
+          const ptX=(i)=>PAD_L+(momentumPts.length>1?i/(momentumPts.length-1):0.5)*plotW;
+          const ptY=(s)=>PAD_T+plotH-Math.max(0,Math.min(s,100))/100*plotH;
+          const buildPath=(pts)=>{
+            if(pts.length<2)return"";
+            const co=pts.map((p,i)=>[ptX(i),ptY(p.score)]);
+            let path=`M ${co[0][0]} ${co[0][1]}`;
+            for(let i=1;i<co.length;i++){const cx=(co[i-1][0]+co[i][0])/2;path+=` C ${cx} ${co[i-1][1]}, ${cx} ${co[i][1]}, ${co[i][0]} ${co[i][1]}`;}
+            return path;
+          };
+          const linePath=buildPath(momentumPts);
+          const areaPath=momentumPts.length>=2?`${linePath} L ${ptX(momentumPts.length-1)} ${PAD_T+plotH} L ${PAD_L} ${PAD_T+plotH} Z`:"";
+          const step=Math.max(Math.ceil(momentumPts.length/5),1);
+          const xLabels=momentumPts.filter((_,i)=>i%step===0||i===momentumPts.length-1).map(p=>{const dt=new Date(p.date+"T12:00:00");return{x:ptX(p.i),label:`${dt.getDate()} ${dt.toLocaleDateString("en-GB",{month:"short"})}`};});
+          const peakPt=momentumPts.length?momentumPts.reduce((b,p)=>p.score>b.score?p:b,momentumPts[0]):{score:0,i:0,date:TODAY};
+
+          // Habit stability
+          const todayWk=isoWeekKey(TODAY);
+          const habStab=habits.map(h=>{
+            let done=0,total=0;
+            const byWk={};periodDates.forEach(d=>{const wk=isoWeekKey(d);if(!byWk[wk])byWk[wk]=[];byWk[wk].push(d);});
+            Object.entries(byWk).forEach(([wk,wkDates])=>{
+              const full=weekDatesOf(wk);
+              const aw=wk===todayWk?h:(habitsArchive[wk]||[]).find(a=>a.id===h.id);
+              if(!aw)return;
+              wkDates.forEach(d=>{const idx=full.indexOf(d);if(idx>=0){total++;if(aw.days[idx])done++;}});
+            });
+            return{id:h.id,name:h.name,color:h.color,icon:h.icon,pct:total?Math.round(done/total*100):0};
+          }).sort((a,b)=>b.pct-a.pct);
+
+          // Goal milestone timeline
+          const milestoneTimeline=allGoals.flatMap(g=>(g.milestones||[]).map(m=>({
+            title:m.title,done:m.done,date:m.doneDate||m.deadline||"",
+            goalTitle:g.title,color:g.color||"#A78BC7",
+          }))).filter(m=>m.date).sort((a,b)=>a.date.localeCompare(b.date)).slice(-5);
+
+          // Productivity rhythm
+          const DOW_LABELS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+          const byDow=Array(7).fill(0);
+          todos.filter(t=>t.done).forEach(t=>{const d=new Date(t.date+"T12:00:00");byDow[(d.getDay()+6)%7]++;});
+          const maxDow=Math.max(...byDow,1);
+          const peakDow=byDow.indexOf(Math.max(...byDow));
+
+          // Activity breakdown
+          const ACT_KEYS=[["todos","#B89576"],["habits","#7F8F68"],["goals","#A78BC7"],["grat","#C98F8F"],["home","#7E9AAF"]];
+          const getActBuckets=(()=>{
+            if(actBarGran==="weekly"){
+              return Array.from({length:5},(_,i)=>{
+                const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-7*(4-i+actBarNav*5));
+                const wk=isoWeekKey(_ld(d));const dates=weekDatesOf(wk);
+                const d0=new Date(dates[0]+"T12:00:00"),d6=new Date(dates[6]+"T12:00:00");
+                const label=`${d0.getDate()}–${d6.getDate()} ${d0.toLocaleDateString("en-GB",{month:"short"})}`;
+                const todosV=todos.filter(t=>dates.includes(t.date)&&t.done).length;
+                const aw=wk===todayWk?habits:(habitsArchive[wk]||[]);
+                const habitsV=aw.reduce((s,h)=>s+h.days.filter(Boolean).length,0);
+                const goalsV=allGoals.flatMap(g=>g.milestones||[]).filter(m=>m.done&&m.doneDate&&dates.includes(m.doneDate)).length;
+                const gratV=dates.reduce((s,d2)=>s+(gratitude[d2]||[]).length,0);
+                const homeV=wk===todayWk?DAYS.reduce((s,dn)=>s+(cleaning[dn]||[]).filter(t=>t.done).length,0):0;
+                return{label,todos:todosV,habits:habitsV,goals:goalsV,grat:gratV,home:homeV};
+              });
+            }
+            if(actBarGran==="monthly"){
+              return Array.from({length:4},(_,i)=>{
+                const d=new Date(TODAY+"T12:00:00");d.setMonth(d.getMonth()-(3-i+actBarNav*4));
+                const yr=d.getFullYear(),mo=d.getMonth();
+                const pfx=`${yr}-${String(mo+1).padStart(2,"0")}`;
+                const label=d.toLocaleDateString("en-GB",{month:"short",year:"2-digit"});
+                const todosV=todos.filter(t=>t.date.startsWith(pfx)&&t.done).length;
+                const daysInMo=new Date(yr,mo+1,0).getDate();
+                let habitsV=0;
+                for(let di=1;di<=daysInMo;di++){const dd=`${pfx}-${String(di).padStart(2,"0")}`;const wk=isoWeekKey(dd);const wkD=weekDatesOf(wk);const idx=wkD.indexOf(dd);if(idx<0)continue;const aw2=wk===todayWk?habits:(habitsArchive[wk]||[]);habitsV+=aw2.filter(h=>h.days[idx]).length;}
+                const goalsV=allGoals.flatMap(g=>g.milestones||[]).filter(m=>m.done&&(m.doneDate||"").startsWith(pfx)).length;
+                const gratV=Object.entries(gratitude).filter(([d2])=>d2.startsWith(pfx)).reduce((s,[,arr])=>s+arr.length,0);
+                return{label,todos:todosV,habits:habitsV,goals:goalsV,grat:gratV,home:0};
+              });
+            }
+            // daily
+            return Array.from({length:7},(_,i)=>{
+              const d=new Date(TODAY+"T12:00:00");d.setDate(d.getDate()-(6-i+actBarNav*7));
+              const date=_ld(d);
+              const label=d.toLocaleDateString("en-GB",{weekday:"short"});
+              const todosV=todos.filter(t=>t.date===date&&t.done).length;
+              const wk=isoWeekKey(date);const wkD2=weekDatesOf(wk);const idx=wkD2.indexOf(date);
+              const aw3=wk===todayWk?habits:(habitsArchive[wk]||[]);
+              const habitsV=idx>=0?aw3.filter(h=>h.days[idx]).length:0;
+              const goalsV=allGoals.flatMap(g=>g.milestones||[]).filter(m=>m.done&&m.doneDate===date).length;
+              const gratV=(gratitude[date]||[]).length;
+              const homeV=date===TODAY?DAYS.reduce((s,dn)=>s+(cleaning[dn]||[]).filter(t=>t.done).length,0):0;
+              return{label,todos:todosV,habits:habitsV,goals:goalsV,grat:gratV,home:homeV};
+            });
+          })();
+          const actMax=Math.max(...getActBuckets.map(b=>b.todos+b.habits+b.goals+b.grat+b.home),1);
+          const actTotals={todos:getActBuckets.reduce((s,b)=>s+b.todos,0),habits:getActBuckets.reduce((s,b)=>s+b.habits,0),goals:getActBuckets.reduce((s,b)=>s+b.goals,0),grat:getActBuckets.reduce((s,b)=>s+b.grat,0),home:getActBuckets.reduce((s,b)=>s+b.home,0)};
+          const actPeriodLabel=progressPeriod==="month"?hmLabel:progressPeriod==="3months"?"Last 3 Months":progressPeriod==="6months"?"Last 6 Months":"This Year";
+
+          // Wins gallery
+          const winsItems=(()=>{
+            const items=[];
+            habits.forEach(h=>{const s=streak(h.days);if(s>=7)items.push({icon:RW_ICONS.streak,title:`${s} Day Habit Streak`,desc:`${h.name} — ${s} consecutive days`,date:TODAY,bg:"#F3EAE1"});});
+            allGoals.filter(g=>g.progress>=100||(g.milestones&&g.milestones.length>0&&g.milestones.every(m=>m.done))).slice(0,3).forEach(g=>items.push({icon:RW_ICONS.goal,title:"Goal Achieved",desc:g.title,date:g.deadline||TODAY,bg:"#F3EAE1"}));
+            if(gratStreak>=7)items.push({icon:RW_ICONS.grat,title:"Gratitude Consistency",desc:`Logged gratitude ${gratStreak} times this month.`,date:TODAY,bg:"#F7EDEA"});
+            if(bilCleanPct===100&&bilCleanTotal>0)items.push({icon:RW_ICONS.home,title:"All Reset Done",desc:"You completed all tasks in your home reset.",date:TODAY,bg:"#EEF3F8"});
+            const topHab=habStab[0];
+            if(topHab&&topHab.pct>=80)items.push({icon:RW_ICONS.habit,title:"Habit Champion",desc:`${topHab.name} at ${topHab.pct}% consistency.`,date:TODAY,bg:"#EEF3EA"});
+            return items.slice(0,5);
+          })();
+
+          return(
+          <div style={{padding:"0 24px 64px"}}>
+
+            {/* Header */}
+            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:20}}>
+              <div>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>My Progress</h1>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Track your consistency, celebrate your wins, and see how your life is improving over time.</div>
+              </div>
+              {headerIcons}
+            </div>
+
+            {/* Period tabs */}
+            <div style={{display:"flex",gap:0,marginBottom:24}}>
+              {PERIODS.map(([v,l],pi)=>(
+                <button key={v} onClick={()=>setProgressPeriod(v)} style={{padding:"7px 18px",border:"1px solid var(--border)",borderRight:pi===PERIODS.length-1?"1px solid var(--border)":"none",borderRadius:pi===0?"20px 0 0 20px":pi===PERIODS.length-1?"0 20px 20px 0":"0",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",background:progressPeriod===v?"var(--ink)":"#fff",color:progressPeriod===v?"#f4ede3":"var(--ink)",transition:"all .15s"}}>
+                  {l}
+                </button>
+              ))}
+            </div>
+
+            {/* ── 1. Consistency Heatmap ── */}
+            <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)",marginBottom:16}}>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 220px",gap:32,alignItems:"start"}}>
+                {/* Left: heatmap */}
                 <div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"rgba(201,168,124,.6)",letterSpacing:".12em",marginBottom:4}}>Week {bilWeekKey.split("-W")[1]} · {bilWeekDates[0]} → {bilWeekDates[6]}</div>
-                  <div className="bil-score" style={{color:bilWeekScore>=70?"var(--gold)":bilWeekScore>=50?"#f0e8dc":"rgba(240,232,220,.5)"}}>{bilWeekScore}<span style={{fontSize:20,fontWeight:400,color:"rgba(240,232,220,.4)"}}>%</span></div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"rgba(240,232,220,.7)",marginTop:6}}>{bilVerdict}</div>
-                </div>
-                <div style={{flex:1,display:"flex",flexDirection:"column",gap:10}}>
-                  {[
-                    {label:"To-Do",pct:bilTodoPct,color:"#7a9070",sub:`${bilWeekDone}/${bilWeekTotal} tasks`},
-                    {label:"Habits",pct:bilHabitPct,color:"#c9a87c",sub:`${bilHabitDone}/${bilHabitTotal} day-checks`},
-                    {label:"Home Reset",pct:bilCleanPct,color:"#7090a8",sub:`${bilCleanDone}/${bilCleanTotal} tasks`},
-                    {label:"Goals",pct:bilGoalPct,color:"#b098c0",sub:`${bilMonthGoals.length} active this month`},
-                  ].map(r=>(
-                    <div key={r.label}>
-                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                        <span style={{fontSize:11,color:"rgba(240,232,220,.55)"}}>{r.label}</span>
-                        <span style={{fontFamily:"'Playfair Display',serif",fontSize:11,color:"rgba(240,232,220,.7)"}}>{r.pct}%</span>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#F3ECE4"/><rect x="7" y="7" width="3" height="3" rx="1" fill="#B89576"/><rect x="11.5" y="7" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="16" y="7" width="3" height="3" rx="1" fill="#E9DDD2"/><rect x="7" y="11.5" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="11.5" y="11.5" width="3" height="3" rx="1" fill="#B89576"/><rect x="16" y="11.5" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="7" y="16" width="3" height="3" rx="1" fill="#E9DDD2"/><rect x="11.5" y="16" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="16" y="16" width="3" height="3" rx="1" fill="#B89576"/></svg>
+                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>1. Consistency Heatmap</span>
+                    </div>
+                    <div style={{display:"flex",alignItems:"center",gap:6}}>
+                      <button onClick={()=>setHmNavMonth(n=>n-1)} style={{background:"none",border:"1px solid var(--border)",borderRadius:6,cursor:"pointer",fontSize:14,color:"var(--ink-light)",padding:"2px 8px",lineHeight:1}}>‹</button>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",minWidth:96,textAlign:"center"}}>{hmLabel}</span>
+                      <button onClick={()=>setHmNavMonth(n=>Math.min(n+1,0))} disabled={hmNavMonth===0} style={{background:"none",border:"1px solid var(--border)",borderRadius:6,cursor:"pointer",fontSize:14,color:hmNavMonth===0?"var(--border)":"var(--ink-light)",padding:"2px 8px",lineHeight:1}}>›</button>
+                    </div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:4}}>
+                    {["M","T","W","T","F","S","S"].map((d,i)=><div key={i} style={{textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)"}}>{d}</div>)}
+                  </div>
+                  {(()=>{
+                    const cells=[];
+                    for(let i=0;i<hmFirstDow;i++)cells.push(null);
+                    hmDates.forEach(d=>cells.push(d));
+                    const rows=[];for(let r=0;r<Math.ceil(cells.length/7);r++)rows.push(cells.slice(r*7,(r+1)*7));
+                    return rows.map((row,ri)=>(
+                      <div key={ri} style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:3}}>
+                        {Array.from({length:7},(_,ci)=>{
+                          const d=row[ci];
+                          if(!d)return<div key={ci}/>;
+                          const sc=getDayScore(d);
+                          const isFuture=d>TODAY,isToday=d===TODAY;
+                          return<div key={ci} title={`${d}: ${Math.round(sc*100)}%`} style={{aspectRatio:"1",borderRadius:4,background:isFuture?"#f4f0eb":sc<0.05?"#ede8e1":`rgba(184,149,118,${0.12+sc*0.88})`,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1}}/>;
+                        })}
                       </div>
-                      <div className="bil-bar" style={{background:"rgba(255,255,255,.1)"}}><div className="bil-fill" style={{width:`${r.pct}%`,background:r.color}}/></div>
+                    ));
+                  })()}
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10}}>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Less consistent</span>
+                    <div style={{display:"flex",gap:2}}>{[0.12,0.3,0.5,0.68,0.8,1].map((o,i)=><div key={i} style={{width:14,height:14,borderRadius:3,background:`rgba(184,149,118,${o})`}}/>)}</div>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>More consistent</span>
+                  </div>
+                </div>
+                {/* Right: overview */}
+                <div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)",marginBottom:14}}>This Month Overview</div>
+                  {[
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F3ECE4"/><rect x="6" y="5.5" width="10" height="11" rx="1.5" stroke="#B89576" strokeWidth="1.4"/><path d="M8.5 10h5M8.5 12.5h3" stroke="#B89576" strokeWidth="1.4" strokeLinecap="round"/></svg>,label:"To-Do Tasks",val:hmTodosDone,sub:"completed"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#EEF3EA"/><path d="M6 11.5L9.5 15L16 8" stroke="#7F8F68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"Habits",val:hmHabitsDone,sub:"checked off"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F2EDF7"/><circle cx="11" cy="11" r="4.5" stroke="#A78BC7" strokeWidth="1.4"/><circle cx="11" cy="11" r="1.6" fill="#A78BC7"/><path d="M13.5 8.5L16 6" stroke="#A78BC7" strokeWidth="1.5" strokeLinecap="round"/></svg>,label:"Goals / Milestones",val:hmGoalsDone,sub:"completed"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F7EDEA"/><path d="M11 16.5c-.2 0-.4-.1-.5-.2C7.8 14.4 6 12.8 6 10.2 6 8.5 7.3 7 9 7c1 0 1.9.5 2 1.2.6-.7 1.5-1.2 2.5-1.2C15.2 7 16.5 8.5 16.5 10.2c0 2.6-1.8 4.2-4.5 6.1-.1.1-.5.2-1 .2z" fill="#C98F8F"/></svg>,label:"Gratitude Entries",val:hmGratTotal,sub:"logged"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#EEF3F8"/><path d="M6 10.5L11 6.5L16 10.5V16H13V12.8H9V16H6V10.5Z" stroke="#7E9AAF" strokeWidth="1.4" strokeLinejoin="round"/></svg>,label:"Home Reset Tasks",val:hmHomeReset,sub:"completed"},
+                  ].map(r=>(
+                    <div key={r.label} style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                      {r.icon}
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11.5,color:"var(--ink)",flex:1}}>{r.label}</span>
+                      <div style={{textAlign:"right"}}>
+                        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{r.val}</div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{r.sub}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="bil-grid">
-              {/* Habits grid */}
-              <div className="card"><div className="ct">Habits this week</div><div className="cs">Your 7-day tracker</div>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
-                  {DAYS.map(d=><div key={d} style={{width:20,textAlign:"center",fontSize:9,color:"var(--ink-light)",flex:1}}>{d}</div>)}
+            {/* ── 2. Momentum Over Time ── */}
+            <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)",marginBottom:16}}>
+              <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:14}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#F3ECE4"/><path d="M7 16C8.5 13.5 10 12 12 13C14 14 15 10 18.5 11.5" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>2. Momentum Over Time</span>
                 </div>
-                {habits.length===0&&<div className="emp">No habits yet ✦</div>}
-                {habits.map(hab=>(
-                  <div key={hab.id} style={{marginBottom:8}}>
-                    <div style={{fontSize:11.5,color:"var(--ink)",marginBottom:3,display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:13}}>{hab.icon}</span>{hab.name}</div>
-                    <div className="bil-dots">{hab.days.map((ck,i)=><div key={i} className={`bil-d ${ck?"ck":""}`} style={{flex:1,background:ck?hab.color:undefined}}>{ ck ? "✓" : ""}</div>)}</div>
-                  </div>
-                ))}
-                <div style={{marginTop:14,paddingTop:12,borderTop:"1px solid var(--border)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center"}}>{bilHabitDone} checks out of {bilHabitTotal} possible this week</div>
+                <div style={{display:"flex",alignItems:"center",gap:6,background:"#f8f5f1",borderRadius:8,padding:"6px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)"}}>
+                  Overall Completion
+                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#9a8a7a" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                </div>
               </div>
-
-              {/* Right side stack */}
-              <div style={{display:"flex",flexDirection:"column",gap:18}}>
-                {/* To-Do this week */}
-                <div className="card"><div className="ct">To-Do this week</div><div className="cs">Tasks completed</div>
-                  <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"8px 0 4px"}}><span style={{fontFamily:"'Playfair Display',serif",fontSize:42,fontWeight:600,lineHeight:1,color:"var(--sage)"}}>{bilWeekDone}</span><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,color:"var(--ink-light)"}}>/ {bilWeekTotal} tasks</span></div>
-                  <div className="bil-bar"><div className="bil-fill" style={{width:`${bilTodoPct}%`,background:"#7a9070"}}/></div>
-                  {bilWeekDates.map(d=>{const dt=todos.filter(t=>t.date===d);const dn=dt.filter(t=>t.done).length;if(dt.length===0)return null;return(<div key={d} style={{display:"flex",alignItems:"center",gap:8,marginTop:6,fontSize:11}}><span style={{color:"var(--ink-light)",minWidth:32}}>{fd(d).split(",")[0]}</span><div style={{flex:1,height:4,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:dt.length?`${Math.round(dn/dt.length*100)}%`:"0%",background:"#7a9070",borderRadius:4}}/></div><span style={{color:"var(--ink-light)",minWidth:30,textAlign:"right"}}>{dn}/{dt.length}</span></div>);} )}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 150px",gap:16,alignItems:"center"}}>
+                <div style={{overflow:"hidden"}}>
+                  <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} style={{width:"100%",height:"auto",display:"block"}}>
+                    <defs>
+                      <linearGradient id="moGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#B89576" stopOpacity="0.2"/>
+                        <stop offset="100%" stopColor="#B89576" stopOpacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    {[0,25,50,75,100].map(v=>(
+                      <g key={v}>
+                        <line x1={PAD_L} y1={ptY(v)} x2={SVG_W-PAD_R} y2={ptY(v)} stroke="#f0ebe4" strokeWidth="1"/>
+                        <text x={PAD_L-4} y={ptY(v)+4} textAnchor="end" fontSize="9" fill="#b5a99a" fontFamily="DM Sans">{v}%</text>
+                      </g>
+                    ))}
+                    {areaPath&&<path d={areaPath} fill="url(#moGrad)"/>}
+                    {linePath&&<path d={linePath} fill="none" stroke="#B89576" strokeWidth="2" strokeLinecap="round"/>}
+                    {peakPt&&peakPt.score>0&&(
+                      <g>
+                        <circle cx={ptX(peakPt.i)} cy={ptY(peakPt.score)} r="4" fill="#fff" stroke="#B89576" strokeWidth="2"/>
+                        <rect x={Math.min(ptX(peakPt.i)-22,SVG_W-PAD_R-44)} y={ptY(peakPt.score)-28} width="44" height="22" rx="4" fill="#fff" style={{filter:"drop-shadow(0 1px 4px rgba(0,0,0,.1))"}}/>
+                        <text x={Math.min(ptX(peakPt.i),SVG_W-PAD_R-22)} y={ptY(peakPt.score)-16} textAnchor="middle" fontSize="8.5" fill="#9a7a5a" fontFamily="DM Sans">{peakPt.date.slice(5)}</text>
+                        <text x={Math.min(ptX(peakPt.i),SVG_W-PAD_R-22)} y={ptY(peakPt.score)-6} textAnchor="middle" fontSize="9" fill="#B89576" fontFamily="DM Sans" fontWeight="600">{peakPt.score}%</text>
+                      </g>
+                    )}
+                    {xLabels.map((l,i)=>(
+                      <text key={i} x={Math.min(Math.max(l.x,PAD_L+20),SVG_W-PAD_R-20)} y={SVG_H-4} textAnchor="middle" fontSize="9" fill="#b5a99a" fontFamily="DM Sans">{l.label}</text>
+                    ))}
+                  </svg>
                 </div>
+                <div style={{background:"#f8f5f1",borderRadius:10,padding:"16px 14px",textAlign:"center"}}>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:4}}>Average Completion</div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:38,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{mAvg}%</div>
+                  <div style={{fontSize:11,fontFamily:"'DM Sans',sans-serif",marginTop:8,color:mChange>=0?"#7F8F68":"#C98F8F"}}>
+                    {mChange>=0?"↑":"↓"} {Math.abs(mChange)}% from {prevPeriodLabel}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                {/* Focus & Cleaning */}
-                <div className="card">
-                  <div style={{display:"flex",gap:18}}>
-                    <div style={{flex:1}}>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Focus sessions</div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:600,color:"var(--gold)"}}>{pomoCount}</div>
-                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>total completed</div>
+            {/* ── 3 + 4: Habit Stability | Goal Milestone Timeline ── */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+
+              {/* 3. Habit Stability */}
+              <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#EEF3EA"/><rect x="7" y="9" width="12" height="2.5" rx="1.2" fill="#7F8F68"/><rect x="7" y="13" width="9" height="2.5" rx="1.2" fill="#A8B29A"/><rect x="7" y="17" width="6" height="2.5" rx="1.2" fill="#D5DEC9"/></svg>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>3. Habit Stability</span>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between",fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",marginBottom:10,paddingBottom:6,borderBottom:"1px solid var(--border)"}}>
+                  <span>Habit</span><span>Consistency</span>
+                </div>
+                {habStab.length===0?<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No habits tracked yet ✦</div>:
+                  habStab.map(h=>(
+                    <div key={h.id} style={{marginBottom:10}}>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
+                        <div style={{display:"flex",alignItems:"center",gap:5}}>
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12C5.3 10.8 3 9.1 3 6.8 3 5.4 4 4.5 5.3 4.5 6.1 4.5 6.8 4.9 7 5.5c.2-.6.9-1 1.7-1C10 4.5 11 5.4 11 6.8 11 9.1 8.7 10.8 7 12z" fill={h.color} opacity="0.7"/></svg>
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)"}}>{h.name}</span>
+                        </div>
+                        <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>{h.pct}%</span>
+                      </div>
+                      <div style={{height:6,background:"#f0ebe4",borderRadius:6,overflow:"hidden"}}>
+                        <div style={{height:"100%",width:`${h.pct}%`,background:h.color,borderRadius:6}}/>
+                      </div>
                     </div>
-                    <div style={{flex:1}}>
-                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginBottom:4}}>Home Reset</div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:600,color:"#7090a8"}}>{bilCleanPct}<span style={{fontSize:16,fontWeight:400}}>%</span></div>
-                      <div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>{bilCleanDone}/{bilCleanTotal} tasks done</div>
+                  ))
+                }
+                {habStab.length>0&&<button onClick={()=>setPage("habits")} style={{marginTop:6,background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer",display:"flex",alignItems:"center",gap:4,padding:0}}>View all habits ›</button>}
+              </div>
+
+              {/* 4. Goal Milestone Timeline */}
+              <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#F2EDF7"/><circle cx="10" cy="9" r="2" fill="#A78BC7"/><circle cx="16" cy="13" r="2" fill="#A78BC7"/><circle cx="11" cy="18" r="2" fill="#A78BC7"/><path d="M10 9L16 13L11 18" stroke="#A78BC7" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>4. Goal Milestone Timeline</span>
+                </div>
+                {milestoneTimeline.length===0?<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No milestones yet — add goals to see your timeline ✦</div>:
+                  milestoneTimeline.slice().reverse().map((m,i)=>(
+                    <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:12}}>
+                      <div style={{width:22,height:22,borderRadius:"50%",background:m.done?"#7F8F68":"#A78BC7",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
+                        {m.done
+                          ?<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          :<div style={{width:8,height:8,borderRadius:"50%",background:"rgba(255,255,255,.5)"}}/>
+                        }
+                      </div>
+                      <div style={{flex:1}}>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"var(--ink)"}}>{m.title||m.goalTitle}</div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginTop:1}}>
+                          {m.date?new Date(m.date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):""}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                }
+                {milestoneTimeline.length>0&&<button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",cursor:"pointer",display:"flex",alignItems:"center",gap:4,padding:0,marginTop:4}}>View all goals ›</button>}
+              </div>
+            </div>
+
+            {/* ── 5 + 7: Productivity Rhythm | Activity Breakdown ── */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+
+              {/* 5. Productivity Rhythm */}
+              <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#F8EFE7"/><rect x="8" y="15" width="2.5" height="4" rx="1.2" fill="#D8B08C"/><rect x="12" y="11" width="2.5" height="8" rx="1.2" fill="#B89576"/><rect x="16" y="8" width="2.5" height="11" rx="1.2" fill="#9C6F4D"/></svg>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>5. Productivity Rhythm</span>
+                </div>
+                <div style={{display:"flex",gap:0,marginBottom:16,background:"#f8f5f1",borderRadius:20,padding:3,width:"fit-content"}}>
+                  {[["time","Time of Day"],["weekday","Day of Week"]].map(([v,l])=>(
+                    <button key={v} onClick={()=>setRhythmTab(v)} style={{padding:"5px 13px",borderRadius:16,border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer",background:rhythmTab===v?"#fff":"transparent",color:rhythmTab===v?"var(--ink)":"var(--ink-light)",fontWeight:rhythmTab===v?500:400}}>
+                      {l}
+                    </button>
+                  ))}
+                </div>
+                {rhythmTab==="weekday"?(
+                  <div>
+                    <div style={{display:"flex",alignItems:"flex-end",gap:5,height:80,marginBottom:6}}>
+                      {DOW_LABELS.map((d,i)=>(
+                        <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center"}}>
+                          <div style={{width:"100%",borderRadius:"3px 3px 0 0",background:i===peakDow?"#B89576":byDow[i]>0?"#D8C7B5":"#f0ebe4",height:`${Math.max(byDow[i]/maxDow*68,3)}px`,minHeight:3}}/>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{display:"flex",gap:5,marginBottom:10}}>
+                      {DOW_LABELS.map((d,i)=><div key={i} style={{flex:1,textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"var(--ink-light)"}}>{d}</div>)}
+                    </div>
+                    <div style={{padding:"9px 12px",background:"#faf7f3",borderRadius:8,display:"flex",alignItems:"center",gap:8}}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#F3ECE4"/><path d="M5.5 8L7.5 10L11 5.5" stroke="#B89576" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>
+                        {todos.filter(t=>t.done).length>0?`Your most productive day is ${DOW_LABELS[peakDow]}.`:"Complete tasks to see your rhythm."}
+                      </span>
                     </div>
                   </div>
+                ):(
+                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"28px 0",gap:8}}>
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#D8C7B5" strokeWidth="2"/><path d="M16 9v7l4 2" stroke="#D8C7B5" strokeWidth="2" strokeLinecap="round"/></svg>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center"}}>Time-of-day tracking will begin<br/>once tasks are marked complete ✦</div>
+                  </div>
+                )}
+              </div>
+
+              {/* 7. Activity Breakdown */}
+              <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#EEF3F8"/><rect x="7" y="13" width="2.5" height="6" rx="1.2" fill="#B89576"/><rect x="10.5" y="10" width="2.5" height="9" rx="1.2" fill="#7F8F68"/><rect x="14" y="8" width="2.5" height="11" rx="1.2" fill="#A78BC7"/><rect x="17.5" y="11" width="2.5" height="8" rx="1.2" fill="#7E9AAF"/></svg>
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>7. Activity Breakdown</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:5}}>
+                    <select value={actBarGran} onChange={e=>{setActBarGran(e.target.value);setActBarNav(0);}} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",border:"1px solid var(--border)",borderRadius:8,padding:"4px 8px",background:"#fff",cursor:"pointer"}}>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
+                    <button onClick={()=>setActBarNav(n=>n+1)} style={{background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--ink-light)",padding:"0 3px",lineHeight:1}}>‹</button>
+                    <button onClick={()=>setActBarNav(n=>Math.max(n-1,0))} disabled={actBarNav===0} style={{background:"none",border:"none",cursor:"pointer",fontSize:15,color:actBarNav===0?"var(--border)":"var(--ink-light)",padding:"0 3px",lineHeight:1}}>›</button>
+                  </div>
+                </div>
+                {/* Stacked bars */}
+                <div style={{display:"flex",alignItems:"flex-end",gap:4,height:80,marginBottom:5}}>
+                  {getActBuckets.map((b,i)=>{
+                    const total=b.todos+b.habits+b.goals+b.grat+b.home;
+                    const h=total>0?Math.max(total/actMax*72,4):2;
+                    return(
+                      <div key={i} title={`Todos:${b.todos} Habits:${b.habits} Goals:${b.goals} Grat:${b.grat} Home:${b.home}`} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"stretch"}}>
+                        <div style={{borderRadius:"3px 3px 0 0",overflow:"hidden",display:"flex",flexDirection:"column-reverse",height:`${h}px`}}>
+                          {ACT_KEYS.map(([k,c])=>b[k]>0&&(
+                            <div key={k} style={{background:c,height:`${b[k]/Math.max(total,1)*h}px`,minHeight:1}}/>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{display:"flex",gap:4,marginBottom:10}}>
+                  {getActBuckets.map((b,i)=>(
+                    <div key={i} style={{flex:1,textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontSize:8.5,color:"var(--ink-light)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{b.label}</div>
+                  ))}
+                </div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:"3px 10px",marginBottom:10}}>
+                  {[["To-Do","#B89576"],["Habits","#7F8F68"],["Goals","#A78BC7"],["Gratitude","#C98F8F"],["Home Reset","#7E9AAF"]].map(([l,c])=>(
+                    <div key={l} style={{display:"flex",alignItems:"center",gap:4}}>
+                      <div style={{width:8,height:8,borderRadius:2,background:c}}/>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)"}}>{l}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{borderTop:"1px solid var(--border)",paddingTop:10,display:"flex"}}>
+                  {[["To-Do Tasks",actTotals.todos],["Habits",actTotals.habits],["Goals",actTotals.goals],["Gratitude",actTotals.grat],["Home Reset",actTotals.home]].map(([l,v])=>(
+                    <div key={l} style={{flex:1,textAlign:"center"}}>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>{v}</div>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"var(--ink-light)",marginTop:1}}>{l}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          </>}
+            </div>
 
-          {bilView==="month"&&<>
-            <div className="bil-grid">
-              {/* Goals this month */}
-              <div className="card"><div className="ct">Goals · {MONTHS[NOW.getMonth()]} {NOW.getFullYear()}</div><div className="cs">{bilMonthGoals.length} active goals</div>
-                {bilMonthGoals.length===0&&<div className="emp">No goals set for this month ✦</div>}
-                {bilMonthGoals.map(g=>(
-                  <div key={g.id} style={{marginBottom:14}}>
-                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:13,color:"var(--ink)",fontWeight:300}}>{g.title}</span><span style={{fontFamily:"'Playfair Display',serif",fontSize:13,color:g.color}}>{g.progress}%</span></div>
-                    <div className="bil-bar"><div className="bil-fill" style={{width:`${g.progress}%`,background:g.color}}/></div>
-                    {g.category&&<div style={{fontSize:10,color:"var(--ink-light)",marginTop:2}}>{g.category}{g.deadline?` · ${g.deadline}`:""}</div>}
-                  </div>
-                ))}
-                {bilMonthGoals.length>0&&<div style={{marginTop:10,paddingTop:10,borderTop:"1px solid var(--border)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Average progress</span>
-                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--gold)"}}>{bilGoalPct}%</span>
-                </div>}
-              </div>
-
-              {/* Monthly todos */}
-              <div className="card"><div className="ct">To-Do · {MONTHS[NOW.getMonth()]}</div><div className="cs">Tasks completed this month</div>
-                {(()=>{const monthPfx=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;const mt=todos.filter(t=>t.date.startsWith(monthPfx));const md=mt.filter(t=>t.done).length;const pct=mt.length?Math.round(md/mt.length*100):0;return(<>
-                  <div style={{display:"flex",alignItems:"baseline",gap:8,margin:"8px 0 4px"}}><span style={{fontFamily:"'Playfair Display',serif",fontSize:42,fontWeight:600,lineHeight:1,color:"var(--sage)"}}>{md}</span><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,color:"var(--ink-light)"}}>/ {mt.length} tasks</span></div>
-                  <div className="bil-bar"><div className="bil-fill" style={{width:`${pct}%`,background:"#7a9070"}}/></div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",marginTop:8}}>{pct}% completion rate this month</div>
-                </>);})()}
-                <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid var(--border)"}}>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:8}}>By priority</div>
-                  {["high","medium","low"].map(p=>{const monthPfx=`${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,"0")}`;const pt=todos.filter(t=>t.date.startsWith(monthPfx)&&(t.priority??"medium")===p);const pd=pt.filter(t=>t.done).length;if(pt.length===0)return null;return(<div key={p} className="bil-row"><span className={`pri ${p}`}>{p}</span><div style={{flex:1}}><div className="bil-bar"><div className="bil-fill" style={{width:pt.length?`${Math.round(pd/pt.length*100)}%`:"0%",background:PCOLS[p]}}/></div></div><span className="bil-pct">{pd}/{pt.length}</span></div>);} )}
+            {/* ── 6. Wins Gallery ── */}
+            <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)"}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#F7EDEA"/><path d="M13 6L14.5 10.5L19 11L15.5 13.8L16.7 18L13 15.6L9.3 18L10.5 13.8L7 11L11.5 10.5L13 6Z" fill="#C98F8F"/></svg>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>6. Wins Gallery</span>
                 </div>
+                <button onClick={()=>setPage("goals")} style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold-deep)",background:"none",border:"none",cursor:"pointer"}}>View all</button>
               </div>
-            </div>
-          </>}
-
-          {bilView==="trends"&&<>
-            <div className="card">
-              <div className="ct">To-Do completion · last 8 weeks</div>
-              <div className="cs">How many tasks you completed each week</div>
-              <div className="bil-chart">
-                {weeklyChart.map((w,i)=>(
-                  <div key={i} className="bil-col">
-                    <div className="bil-cval">{w.total>0?`${w.pct}%`:""}</div>
-                    <div className="bil-cbar" style={{height:`${w.total>0?(w.pct/maxChartPct)*60:2}px`,background:w.pct>=70?"linear-gradient(to top,#5a7050,#7a9070)":w.pct>=40?"linear-gradient(to top,#a8865a,#c9a87c)":"var(--parchment)"}}/>
-                    <div className="bil-clbl">{w.label}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{display:"flex",gap:18,marginTop:16,paddingTop:14,borderTop:"1px solid var(--border)"}}>
-                {(()=>{const avg=Math.round(weeklyChart.filter(w=>w.total>0).reduce((s,w)=>s+w.pct,0)/(weeklyChart.filter(w=>w.total>0).length||1));const best=weeklyChart.reduce((b,w)=>w.pct>b.pct?w:b,{pct:0,label:"-"});const totalDone=todos.filter(t=>t.done).length;return(<>
-                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--gold)"}}>{avg}%</div><div style={{fontSize:10,color:"var(--ink-light)"}}>8-week avg</div></div>
-                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--sage)"}}>{best.pct}%</div><div style={{fontSize:10,color:"var(--ink-light)"}}>best week ({best.label})</div></div>
-                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"#7090a8"}}>{totalDone}</div><div style={{fontSize:10,color:"var(--ink-light)"}}>total tasks done ever</div></div>
-                  <div style={{flex:1,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"#b098c0"}}>{pomoCount}</div><div style={{fontSize:10,color:"var(--ink-light)"}}>focus sessions ever</div></div>
-                </>);})()}
-              </div>
+              {winsItems.length===0?(
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here as you build your streaks and hit your goals ✦</div>
+              ):(
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:12}}>
+                  {winsItems.map((w,i)=>(
+                    <div key={i} style={{background:w.bg||"#F3EAE1",borderRadius:12,padding:"16px 14px"}}>
+                      <div style={{marginBottom:10}}>{w.icon}</div>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:4}}>{w.title}</div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.45,marginBottom:6}}>{w.desc}</div>
+                      {w.date&&<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)"}}>{(()=>{try{return new Date(w.date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});}catch(e){return w.date;}})()}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Goals across all months */}
-            <div className="card" style={{marginTop:18}}>
-              <div className="ct">Goals · all time</div>
-              <div className="cs">Progress across every month</div>
-              {Object.keys(goals).length===0&&<div className="emp">No goals yet ✦</div>}
-              {Object.entries(goals).sort(([a],[b])=>b.localeCompare(a)).slice(0,6).map(([mk,mgoals])=>{const avg=mgoals.length?Math.round(mgoals.reduce((s,g)=>s+g.progress,0)/mgoals.length):0;const[yr,mo]=mk.split("-");return(<div key={mk} className="bil-row" style={{marginBottom:13}}><span className="bil-lbl">{MONTHS[parseInt(mo)-1].slice(0,3)} {yr}</span><div style={{flex:1}}><div className="bil-bar"><div className="bil-fill" style={{width:`${avg}%`,background:"linear-gradient(90deg,#9078b0,#b098c0)"}}/></div></div><span className="bil-pct">{avg}%</span></div>);} )}
-            </div>
-          </>}
-        </>}
+          </div>
+          );
+        })()}
+
 
         {/* ── GOALS ── */}
         {page==="goals"&&(()=>{try{
