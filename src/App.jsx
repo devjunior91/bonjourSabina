@@ -2841,64 +2841,68 @@ export default function App() {
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#F3ECE4"/><rect x="7" y="7" width="3" height="3" rx="1" fill="#B89576"/><rect x="11.5" y="7" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="16" y="7" width="3" height="3" rx="1" fill="#E9DDD2"/><rect x="7" y="11.5" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="11.5" y="11.5" width="3" height="3" rx="1" fill="#B89576"/><rect x="16" y="11.5" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="7" y="16" width="3" height="3" rx="1" fill="#E9DDD2"/><rect x="11.5" y="16" width="3" height="3" rx="1" fill="#D8C7B5"/><rect x="16" y="16" width="3" height="3" rx="1" fill="#B89576"/></svg>
                 <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:600,color:"var(--ink)"}}>1. Consistency Heatmap</span>
               </div>
-              <div style={{overflowX:"auto",paddingBottom:4}}>
-                <div style={{display:"flex",gap:0,minWidth:"fit-content"}}>
-                  <div style={{display:"flex",flexDirection:"column",gap:hmCellGap,marginRight:8,paddingTop:20}}>
-                    {["Mon","","Wed","","Fri","","Sun"].map((d,i)=>(
-                      <div key={i} style={{height:hmCellSize,display:"flex",alignItems:"center",fontFamily:"'DM Sans',sans-serif",fontSize:Math.max(9,Math.min(hmCellSize*0.45,11)),color:"var(--ink-light)",lineHeight:1,whiteSpace:"nowrap"}}>{d}</div>
-                    ))}
-                  </div>
-                  <div style={{display:"flex",gap:hmCellGap}}>
-                    {hmWeekCols.map((wk,wi)=>(
-                      <div key={wi} style={{display:"flex",flexDirection:"column",gap:0}}>
-                        <div style={{height:20,display:"flex",alignItems:"flex-end",paddingBottom:3}}>
-                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{wk.monthLabel||""}</span>
-                        </div>
-                        <div style={{display:"flex",flexDirection:"column",gap:hmCellGap}}>
-                          {wk.days.map((day,di)=>{
-                            const sc=day.score;
-                            const isFuture=sc===null;
-                            const isToday=day.date===TODAY;
-                            const alpha=(0.12+(sc||0)*0.88).toFixed(2);
-                            const bg=isFuture?"#f4f0eb":sc<0.05?"#ede8e1":("rgba(184,149,118,"+alpha+")");
-                            return(
-                              <div key={di}
-                                title={day.date+(isFuture?"":(": "+Math.round((sc||0)*100)+"%"))}
-                                style={{width:hmCellSize,height:hmCellSize,borderRadius:Math.max(2,hmCellSize*0.2),background:bg,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1,flexShrink:0}}
-                              />
-                            );
-                          })}
-                        </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 200px",gap:28,alignItems:"start"}}>
+                {/* Left: heatmap — takes at least half the row */}
+                <div style={{minWidth:0}}>
+                  <div style={{overflowX:"auto",paddingBottom:4}}>
+                    <div style={{display:"flex",gap:0,minWidth:"fit-content"}}>
+                      <div style={{display:"flex",flexDirection:"column",gap:hmCellGap,marginRight:8,paddingTop:20}}>
+                        {["Mon","","Wed","","Fri","","Sun"].map((d,i)=>(
+                          <div key={i} style={{height:hmCellSize,display:"flex",alignItems:"center",fontFamily:"'DM Sans',sans-serif",fontSize:Math.max(9,Math.min(hmCellSize*0.45,11)),color:"var(--ink-light)",lineHeight:1,whiteSpace:"nowrap"}}>{d}</div>
+                        ))}
                       </div>
-                    ))}
+                      <div style={{display:"flex",gap:hmCellGap}}>
+                        {hmWeekCols.map((wk,wi)=>(
+                          <div key={wi} style={{display:"flex",flexDirection:"column",gap:0}}>
+                            <div style={{height:20,display:"flex",alignItems:"flex-end",paddingBottom:3}}>
+                              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{wk.monthLabel||""}</span>
+                            </div>
+                            <div style={{display:"flex",flexDirection:"column",gap:hmCellGap}}>
+                              {wk.days.map((day,di)=>{
+                                const sc=day.score;
+                                const isFuture=sc===null;
+                                const isToday=day.date===TODAY;
+                                const alpha=(0.12+(sc||0)*0.88).toFixed(2);
+                                const bg=isFuture?"#f4f0eb":sc<0.05?"#ede8e1":("rgba(184,149,118,"+alpha+")");
+                                return(
+                                  <div key={di}
+                                    title={day.date+(isFuture?"":(": "+Math.round((sc||0)*100)+"%"))}
+                                    style={{width:hmCellSize,height:hmCellSize,borderRadius:Math.max(2,hmCellSize*0.2),background:bg,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1,flexShrink:0}}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginTop:14}}>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Less</span>
+                    <div style={{display:"flex",gap:3}}>{[0.12,0.3,0.5,0.68,0.8,1].map((o,i)=><div key={i} style={{width:14,height:14,borderRadius:3,background:"rgba(184,149,118,"+o+")"}}/>)}</div>
+                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>More consistent</span>
                   </div>
                 </div>
-              </div>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginTop:14}}>
-                <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Less</span>
-                <div style={{display:"flex",gap:3}}>{[0.12,0.3,0.5,0.68,0.8,1].map((o,i)=><div key={i} style={{width:14,height:14,borderRadius:3,background:"rgba(184,149,118,"+o+")"}}/>)}</div>
-                <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>More consistent</span>
-              </div>
-            </div>
-
-            {/* ── 1b. Period Overview ── */}
-            <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 24px",boxShadow:"var(--shadow)",marginBottom:16}}>
-              <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)",marginBottom:14}}>{ovPeriodLabel} Overview</div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:12}}>
-                {[
-                  {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F3ECE4"/><rect x="6" y="5.5" width="10" height="11" rx="1.5" stroke="#B89576" strokeWidth="1.4"/><path d="M8.5 10h5M8.5 12.5h3" stroke="#B89576" strokeWidth="1.4" strokeLinecap="round"/></svg>,label:"To-Do Tasks",val:ovTodosDone,sub:"completed"},
-                  {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#EEF3EA"/><path d="M6 11.5L9.5 15L16 8" stroke="#7F8F68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"Habits",val:ovHabitsDone,sub:"checked off"},
-                  {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F2EDF7"/><circle cx="11" cy="11" r="4.5" stroke="#A78BC7" strokeWidth="1.4"/><circle cx="11" cy="11" r="1.6" fill="#A78BC7"/><path d="M13.5 8.5L16 6" stroke="#A78BC7" strokeWidth="1.5" strokeLinecap="round"/></svg>,label:"Goals",val:ovGoalsDone,sub:"milestones"},
-                  {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F7EDEA"/><path d="M11 16.5c-.2 0-.4-.1-.5-.2C7.8 14.4 6 12.8 6 10.2 6 8.5 7.3 7 9 7c1 0 1.9.5 2 1.2.6-.7 1.5-1.2 2.5-1.2C15.2 7 16.5 8.5 16.5 10.2c0 2.6-1.8 4.2-4.5 6.1-.1.1-.5.2-1 .2z" fill="#C98F8F"/></svg>,label:"Gratitude",val:ovGratTotal,sub:"entries"},
-                  {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#EEF3F8"/><path d="M6 10.5L11 6.5L16 10.5V16H13V12.8H9V16H6V10.5Z" stroke="#7E9AAF" strokeWidth="1.4" strokeLinejoin="round"/></svg>,label:"Home Reset",val:ovHomeReset,sub:"tasks done"},
-                ].map(r=>(
-                  <div key={r.label} style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",background:"#f8f5f1",borderRadius:10,padding:"12px 8px",gap:6}}>
-                    {r.icon}
-                    <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{r.val}</div>
-                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10.5,color:"var(--ink)",fontWeight:500}}>{r.label}</div>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{r.sub}</div>
-                  </div>
-                ))}
+                {/* Right: overview */}
+                <div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)",marginBottom:14}}>Overview</div>
+                  {[
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F3ECE4"/><rect x="6" y="5.5" width="10" height="11" rx="1.5" stroke="#B89576" strokeWidth="1.4"/><path d="M8.5 10h5M8.5 12.5h3" stroke="#B89576" strokeWidth="1.4" strokeLinecap="round"/></svg>,label:"To-Do Tasks",val:ovTodosDone,sub:"completed"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#EEF3EA"/><path d="M6 11.5L9.5 15L16 8" stroke="#7F8F68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"Habits",val:ovHabitsDone,sub:"checked off"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F2EDF7"/><circle cx="11" cy="11" r="4.5" stroke="#A78BC7" strokeWidth="1.4"/><circle cx="11" cy="11" r="1.6" fill="#A78BC7"/><path d="M13.5 8.5L16 6" stroke="#A78BC7" strokeWidth="1.5" strokeLinecap="round"/></svg>,label:"Goals",val:ovGoalsDone,sub:"milestones"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#F7EDEA"/><path d="M11 16.5c-.2 0-.4-.1-.5-.2C7.8 14.4 6 12.8 6 10.2 6 8.5 7.3 7 9 7c1 0 1.9.5 2 1.2.6-.7 1.5-1.2 2.5-1.2C15.2 7 16.5 8.5 16.5 10.2c0 2.6-1.8 4.2-4.5 6.1-.1.1-.5.2-1 .2z" fill="#C98F8F"/></svg>,label:"Gratitude",val:ovGratTotal,sub:"entries"},
+                    {icon:<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="11" fill="#EEF3F8"/><path d="M6 10.5L11 6.5L16 10.5V16H13V12.8H9V16H6V10.5Z" stroke="#7E9AAF" strokeWidth="1.4" strokeLinejoin="round"/></svg>,label:"Home Reset",val:ovHomeReset,sub:"tasks done"},
+                  ].map(r=>(
+                    <div key={r.label} style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+                      {r.icon}
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11.5,color:"var(--ink)",flex:1}}>{r.label}</span>
+                      <div style={{textAlign:"right"}}>
+                        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{r.val}</div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{r.sub}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             {/* ── 2. Momentum Over Time ── */}
