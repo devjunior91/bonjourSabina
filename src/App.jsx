@@ -2673,6 +2673,8 @@ export default function App() {
 
           // GitHub-style heatmap (responds to period filter)
           const hmNumWeeks=progressPeriod==="month"?5:progressPeriod==="3months"?14:progressPeriod==="6months"?26:53;
+          const hmCellSize=progressPeriod==="month"?28:progressPeriod==="3months"?18:progressPeriod==="6months"?13:11;
+          const hmCellGap=progressPeriod==="month"?4:progressPeriod==="3months"?3:2;
           const hmTodayDow=(new Date(TODAY+"T12:00:00").getDay()+6)%7;
           const hmWeekCols=Array.from({length:hmNumWeeks},(_,wi)=>{
             const weekOffset=hmNumWeeks-1-wi;
@@ -2841,18 +2843,18 @@ export default function App() {
               </div>
               <div style={{overflowX:"auto",paddingBottom:4}}>
                 <div style={{display:"flex",gap:0,minWidth:"fit-content"}}>
-                  <div style={{display:"flex",flexDirection:"column",gap:2,marginRight:6,paddingTop:18}}>
+                  <div style={{display:"flex",flexDirection:"column",gap:hmCellGap,marginRight:8,paddingTop:20}}>
                     {["Mon","","Wed","","Fri","","Sun"].map((d,i)=>(
-                      <div key={i} style={{height:11,display:"flex",alignItems:"center",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"var(--ink-light)",lineHeight:1}}>{d}</div>
+                      <div key={i} style={{height:hmCellSize,display:"flex",alignItems:"center",fontFamily:"'DM Sans',sans-serif",fontSize:Math.max(9,Math.min(hmCellSize*0.45,11)),color:"var(--ink-light)",lineHeight:1,whiteSpace:"nowrap"}}>{d}</div>
                     ))}
                   </div>
-                  <div style={{display:"flex",gap:2}}>
+                  <div style={{display:"flex",gap:hmCellGap}}>
                     {hmWeekCols.map((wk,wi)=>(
                       <div key={wi} style={{display:"flex",flexDirection:"column",gap:0}}>
-                        <div style={{height:16,display:"flex",alignItems:"flex-end",paddingBottom:2}}>
-                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{wk.monthLabel||""}</span>
+                        <div style={{height:20,display:"flex",alignItems:"flex-end",paddingBottom:3}}>
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{wk.monthLabel||""}</span>
                         </div>
-                        <div style={{display:"flex",flexDirection:"column",gap:2}}>
+                        <div style={{display:"flex",flexDirection:"column",gap:hmCellGap}}>
                           {wk.days.map((day,di)=>{
                             const sc=day.score;
                             const isFuture=sc===null;
@@ -2862,7 +2864,7 @@ export default function App() {
                             return(
                               <div key={di}
                                 title={day.date+(isFuture?"":(": "+Math.round((sc||0)*100)+"%"))}
-                                style={{width:11,height:11,borderRadius:2,background:bg,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1,flexShrink:0}}
+                                style={{width:hmCellSize,height:hmCellSize,borderRadius:Math.max(2,hmCellSize*0.2),background:bg,outline:isToday?"2px solid #B89576":"none",outlineOffset:-1,flexShrink:0}}
                               />
                             );
                           })}
@@ -2872,9 +2874,9 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginTop:12}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginTop:14}}>
                 <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Less</span>
-                <div style={{display:"flex",gap:2}}>{[0.12,0.3,0.5,0.68,0.8,1].map((o,i)=><div key={i} style={{width:11,height:11,borderRadius:2,background:"rgba(184,149,118,"+o+")"}}/>)}</div>
+                <div style={{display:"flex",gap:3}}>{[0.12,0.3,0.5,0.68,0.8,1].map((o,i)=><div key={i} style={{width:14,height:14,borderRadius:3,background:"rgba(184,149,118,"+o+")"}}/>)}</div>
                 <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>More consistent</span>
               </div>
             </div>
