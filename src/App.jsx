@@ -3108,7 +3108,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-            </div>
 
             {/* ── 6. Wins Gallery ── */}
             <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 24px",boxShadow:"var(--shadow)"}}>
