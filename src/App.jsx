@@ -1493,7 +1493,8 @@ export default function App() {
   const monthGoalsArr=goals[MK]||[];
   const monthGoalsAvgPct=monthGoalsArr.length?Math.round(monthGoalsArr.reduce((s,g)=>s+g.progress,0)/monthGoalsArr.length):0;
   const goalWeightV=monthGoalsArr.length>0?1:0;
-  const goalDoneV=monthGoalsArr.length>0?monthGoalsAvgPct/100:0;
+  const goalMilestoneDoneToday=allGoals.some(g=>(g.milestones||[]).some(m=>m.done&&m.doneDate===TODAY));
+  const goalDoneV=monthGoalsArr.length>0?(goalMilestoneDoneToday?1:0):0;
   // Gratitude computed — must be before dayTotal
   const GRAT_TARGET=5;
   const todayGrat=gratitude[TODAY]||[];
