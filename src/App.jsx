@@ -2798,7 +2798,7 @@ export default function App() {
           })();
           const actMax=Math.max(...getActBuckets.map(b=>b.todos+b.habits+b.goals+b.grat+b.home),1);
           const actTotals={todos:getActBuckets.reduce((s,b)=>s+b.todos,0),habits:getActBuckets.reduce((s,b)=>s+b.habits,0),goals:getActBuckets.reduce((s,b)=>s+b.goals,0),grat:getActBuckets.reduce((s,b)=>s+b.grat,0),home:getActBuckets.reduce((s,b)=>s+b.home,0)};
-          const actPeriodLabel=progressPeriod==="month"?hmLabel:progressPeriod==="3months"?"Last 3 Months":progressPeriod==="6months"?"Last 6 Months":"This Year";
+          const actPeriodLabel=ovPeriodLabel;
 
           // Wins gallery
           const winsItems=(()=>{
