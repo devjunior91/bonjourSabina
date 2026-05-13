@@ -1235,8 +1235,8 @@ export default function App() {
     const isMonday=now.getDay()===1;
     const isPast3am=now.getHours()>=3;
     if(habitsWeekKey&&habitsWeekKey!==wk&&isMonday&&isPast3am){
-      setHabitsArchive(a=>({...a,[habitsWeekKey]:habits.map(h=>({id:h.id,name:h.name,days:[...h.days]}))}));
-      setHabits(h=>h.map(hab=>({...hab,days:Array(7).fill(false)})));
+      setHabitsArchive(a=>({...a,[habitsWeekKey]:habits.map(h=>({id:h.id,name:h.name,days:[...h.days],dayTimes:[...(h.dayTimes||Array(7).fill(null))]}))}));
+      setHabits(h=>h.map(hab=>({...hab,days:Array(7).fill(false),dayTimes:Array(7).fill(null)})));
     }
     if(!habitsWeekKey||(habitsWeekKey!==wk&&isMonday&&isPast3am))setHabitsWeekKey(wk);
   },[TODAY,minuteTick]);// eslint-disable-line react-hooks/exhaustive-deps
@@ -1352,9 +1352,9 @@ export default function App() {
   const pomoEnd=()=>{try{if(!ac.current)ac.current=new(window.AudioContext||window.webkitAudioContext)();const ctx=ac.current;[659.25,523.25,392].forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0,ctx.currentTime+i*.16);g.gain.linearRampToValueAtTime(.13,ctx.currentTime+i*.16+.04);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.16+.4);o.start(ctx.currentTime+i*.16);o.stop(ctx.currentTime+i*.16+.4);});}catch(e){}};
   const shout=()=>{setPraise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);clearTimeout(pt.current);pt.current=setTimeout(()=>setPraise(null),3000);chime();};
 
-  const toggleDay=(id,i)=>setHabits(h=>h.map(hab=>{if(hab.id!==id)return hab;const was=hab.days[i];if(!was)chime();return{...hab,days:hab.days.map((d,j)=>j===i?!d:d)};}));
+  const toggleDay=(id,i)=>setHabits(h=>h.map(hab=>{if(hab.id!==id)return hab;const was=hab.days[i];if(!was)chime();const nowDone=!was;const newDayTimes=(hab.dayTimes||Array(7).fill(null)).map((t,j)=>j===i?(nowDone?new Date().toISOString():null):t);return{...hab,days:hab.days.map((d,j)=>j===i?!d:d),dayTimes:newDayTimes};}));
   const delHabit=id=>setHabits(h=>h.filter(hab=>hab.id!==id));
-  const addHabit=()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HICONS[idx],color:HCOLORS[idx],days:Array(7).fill(false)}]);setNewHabit("");};
+  const addHabit=()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HICONS[idx],color:HCOLORS[idx],days:Array(7).fill(false),dayTimes:Array(7).fill(null)}]);setNewHabit("");};
   const startEH=h=>{setEditHabit(h.id);setEditHName(h.name);};
   const saveEH=id=>{if(editHName.trim())setHabits(h=>h.map(hab=>hab.id===id?{...hab,name:editHName}:hab));setEditHabit(null);};
   const setIcon=(id,icon)=>{setHabits(h=>h.map(hab=>hab.id===id?{...hab,icon}:hab));setIconFor(null);};
@@ -1371,7 +1371,7 @@ export default function App() {
   const addTodoFor=date=>{if(!newTodo.trim())return;setTodos(t=>[...t,{id:Date.now(),text:newTodo,done:false,tag:newTodoTag,date,priority:newTodoPriority,subtasks:[]}]);setNewTodo("");gratChime();};
   const addTodo=()=>addTodoFor(TODAY);
   const addTodoDash=()=>addTodoFor(dashTodoDay==="today"?TODAY:TOMORROW);
-  const toggleTodo=id=>setTodos(t=>t.map(td=>{if(td.id!==id)return td;if(!td.done)shout();return{...td,done:!td.done};}));
+  const toggleTodo=id=>setTodos(t=>t.map(td=>{if(td.id!==id)return td;if(!td.done)shout();const nowDone=!td.done;return{...td,done:nowDone,doneAt:nowDone?new Date().toISOString():null};}));
   const delTodo=id=>setTodos(t=>t.filter(td=>td.id!==id));
   const startEditTodo=todo=>{setEditTodoId(todo.id);setEditTodoTxt(todo.text);};
   const saveEditTodo=()=>{if(editTodoTxt.trim())setTodos(t=>t.map(td=>td.id===editTodoId?{...td,text:editTodoTxt}:td));setEditTodoId(null);};
@@ -1830,7 +1830,7 @@ export default function App() {
             <span className="hab-nav-lbl">{habitViewWeekLabel}</span>
             <button className="hab-nav-arrow" disabled={habitViewWeek===0} onClick={()=>setHabitViewWeek(w=>w-1)}>›</button>
           </div>
-          <button onClick={()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HABIT_ICON_LIST[idx%HABIT_ICON_LIST.length],color:HCOLORS[idx],days:Array(7).fill(false)}]);setNewHabit("");}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New habit</button>
+          <button onClick={()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HABIT_ICON_LIST[idx%HABIT_ICON_LIST.length],color:HCOLORS[idx],days:Array(7).fill(false),dayTimes:Array(7).fill(null)}]);setNewHabit("");}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New habit</button>
           {headerIcons}
         </div>
       </div>
@@ -2750,6 +2750,16 @@ export default function App() {
           const maxDow=Math.max(...byDow,1);
           const peakDow=byDow.indexOf(Math.max(...byDow));
 
+          // Time-of-day histogram (uses doneAt timestamps)
+          const byHour=Array(24).fill(0);
+          todos.filter(t=>t.done&&t.doneAt).forEach(t=>{byHour[new Date(t.doneAt).getHours()]++;});
+          habits.forEach(hab=>(hab.dayTimes||[]).forEach(ts=>{if(ts)byHour[new Date(ts).getHours()]++;}));
+          Object.values(habitsArchive).forEach(wkH=>wkH.forEach(hab=>(hab.dayTimes||[]).forEach(ts=>{if(ts)byHour[new Date(ts).getHours()]++;})));
+          const maxHour=Math.max(...byHour,1);
+          const peakHour=byHour.indexOf(Math.max(...byHour));
+          const fmtHour=h=>h===0?"12am":h<12?h+"am":h===12?"12pm":(h-12)+"pm";
+          const hasTimeData=byHour.some(v=>v>0);
+
           // Activity breakdown
           const ACT_KEYS=[["todos","#B89576"],["habits","#7F8F68"],["goals","#A78BC7"],["grat","#C98F8F"],["home","#7E9AAF"]];
           const getActBuckets=(()=>{
@@ -3054,10 +3064,35 @@ export default function App() {
                     </div>
                   </div>
                 ):(
-                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"28px 0",gap:8}}>
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#D8C7B5" strokeWidth="2"/><path d="M16 9v7l4 2" stroke="#D8C7B5" strokeWidth="2" strokeLinecap="round"/></svg>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center"}}>Time-of-day tracking will begin<br/>once tasks are marked complete ✦</div>
-                  </div>
+                  hasTimeData?(
+                    <div>
+                      <div style={{display:"flex",alignItems:"flex-end",gap:2,height:80,marginBottom:4}}>
+                        {byHour.map((v,h)=>(
+                          <div key={h} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center"}}>
+                            <div style={{width:"100%",borderRadius:"2px 2px 0 0",background:h===peakHour?"#B89576":v>0?"#D8C7B5":"#f0ebe4",height:`${Math.max(v/maxHour*70,v>0?3:1)}px`,minHeight:1,transition:"height .2s"}}/>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{display:"flex",gap:2,marginBottom:10}}>
+                        {byHour.map((_,h)=>(
+                          <div key={h} style={{flex:1,textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontSize:8,color:"var(--ink-light)"}}>
+                            {h===0||h===6||h===12||h===18||h===23?fmtHour(h):""}
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{padding:"9px 12px",background:"#faf7f3",borderRadius:8,display:"flex",alignItems:"center",gap:8}}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#F3ECE4"/><path d="M8 4v4l2.5 1.5" stroke="#B89576" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                        <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>
+                          You're most productive around {fmtHour(peakHour)}.
+                        </span>
+                      </div>
+                    </div>
+                  ):(
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"28px 0",gap:8}}>
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#D8C7B5" strokeWidth="2"/><path d="M16 9v7l4 2" stroke="#D8C7B5" strokeWidth="2" strokeLinecap="round"/></svg>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",textAlign:"center"}}>Time-of-day tracking begins<br/>once tasks are marked complete ✦</div>
+                    </div>
+                  )
                 )}
               </div>
 
