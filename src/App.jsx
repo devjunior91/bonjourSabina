@@ -1196,6 +1196,9 @@ export default function App() {
   const [editNoteText,setEditNoteText]=useState("");
   const [editTaskId,setEditTaskId]=useState(null);
   const [editTaskText,setEditTaskText]=useState("");
+  const [editTaskPri,setEditTaskPri]=useState("medium");
+  const [editTaskDue,setEditTaskDue]=useState("");
+  const [taskMenuId,setTaskMenuId]=useState(null);
   const [gratInput,setGratInput]=useState("");
   const [gratMenuId,setGratMenuId]=useState(null);
   const [gratViewOffset,setGratViewOffset]=useState(0);
@@ -1771,7 +1774,8 @@ export default function App() {
   const saveNoteEdit=(projId)=>{if(!editNoteText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:getProjNotes(p).map(n=>n.id===editNoteId?{...n,text:editNoteText.trim()}:n)}));setEditNoteId(null);setEditNoteText("");};
   const saveEditProject=()=>{if(!editProjTitle.trim())return;setProjects(ps=>ps.map(p=>p.id!==editProjId?p:{...p,title:editProjTitle.trim(),description:editProjDesc.trim(),icon:editProjIcon,priority:editProjPriority,dueDate:editProjDue,startDate:editProjStart,status:editProjStatus}));setShowEditProj(false);};
   const openEditProj=(p)=>{setEditProjId(p.id);setEditProjTitle(p.title);setEditProjDesc(p.description||"");setEditProjIcon(p.icon||"laptop");setEditProjPriority(p.priority||"medium");setEditProjDue(p.dueDate||"");setEditProjStart(p.startDate||TODAY);setEditProjStatus(p.status||"active");setShowEditProj(true);};
-  const saveTaskEdit=(projId)=>{if(!editTaskText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id===editTaskId?{...t,text:editTaskText.trim()}:t)}));setEditTaskId(null);setEditTaskText("");};
+  const openTaskEdit=(t)=>{setEditTaskId(t.id);setEditTaskText(t.text);setEditTaskPri(t.priority||"medium");setEditTaskDue(t.dueDate||"");setTaskMenuId(null);};
+  const saveTaskEdit=(projId)=>{if(!editTaskText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id===editTaskId?{...t,text:editTaskText.trim(),priority:editTaskPri,dueDate:editTaskDue}:t)}));setEditTaskId(null);setEditTaskText("");};
   const addProjAttachment=(projId,file)=>{
     if(!file)return;
     if(file.size>8*1024*1024){alert("File is too large (max 8 MB). Try a smaller file.");return;}
@@ -4301,30 +4305,55 @@ export default function App() {
                 </div>
                 {selProj.tasks.map(t=>{
                   const pri=t.priority||"medium";
-                  const nextPri={low:"medium",medium:"high",high:"low"};
                   const isOverdue=!t.done&&t.dueDate&&t.dueDate<TODAY;
+                  const isEditing=editTaskId===t.id;
                   return(
-                  <div key={t.id} className="proj-detail-task" style={{flexWrap:"wrap",rowGap:4}}>
-                    <button onClick={()=>toggleProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",flexShrink:0,padding:0}}>
-                      {t.done
-                        ?<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#7F8F68"/><path d="M8 12.2L10.8 15L16.5 9.5" stroke="#FFFDF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        :<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#BFA58D" strokeWidth="1.6"/></svg>
-                      }
-                    </button>
-                    {editTaskId===t.id
-                      ?<input autoFocus value={editTaskText} onChange={e=>setEditTaskText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")saveTaskEdit(selProj.id);if(e.key==="Escape"){setEditTaskId(null);setEditTaskText("");}}} onBlur={()=>saveTaskEdit(selProj.id)} style={{flex:1,border:"1px solid #B9855E",borderRadius:6,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
-                      :<span onDoubleClick={()=>{setEditTaskId(t.id);setEditTaskText(t.text);}} style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1,cursor:"text"}} title="Double-click to edit text">{t.text}</span>
-                    }
-                    {/* Due date — inline date picker overlaid on display */}
-                    <div style={{position:"relative",flexShrink:0}} title={isOverdue?"Overdue — click to change":"Click to set due date"}>
-                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:isOverdue?"#C98F8F":t.dueDate?"#8F8A83":"#C4B9AD",fontWeight:isOverdue?600:400,padding:"2px 6px",borderRadius:6,border:"1px solid "+(t.dueDate?"#EAE4DC":"#E8E3DC"),background:isOverdue?"#FEF2F2":t.dueDate?"#faf7f3":"transparent",cursor:"pointer",display:"block",whiteSpace:"nowrap"}}>
-                        {isOverdue?"⚠ ":""}{t.dueDate?new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"Add date"}
-                      </span>
-                      <input type="date" value={t.dueDate||""} onChange={e=>updateProjTask(selProj.id,t.id,{dueDate:e.target.value})} style={{position:"absolute",inset:0,opacity:0,cursor:"pointer",width:"100%",height:"100%"}}/>
+                  <div key={t.id} style={{borderBottom:"1px solid #f3ede6",paddingBottom:isEditing?12:0,marginBottom:isEditing?10:0}}>
+                    {/* Normal row */}
+                    <div className="proj-detail-task" style={{position:"relative"}}>
+                      <button onClick={()=>toggleProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",flexShrink:0,padding:0}}>
+                        {t.done
+                          ?<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#7F8F68"/><path d="M8 12.2L10.8 15L16.5 9.5" stroke="#FFFDF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          :<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#BFA58D" strokeWidth="1.6"/></svg>
+                        }
+                      </button>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1}}>{t.text}</span>
+                      {t.dueDate&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:isOverdue?"#C98F8F":"#8F8A83",fontWeight:isOverdue?600:400,flexShrink:0}}>{isOverdue?"⚠ ":""}{new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}
+                      <span className="proj-pri-badge" style={{background:priBg[pri],color:priClr[pri],flexShrink:0}}>{pri}</span>
+                      {/* Three-dot menu */}
+                      <div style={{position:"relative",flexShrink:0}}>
+                        <button onClick={e=>{e.stopPropagation();setTaskMenuId(taskMenuId===t.id?null:t.id);}} style={{background:"none",border:"none",cursor:"pointer",color:"#C4B9AD",padding:"2px 4px",lineHeight:1,fontSize:18,letterSpacing:1}}>⋮</button>
+                        {taskMenuId===t.id&&(
+                          <div style={{position:"absolute",right:0,top:"100%",background:"#fff",border:"1px solid #EAE4DC",borderRadius:10,boxShadow:"0 4px 18px rgba(0,0,0,.1)",zIndex:100,minWidth:120,overflow:"hidden"}}>
+                            <button onClick={()=>openTaskEdit(t)} style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"none",border:"none",cursor:"pointer",borderBottom:"1px solid #f3ede6"}}>
+                              Edit task
+                            </button>
+                            <button onClick={()=>{deleteProjTask(selProj.id,t.id);setTaskMenuId(null);}} style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"#C98F8F",background:"none",border:"none",cursor:"pointer"}}>
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    {/* Priority badge — click to cycle */}
-                    <span onClick={()=>updateProjTask(selProj.id,t.id,{priority:nextPri[pri]})} className="proj-pri-badge" style={{background:priBg[pri],color:priClr[pri],cursor:"pointer",userSelect:"none"}} title="Click to change priority">{pri}</span>
-                    <button onClick={()=>deleteProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}}>×</button>
+                    {/* Inline edit form */}
+                    {isEditing&&(
+                      <div style={{padding:"10px 12px",background:"#faf7f3",borderRadius:10,marginTop:4}}>
+                        <input autoFocus value={editTaskText} onChange={e=>setEditTaskText(e.target.value)} placeholder="Task name" style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:7,padding:"8px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#fff",outline:"none",boxSizing:"border-box",marginBottom:10}}/>
+                        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10,flexWrap:"wrap"}}>
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83"}}>Priority:</span>
+                          {[["low","#EEF3EA","#6F7F55"],["medium","#FFF3DF","#A8793C"],["high","#F7EDEA","#C98F8F"]].map(([v,bg,cl])=>(
+                            <button key={v} onClick={()=>setEditTaskPri(v)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:editTaskPri===v?600:400,padding:"3px 10px",borderRadius:10,border:"1px solid "+(editTaskPri===v?cl:"#EAE4DC"),background:editTaskPri===v?bg:"transparent",color:editTaskPri===v?cl:"#8F8A83",cursor:"pointer"}}>{v}</button>
+                          ))}
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",marginLeft:8}}>Due:</span>
+                          <input type="date" value={editTaskDue} onChange={e=>setEditTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#fff",outline:"none"}}/>
+                          {editTaskDue&&<button onClick={()=>setEditTaskDue("")} style={{background:"none",border:"none",cursor:"pointer",color:"#C4B9AD",fontSize:12,padding:"0 2px"}}>✕</button>}
+                        </div>
+                        <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
+                          <button onClick={()=>setEditTaskId(null)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:7,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                          <button onClick={()=>saveTaskEdit(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:7,padding:"6px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>Save</button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );})}
                 <div style={{marginTop:14}}>
