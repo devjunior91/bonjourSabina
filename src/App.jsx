@@ -1756,6 +1756,7 @@ export default function App() {
     setNewProjTaskText("");setNewProjTaskPri("medium");setNewProjTaskDue("");
   };
   const deleteProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.filter(t=>t.id!==taskId)}));
+  const updateProjTask=(projId,taskId,changes)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id!==taskId?t:{...t,...changes})}));
   const toggleProjMil=(projId,milId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,milestones:p.milestones.map(m=>m.id!==milId?m:{...m,done:!m.done,doneDate:!m.done?TODAY:null})}));
   const addProjMil=(projId)=>{
     if(!newProjMilText.trim())return;
@@ -4298,8 +4299,12 @@ export default function App() {
                     <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 8px"}}>{doneTaskCount} / {selProj.tasks.length}</span>
                   </div>
                 </div>
-                {selProj.tasks.map(t=>(
-                  <div key={t.id} className="proj-detail-task">
+                {selProj.tasks.map(t=>{
+                  const pri=t.priority||"medium";
+                  const nextPri={low:"medium",medium:"high",high:"low"};
+                  const isOverdue=!t.done&&t.dueDate&&t.dueDate<TODAY;
+                  return(
+                  <div key={t.id} className="proj-detail-task" style={{flexWrap:"wrap",rowGap:4}}>
                     <button onClick={()=>toggleProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",flexShrink:0,padding:0}}>
                       {t.done
                         ?<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#7F8F68"/><path d="M8 12.2L10.8 15L16.5 9.5" stroke="#FFFDF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -4308,13 +4313,20 @@ export default function App() {
                     </button>
                     {editTaskId===t.id
                       ?<input autoFocus value={editTaskText} onChange={e=>setEditTaskText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")saveTaskEdit(selProj.id);if(e.key==="Escape"){setEditTaskId(null);setEditTaskText("");}}} onBlur={()=>saveTaskEdit(selProj.id)} style={{flex:1,border:"1px solid #B9855E",borderRadius:6,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
-                      :<span onDoubleClick={()=>{setEditTaskId(t.id);setEditTaskText(t.text);}} style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1,cursor:"text"}} title="Double-click to edit">{t.text}</span>
+                      :<span onDoubleClick={()=>{setEditTaskId(t.id);setEditTaskText(t.text);}} style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1,cursor:"text"}} title="Double-click to edit text">{t.text}</span>
                     }
-                    {t.dueDate&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:(!t.done&&t.dueDate<TODAY)?"#C98F8F":"#8F8A83",fontWeight:(!t.done&&t.dueDate<TODAY)?600:400}} title={!t.done&&t.dueDate<TODAY?"Overdue":undefined}>{!t.done&&t.dueDate<TODAY?"⚠ ":""}{new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}
-                    <span className="proj-pri-badge" style={{background:priBg[t.priority]||priBg.medium,color:priClr[t.priority]||priClr.medium}}>{t.priority||"medium"}</span>
+                    {/* Due date — inline date picker overlaid on display */}
+                    <div style={{position:"relative",flexShrink:0}} title={isOverdue?"Overdue — click to change":"Click to set due date"}>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:isOverdue?"#C98F8F":t.dueDate?"#8F8A83":"#C4B9AD",fontWeight:isOverdue?600:400,padding:"2px 6px",borderRadius:6,border:"1px solid "+(t.dueDate?"#EAE4DC":"#E8E3DC"),background:isOverdue?"#FEF2F2":t.dueDate?"#faf7f3":"transparent",cursor:"pointer",display:"block",whiteSpace:"nowrap"}}>
+                        {isOverdue?"⚠ ":""}{t.dueDate?new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"Add date"}
+                      </span>
+                      <input type="date" value={t.dueDate||""} onChange={e=>updateProjTask(selProj.id,t.id,{dueDate:e.target.value})} style={{position:"absolute",inset:0,opacity:0,cursor:"pointer",width:"100%",height:"100%"}}/>
+                    </div>
+                    {/* Priority badge — click to cycle */}
+                    <span onClick={()=>updateProjTask(selProj.id,t.id,{priority:nextPri[pri]})} className="proj-pri-badge" style={{background:priBg[pri],color:priClr[pri],cursor:"pointer",userSelect:"none"}} title="Click to change priority">{pri}</span>
                     <button onClick={()=>deleteProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}}>×</button>
                   </div>
-                ))}
+                );})}
                 <div style={{marginTop:14}}>
                   <div style={{display:"flex",gap:8,marginBottom:6}}>
                     <input value={newProjTaskText} onChange={e=>setNewProjTaskText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjTask(selProj.id)} placeholder="Add a task..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
