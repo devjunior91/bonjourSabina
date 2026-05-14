@@ -1755,7 +1755,7 @@ export default function App() {
   const toggleProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id!==taskId?t:{...t,done:!t.done,doneAt:!t.done?new Date().toISOString():null})}));
   const addProjTask=(projId)=>{
     if(!newProjTaskText.trim())return;
-    setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:[...p.tasks,{id:Date.now(),text:newProjTaskText.trim(),done:false,dueDate:newProjTaskDue,priority:newProjTaskPri,doneAt:null}]}));
+    setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:[...p.tasks,{id:Date.now(),text:newProjTaskText.trim(),done:false,dueDate:_parseDateEdit(newProjTaskDue),priority:newProjTaskPri,doneAt:null}]}));
     setNewProjTaskText("");setNewProjTaskPri("medium");setNewProjTaskDue("");
   };
   const deleteProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.filter(t=>t.id!==taskId)}));
@@ -1774,8 +1774,10 @@ export default function App() {
   const saveNoteEdit=(projId)=>{if(!editNoteText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:getProjNotes(p).map(n=>n.id===editNoteId?{...n,text:editNoteText.trim()}:n)}));setEditNoteId(null);setEditNoteText("");};
   const saveEditProject=()=>{if(!editProjTitle.trim())return;setProjects(ps=>ps.map(p=>p.id!==editProjId?p:{...p,title:editProjTitle.trim(),description:editProjDesc.trim(),icon:editProjIcon,priority:editProjPriority,dueDate:editProjDue,startDate:editProjStart,status:editProjStatus}));setShowEditProj(false);};
   const openEditProj=(p)=>{setEditProjId(p.id);setEditProjTitle(p.title);setEditProjDesc(p.description||"");setEditProjIcon(p.icon||"laptop");setEditProjPriority(p.priority||"medium");setEditProjDue(p.dueDate||"");setEditProjStart(p.startDate||TODAY);setEditProjStatus(p.status||"active");setShowEditProj(true);};
-  const openTaskEdit=(t)=>{setEditTaskId(t.id);setEditTaskText(t.text);setEditTaskPri(t.priority||"medium");setEditTaskDue(t.dueDate||"");setTaskMenuId(null);};
-  const saveTaskEdit=(projId)=>{if(!editTaskText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id===editTaskId?{...t,text:editTaskText.trim(),priority:editTaskPri,dueDate:editTaskDue}:t)}));setEditTaskId(null);setEditTaskText("");};
+  const _fmtDateEdit=(d)=>{if(!d)return "";const pts=d.split("-");if(pts.length!==3)return d;return pts[2]+"/"+pts[1]+"/"+pts[0];};
+  const _parseDateEdit=(s)=>{if(!s||!s.trim())return "";const clean=s.trim();if(/^\d{4}-\d{2}-\d{2}$/.test(clean))return clean;const m=clean.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);if(m)return m[3]+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0");return "";};
+  const openTaskEdit=(t)=>{setEditTaskId(t.id);setEditTaskText(t.text);setEditTaskPri(t.priority||"medium");setEditTaskDue(_fmtDateEdit(t.dueDate));setTaskMenuId(null);};
+  const saveTaskEdit=(projId)=>{if(!editTaskText.trim())return;const parsedDue=_parseDateEdit(editTaskDue);setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id===editTaskId?{...t,text:editTaskText.trim(),priority:editTaskPri,dueDate:parsedDue}:t)}));setEditTaskId(null);setEditTaskText("");};
   const addProjAttachment=(projId,file)=>{
     if(!file)return;
     if(file.size>8*1024*1024){alert("File is too large (max 8 MB). Try a smaller file.");return;}
@@ -4345,7 +4347,7 @@ export default function App() {
                             <button key={v} onClick={()=>setEditTaskPri(v)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:editTaskPri===v?600:400,padding:"3px 10px",borderRadius:10,border:"1px solid "+(editTaskPri===v?cl:"#EAE4DC"),background:editTaskPri===v?bg:"transparent",color:editTaskPri===v?cl:"#8F8A83",cursor:"pointer"}}>{v}</button>
                           ))}
                           <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",marginLeft:8}}>Due:</span>
-                          <input type="date" value={editTaskDue} onChange={e=>setEditTaskDue(e.target.value)} onInput={e=>setEditTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#fff",outline:"none"}}/>
+                          <input type="text" value={editTaskDue} onChange={e=>setEditTaskDue(e.target.value)} placeholder="DD/MM/YYYY" style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#fff",outline:"none",width:90}}/>
                           {editTaskDue&&<button onClick={()=>setEditTaskDue("")} style={{background:"none",border:"none",cursor:"pointer",color:"#C4B9AD",fontSize:12,padding:"0 2px"}}>✕</button>}
                         </div>
                         <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
@@ -4367,7 +4369,7 @@ export default function App() {
                       <button key={v} onClick={()=>setNewProjTaskPri(v)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:newProjTaskPri===v?600:400,padding:"3px 10px",borderRadius:10,border:"1px solid "+(newProjTaskPri===v?cl:"#EAE4DC"),background:newProjTaskPri===v?bg:"transparent",color:newProjTaskPri===v?cl:"#8F8A83",cursor:"pointer",transition:"all .15s"}}>{v}</button>
                     ))}
                     <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",flexShrink:0,marginLeft:8}}>Due:</span>
-                    <input type="date" value={newProjTaskDue} onChange={e=>setNewProjTaskDue(e.target.value)} onInput={e=>setNewProjTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#faf7f3",outline:"none",cursor:"pointer"}}/>
+                    <input type="text" value={newProjTaskDue} onChange={e=>setNewProjTaskDue(e.target.value)} placeholder="DD/MM/YYYY" style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#faf7f3",outline:"none",width:90}}/>
                   </div>
                 </div>
               </div>
