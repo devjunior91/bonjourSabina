@@ -4363,6 +4363,63 @@ export default function App() {
                 );
               })()}
 
+            {/* Edit Project Modal — must live inside detail view */}
+            {showEditProj&&(
+              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowEditProj(false)}>
+                <div style={{background:"#fff",borderRadius:18,padding:"28px 32px",width:500,maxWidth:"92vw",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
+                  <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:"var(--ink)",marginBottom:20}}>Edit Project</h2>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Project Name *</label>
+                    <input value={editProjTitle} onChange={e=>setEditProjTitle(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Description</label>
+                    <textarea value={editProjDesc} onChange={e=>setEditProjDesc(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"none",height:72,boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:14}}>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Status</label>
+                      <select value={editProjStatus} onChange={e=>setEditProjStatus(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                        <option value="active">Active</option>
+                        <option value="paused">Paused</option>
+                        <option value="completed">Completed</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
+                      <select value={editProjPriority} onChange={e=>setEditProjPriority(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start Date</label>
+                      <input type="date" value={editProjStart} onChange={e=>setEditProjStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                    </div>
+                  </div>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Due Date (optional)</label>
+                    <input type="date" value={editProjDue} onChange={e=>setEditProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{marginBottom:20}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Icon</label>
+                    <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                      {PROJ_ICON_KEYS.map(k=>(
+                        <button key={k} onClick={()=>setEditProjIcon(k)} style={{background:"none",border:"2px solid "+(editProjIcon===k?"#B9855E":"transparent"),borderRadius:12,padding:4,cursor:"pointer",opacity:editProjIcon===k?1:0.6}}>
+                          {PROJ_ICONS[k]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+                    <button onClick={()=>setShowEditProj(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                    <button onClick={saveEditProject} style={{background:"#B9855E",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Save Changes</button>
+                  </div>
+                </div>
+              </div>
+            )}
             </div>
             );
           }
@@ -4463,63 +4520,6 @@ export default function App() {
               </div>
             )}
 
-            {/* Edit Project Modal */}
-            {showEditProj&&(
-              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowEditProj(false)}>
-                <div style={{background:"#fff",borderRadius:18,padding:"28px 32px",width:500,maxWidth:"92vw",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
-                  <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:"var(--ink)",marginBottom:20}}>Edit Project</h2>
-                  <div style={{marginBottom:14}}>
-                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Project Name *</label>
-                    <input value={editProjTitle} onChange={e=>setEditProjTitle(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
-                  </div>
-                  <div style={{marginBottom:14}}>
-                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Description</label>
-                    <textarea value={editProjDesc} onChange={e=>setEditProjDesc(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"none",height:72,boxSizing:"border-box"}}/>
-                  </div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:14}}>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Status</label>
-                      <select value={editProjStatus} onChange={e=>setEditProjStatus(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
-                        <option value="active">Active</option>
-                        <option value="paused">Paused</option>
-                        <option value="completed">Completed</option>
-                        <option value="archived">Archived</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
-                      <select value={editProjPriority} onChange={e=>setEditProjPriority(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start Date</label>
-                      <input type="date" value={editProjStart} onChange={e=>setEditProjStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
-                    </div>
-                  </div>
-                  <div style={{marginBottom:14}}>
-                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Due Date (optional)</label>
-                    <input type="date" value={editProjDue} onChange={e=>setEditProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
-                  </div>
-                  <div style={{marginBottom:20}}>
-                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Icon</label>
-                    <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-                      {PROJ_ICON_KEYS.map(k=>(
-                        <button key={k} onClick={()=>setEditProjIcon(k)} style={{background:"none",border:"2px solid "+(editProjIcon===k?"#B9855E":"transparent"),borderRadius:12,padding:4,cursor:"pointer",opacity:editProjIcon===k?1:0.6}}>
-                          {PROJ_ICONS[k]}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
-                    <button onClick={()=>setShowEditProj(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                    <button onClick={saveEditProject} style={{background:"#B9855E",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Save Changes</button>
-                  </div>
-                </div>
-              </div>
-            )}
             {/* New Project Modal */}
             {showNewProj&&(
               <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNewProj(false)}>
