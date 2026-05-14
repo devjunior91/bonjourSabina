@@ -1043,6 +1043,17 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 @media(max-width:1100px){.hr-top-card{grid-template-columns:1fr 180px 220px;}}
 @media(max-width:960px){.hr-layout{grid-template-columns:1fr;}.hr-right{display:none;}}
 @media(max-width:700px){.hr-top-card{grid-template-columns:1fr;}.hr-top-img-col,.hr-top-phil-col{display:none;}}
+/* ── PROJECT PLANNER ── */
+.proj-card{background:#fff;border:1px solid #EAE4DC;border-radius:14px;padding:20px 22px;margin-bottom:12px;cursor:pointer;transition:box-shadow .15s;}
+.proj-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.proj-prog-bar{height:5px;background:#f0ebe4;border-radius:3px;overflow:hidden;margin-top:10px;}
+.proj-prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#B9855E,#d4a882);transition:width .5s;}
+.proj-tab{padding:7px 16px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;}
+.proj-tab.on{background:var(--ink);color:#f4ede3;}
+.proj-tab.off{background:#fff;color:var(--ink-light);border:1px solid var(--border);}
+.proj-detail-task{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f5f0ea;}
+.proj-detail-task:last-child{border-bottom:none;}
+.proj-pri-badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:500;font-family:'DM Sans',sans-serif;}
 `;
 
 const MONTHLY_TIPS={
@@ -1155,6 +1166,20 @@ export default function App() {
   const [minuteTick,setMinuteTick]=useState(0);
   const [gratitude,setGratitude]=useDB("sab_gratitude",{});
   const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
+  const [projects,setProjects]=useDB("sab_projects",[]);
+  const [selProjId,setSelProjId]=useState(null);
+  const [projTab,setProjTab]=useState("active");
+  const [projSort,setProjSort]=useState("recent");
+  const [showNewProj,setShowNewProj]=useState(false);
+  const [newProjTitle,setNewProjTitle]=useState("");
+  const [newProjDesc,setNewProjDesc]=useState("");
+  const [newProjIcon,setNewProjIcon]=useState("laptop");
+  const [newProjPriority,setNewProjPriority]=useState("medium");
+  const [newProjDue,setNewProjDue]=useState("");
+  const [newProjTaskText,setNewProjTaskText]=useState("");
+  const [newProjMilText,setNewProjMilText]=useState("");
+  const [projNotesEdit,setProjNotesEdit]=useState(false);
+  const [editProjNotes,setEditProjNotes]=useState("");
   const [gratInput,setGratInput]=useState("");
   const [gratMenuId,setGratMenuId]=useState(null);
   const [gratViewOffset,setGratViewOffset]=useState(0);
@@ -1669,6 +1694,44 @@ export default function App() {
   };
 
   const S=({s=15,w=1.75,children})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
+  const PROJ_ICONS={
+    laptop:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#F3E8DE"/><rect x="10" y="11.5" width="16" height="11" rx="1.8" stroke="#B9855E" strokeWidth="2"/><path d="M8.5 26H27.5" stroke="#B9855E" strokeWidth="2" strokeLinecap="round"/></svg>,
+    dumbbell:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#EEF3EA"/><path d="M10 13V23" stroke="#7F8F68" strokeWidth="2.2" strokeLinecap="round"/><path d="M26 13V23" stroke="#7F8F68" strokeWidth="2.2" strokeLinecap="round"/><path d="M7 16V20" stroke="#7F8F68" strokeWidth="2.2" strokeLinecap="round"/><path d="M29 16V20" stroke="#7F8F68" strokeWidth="2.2" strokeLinecap="round"/><path d="M10 18H26" stroke="#7F8F68" strokeWidth="2.2" strokeLinecap="round"/></svg>,
+    book:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#F2EDF7"/><path d="M9 12C12 11 15 11.2 18 13V27C15 25.8 12 25.8 9 27V12Z" stroke="#9B7BB6" strokeWidth="1.8" strokeLinejoin="round"/><path d="M27 12C24 11 21 11.2 18 13V27C21 25.8 24 25.8 27 27V12Z" stroke="#9B7BB6" strokeWidth="1.8" strokeLinejoin="round"/></svg>,
+    heart:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#F7EDEA"/><path d="M18 26C17.7 26 17.5 25.9 17.2 25.7C12.2 22.4 9 19.6 9 15.2C9 12.6 11 10.5 13.5 10.5C15.1 10.5 16.6 11.4 18 13.1C19.4 11.4 20.9 10.5 22.5 10.5C25 10.5 27 12.6 27 15.2C27 19.6 23.8 22.4 18.8 25.7C18.5 25.9 18.3 26 18 26Z" stroke="#C98F8F" strokeWidth="1.8" strokeLinejoin="round"/></svg>,
+    home:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#EEF3F8"/><path d="M9 17.5L18 10.5L27 17.5V27H21.5V21.5H14.5V27H9V17.5Z" stroke="#7E9AAF" strokeWidth="1.8" strokeLinejoin="round"/></svg>,
+    briefcase:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#F3E8DE"/><rect x="8" y="15" width="20" height="13" rx="2.5" stroke="#B9855E" strokeWidth="1.8"/><path d="M13.5 15V13C13.5 11.9 14.4 11 15.5 11H20.5C21.6 11 22.5 11.9 22.5 13V15" stroke="#B9855E" strokeWidth="1.8" strokeLinecap="round"/></svg>,
+    plane:<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#EEF3EA"/><path d="M9 19.5L27 12L21 28L17 21L9 19.5Z" stroke="#7F8F68" strokeWidth="1.8" strokeLinejoin="round"/></svg>,
+  };
+  const PROJ_ICON_KEYS=["laptop","dumbbell","book","heart","home","briefcase","plane"];
+  const projPct=p=>{
+    const tp=p.tasks.length?p.tasks.filter(t=>t.done).length/p.tasks.length:null;
+    const mp=p.milestones.length?p.milestones.filter(m=>m.done).length/p.milestones.length:null;
+    if(tp===null&&mp===null)return 0;
+    if(tp===null)return Math.round(mp*100);
+    if(mp===null)return Math.round(tp*100);
+    return Math.round(tp*40+mp*60);
+  };
+  const addProject=()=>{
+    if(!newProjTitle.trim())return;
+    setProjects(ps=>[...ps,{id:Date.now(),title:newProjTitle.trim(),description:newProjDesc.trim(),icon:newProjIcon,status:"active",priority:newProjPriority,startDate:TODAY,dueDate:newProjDue,tasks:[],milestones:[],notes:"",createdAt:TODAY}]);
+    setNewProjTitle("");setNewProjDesc("");setNewProjIcon("laptop");setNewProjPriority("medium");setNewProjDue("");setShowNewProj(false);
+  };
+  const toggleProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id!==taskId?t:{...t,done:!t.done,doneAt:!t.done?new Date().toISOString():null})}));
+  const addProjTask=(projId)=>{
+    if(!newProjTaskText.trim())return;
+    setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:[...p.tasks,{id:Date.now(),text:newProjTaskText.trim(),done:false,dueDate:"",priority:"medium",doneAt:null}]}));
+    setNewProjTaskText("");
+  };
+  const deleteProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.filter(t=>t.id!==taskId)}));
+  const toggleProjMil=(projId,milId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,milestones:p.milestones.map(m=>m.id!==milId?m:{...m,done:!m.done,doneDate:!m.done?TODAY:null})}));
+  const addProjMil=(projId)=>{
+    if(!newProjMilText.trim())return;
+    setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,milestones:[...p.milestones,{id:Date.now(),title:newProjMilText.trim(),done:false,doneDate:null,deadline:""}]}));
+    setNewProjMilText("");
+  };
+  const deleteProjMil=(projId,milId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,milestones:p.milestones.filter(m=>m.id!==milId)}));
+  const saveProjNotes=(projId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:editProjNotes}));
   const NAV=[
     {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
@@ -1677,6 +1740,7 @@ export default function App() {
     {id:"cleaning",label:"Home Reset",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/><path d="M19 6l2-1.5M19 9l2 1.5M21 7.5h-2"/></S>},
     {id:"goals",label:"Monthly Goals",icon:<S><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></S>},
     {id:"gratitude",label:"Gratitude",icon:<S><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></S>},
+    {id:"projects",label:"Projects",icon:<S><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></S>},
   ];
 
   // ── HEADER ICONS (bell + settings, reused in every page header) ──
@@ -2669,6 +2733,9 @@ export default function App() {
               if(aw&&aw.length>0)parts.push(aw.filter(h=>h.days[dayIdx]).length/aw.length);
             }
             parts.push(Math.min((gratitude[date]||[]).length/GRAT_TARGET,1));
+            const projTasksDone=projects.reduce((s,p)=>s+p.tasks.filter(t=>t.done&&t.doneAt&&t.doneAt.startsWith(date)).length,0);
+            const projTasksTotal=projects.reduce((s,p)=>s+p.tasks.length,0);
+            if(projTasksTotal>0)parts.push(projTasksDone/projTasksTotal);
             return parts.length?parts.reduce((s,v)=>s+v,0)/parts.length:0;
           };
 
@@ -2822,6 +2889,8 @@ export default function App() {
             if(bilCleanPct===100&&bilCleanTotal>0)items.push({icon:RW_ICONS.home,title:"All Reset Done",desc:"You completed all tasks in your home reset.",date:TODAY,bg:"#EEF3F8"});
             const topHab=habStab[0];
             if(topHab&&topHab.pct>=80)items.push({icon:RW_ICONS.habit,title:"Habit Champion",desc:`${topHab.name} at ${topHab.pct}% consistency.`,date:TODAY,bg:"#EEF3EA"});
+            projects.forEach(p=>{const recentMil=p.milestones.filter(m=>m.done&&m.doneDate===TODAY)[0];if(recentMil)items.push({icon:RW_ICONS.goal,title:"Milestone Reached",desc:recentMil.title+" — "+p.title,date:TODAY,bg:"#F3EAE1"});});
+            if(projects.some(p=>p.status==="completed"))items.push({icon:RW_ICONS.streak,title:"Project Complete!",desc:projects.find(p=>p.status==="completed").title+" ❆",date:TODAY,bg:"#F3EAE1"});
             return items.slice(0,5);
           })();
 
@@ -4089,6 +4158,306 @@ export default function App() {
           );
         })()}
 
+        {/* ── PROJECTS ── */}
+        {page==="projects"&&(()=>{
+          const selProj=selProjId?projects.find(p=>p.id===selProjId):null;
+          
+          // ── PROJECT DETAIL VIEW ──
+          if(selProj){
+            const pct=projPct(selProj);
+            const doneTaskCount=selProj.tasks.filter(t=>t.done).length;
+            const doneMilCount=selProj.milestones.filter(m=>m.done).length;
+            const firstUndone=selProj.milestones.findIndex(m=>!m.done);
+            const priBg={low:"#EEF3EA",medium:"#FFF3DF",high:"#F7EDEA"};
+            const priClr={low:"#6F7F55",medium:"#A8793C",high:"#C98F8F"};
+            const circumference=2*Math.PI*38;
+            const dash=circumference*(1-pct/100);
+            return(
+            <div style={{padding:"0 24px 64px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+                <button onClick={()=>{setSelProjId(null);}} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"1px solid var(--border)",borderRadius:20,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink-light)",cursor:"pointer"}}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                  Projects
+                </button>
+              </div>
+              {/* Project header card */}
+              <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:16,padding:"24px 28px",boxShadow:"var(--shadow)",marginBottom:16}}>
+                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:20}}>
+                  <div style={{display:"flex",alignItems:"flex-start",gap:18,flex:1}}>
+                    <div style={{flexShrink:0}}>{PROJ_ICONS[selProj.icon]||PROJ_ICONS.laptop}</div>
+                    <div style={{flex:1}}>
+                      <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",margin:"0 0 6px"}}>{selProj.title}</h1>
+                      <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"#8F8A83",margin:"0 0 20px",lineHeight:1.5}}>{selProj.description||"No description yet."}</p>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:24}}>
+                        {[
+                          {icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="6.5" width="14" height="13" rx="2.5" stroke="#8F8A83" strokeWidth="1.7"/><path d="M8 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M16 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M5.5 10H18.5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/></svg>,label:"Start Date",val:selProj.startDate?new Date(selProj.startDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"\u2014"},
+                          {icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="6.5" width="14" height="13" rx="2.5" stroke="#8F8A83" strokeWidth="1.7"/><path d="M8 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M16 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M5.5 10H18.5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/></svg>,label:"Due Date",val:selProj.dueDate?new Date(selProj.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"Ongoing"},
+                          {icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7 20V5" stroke="#C47C6A" strokeWidth="1.8" strokeLinecap="round"/><path d="M7 6H17L15.5 10L17 14H7V6Z" stroke="#C47C6A" strokeWidth="1.8" strokeLinejoin="round"/></svg>,label:"Priority",val:selProj.priority.charAt(0).toUpperCase()+selProj.priority.slice(1)},
+                          {icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M10 7H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><path d="M10 12H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><path d="M10 17H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><circle cx="6" cy="7" r="1.2" fill="#8F8A83"/><circle cx="6" cy="12" r="1.2" fill="#8F8A83"/><circle cx="6" cy="17" r="1.2" fill="#8F8A83"/></svg>,label:"Tasks",val:doneTaskCount+" / "+selProj.tasks.length},
+                        ].map(m=>(
+                          <div key={m.label} style={{display:"flex",alignItems:"center",gap:7}}>
+                            {m.icon}
+                            <div>
+                              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83"}}>{m.label}</div>
+                              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,color:"var(--ink)"}}>{m.val}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Progress donut */}
+                  <div style={{flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                      <circle cx="45" cy="45" r="38" fill="none" stroke="#f0ebe4" strokeWidth="8"/>
+                      <circle cx="45" cy="45" r="38" fill="none" stroke="#B9855E" strokeWidth="8"
+                        strokeDasharray={circumference.toFixed(1)+" "+circumference.toFixed(1)}
+                        strokeDashoffset={dash.toFixed(1)}
+                        strokeLinecap="round"
+                        transform="rotate(-90 45 45)"/>
+                      <text x="45" y="49" textAnchor="middle" fontFamily="Playfair Display" fontSize="17" fontWeight="600" fill="#2A2421">{pct}%</text>
+                    </svg>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83"}}>Progress</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tasks */}
+              <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:14,padding:"20px 24px",boxShadow:"var(--shadow)",marginBottom:14}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M10 7H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><path d="M10 12H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><path d="M10 17H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><circle cx="6" cy="7" r="1.2" fill="#8F8A83"/><circle cx="6" cy="12" r="1.2" fill="#8F8A83"/><circle cx="6" cy="17" r="1.2" fill="#8F8A83"/></svg>
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Tasks</span>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 8px"}}>{doneTaskCount} / {selProj.tasks.length}</span>
+                  </div>
+                </div>
+                {selProj.tasks.map(t=>(
+                  <div key={t.id} className="proj-detail-task">
+                    <button onClick={()=>toggleProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",flexShrink:0,padding:0}}>
+                      {t.done
+                        ?<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#7F8F68"/><path d="M8 12.2L10.8 15L16.5 9.5" stroke="#FFFDF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        :<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#BFA58D" strokeWidth="1.6"/></svg>
+                      }
+                    </button>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1}}>{t.text}</span>
+                    {t.dueDate&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83"}}>{new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}
+                    <span className="proj-pri-badge" style={{background:priBg[t.priority]||priBg.medium,color:priClr[t.priority]||priClr.medium}}>{t.priority||"medium"}</span>
+                    <button onClick={()=>deleteProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}}>×</button>
+                  </div>
+                ))}
+                <div style={{display:"flex",gap:8,marginTop:14}}>
+                  <input value={newProjTaskText} onChange={e=>setNewProjTaskText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjTask(selProj.id)} placeholder="Add a task..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
+                  <button onClick={()=>addProjTask(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add</button>
+                </div>
+              </div>
+
+              {/* Milestones */}
+              <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:14,padding:"20px 24px",boxShadow:"var(--shadow)",marginBottom:14}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#B9855E" strokeWidth="1.7"/><circle cx="12" cy="12" r="4" fill="#B9855E"/></svg>
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Milestones</span>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 8px"}}>{doneMilCount} / {selProj.milestones.length}</span>
+                  </div>
+                </div>
+                {selProj.milestones.length>0&&(
+                  <div style={{display:"flex",alignItems:"flex-start",gap:0,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+                    {selProj.milestones.map((m,mi)=>{
+                      const isCurrent=!m.done&&mi===firstUndone;
+                      const isNext=!m.done&&mi>firstUndone;
+                      return(
+                        <div key={m.id} style={{display:"flex",flexDirection:"column",alignItems:"center",minWidth:90,flex:1,position:"relative"}}>
+                          {mi>0&&<div style={{position:"absolute",top:12,right:"50%",left:"-50%",height:2,background:selProj.milestones[mi-1].done?"#7F8F68":"#E6D8CC",zIndex:0}}/>}
+                          <button onClick={()=>toggleProjMil(selProj.id,m.id)} style={{background:"none",border:"none",cursor:"pointer",position:"relative",zIndex:1,padding:0}}>
+                            {m.done
+                              ?<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" fill="#7F8F68"/><path d="M9 13.2L11.8 16L17.5 10.5" stroke="#FFFDF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              :isCurrent
+                                ?<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" fill="#F3E8DE"/><circle cx="13" cy="13" r="7" stroke="#B9855E" strokeWidth="2"/><circle cx="13" cy="13" r="4" fill="#B9855E"/></svg>
+                                :<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="9" stroke="#E6D8CC" strokeWidth="1.8"/></svg>
+                            }
+                          </button>
+                          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10.5,color:m.done?"#7F8F68":isCurrent?"#B9855E":"#8F8A83",fontWeight:m.done||isCurrent?500:400,textAlign:"center",marginTop:6,lineHeight:1.3,maxWidth:80}}>{m.title}</div>
+                          {m.doneDate&&<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"#8F8A83",marginTop:3}}>{new Date(m.doneDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</div>}
+                          {!m.done&&m.deadline&&<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"#8F8A83",marginTop:3}}>{new Date(m.deadline+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</div>}
+                          <button onClick={()=>deleteProjMil(selProj.id,m.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ddd",fontSize:13,padding:"2px",marginTop:2,lineHeight:1}}>×</button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                <div style={{display:"flex",gap:8}}>
+                  <input value={newProjMilText} onChange={e=>setNewProjMilText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjMil(selProj.id)} placeholder="Add a milestone..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
+                  <button onClick={()=>addProjMil(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add</button>
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:14,padding:"20px 24px",boxShadow:"var(--shadow)",marginBottom:14}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Notes</span>
+                  <button onClick={()=>{setProjNotesEdit(e=>!e);setEditProjNotes(selProj.notes||"");}} style={{background:"none",border:"none",cursor:"pointer",color:"#8F8A83"}}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 18.5L5.8 15L15.5 5.3C16.2 4.6 17.3 4.6 18 5.3L18.7 6C19.4 6.7 19.4 7.8 18.7 8.5L9 18.2L5 18.5Z" stroke="#8F8A83" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14.5 6.5L17.5 9.5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/></svg>
+                  </button>
+                </div>
+                {projNotesEdit?(
+                  <div>
+                    <textarea value={editProjNotes} onChange={e=>setEditProjNotes(e.target.value)} style={{width:"100%",minHeight:100,border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
+                    <div style={{display:"flex",gap:8,marginTop:8,justifyContent:"flex-end"}}>
+                      <button onClick={()=>setProjNotesEdit(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                      <button onClick={()=>{saveProjNotes(selProj.id);setProjNotesEdit(false);}} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>Save</button>
+                    </div>
+                  </div>
+                ):(
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:selProj.notes?"var(--ink)":"#8F8A83",lineHeight:1.6,whiteSpace:"pre-wrap",fontStyle:selProj.notes?"normal":"italic"}}>
+                    {selProj.notes||"Add notes, ideas or anything important for this project..."}
+                  </div>
+                )}
+              </div>
+
+            </div>
+            );
+          }
+
+          // ── PROJECT LIST VIEW ──
+          const filtered=projects.filter(p=>projTab==="all"?true:projTab==="completed"?p.status==="completed":projTab==="archived"?p.status==="archived":p.status==="active"||p.status==="planning"||p.status==="paused");
+          const sorted=[...filtered].sort((a,b)=>projSort==="name"?a.title.localeCompare(b.title):projSort==="progress"?projPct(b)-projPct(a):b.id-a.id);
+          const recentWins=projects.flatMap(p=>p.milestones.filter(m=>m.done).map(m=>({type:"milestone",title:m.title,project:p.title,icon:p.icon,date:m.doneDate||TODAY}))).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+          return(
+          <div style={{padding:"0 24px 64px"}}>
+            {/* Header */}
+            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:20}}>
+              <div>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Project Planner</h1>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Plan, track and bring your ideas to life.</div>
+              </div>
+              <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"#B9855E",color:"#fff",border:"none",borderRadius:10,padding:"10px 18px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Project
+              </button>
+            </div>
+
+            {/* Tabs + Sort */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+              <div style={{display:"flex",gap:6}}>
+                {[["active","Active"],["all","All Projects"],["completed","Completed"],["archived","Archived"]].map(([v,l])=>(
+                  <button key={v} onClick={()=>setProjTab(v)} className={"proj-tab "+(projTab===v?"on":"off")}>{l}</button>
+                ))}
+              </div>
+              <select value={projSort} onChange={e=>setProjSort(e.target.value)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",border:"1px solid var(--border)",borderRadius:8,padding:"6px 10px",background:"#fff",cursor:"pointer"}}>
+                <option value="recent">Sort: Recent</option>
+                <option value="name">Sort: Name</option>
+                <option value="progress">Sort: Progress</option>
+              </select>
+            </div>
+
+            {/* Project cards */}
+            {sorted.length===0&&<div style={{textAlign:"center",padding:"48px 0",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:15,color:"var(--ink-light)"}}>No projects yet. Create your first one ✦</div>}
+            {sorted.map(p=>{
+              const pct=projPct(p);
+              const priBg={low:"#EEF3EA",medium:"#FFF3DF",high:"#F7EDEA"};
+              const priClr={low:"#6F7F55",medium:"#A8793C",high:"#C98F8F"};
+              return(
+              <div key={p.id} className="proj-card" onClick={()=>setSelProjId(p.id)}>
+                <div style={{display:"flex",alignItems:"flex-start",gap:16}}>
+                  <div style={{flexShrink:0}}>{PROJ_ICONS[p.icon]||PROJ_ICONS.laptop}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12}}>
+                      <div style={{flex:1}}>
+                        <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:600,color:"var(--ink)",marginBottom:3}}>{p.title}</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",lineHeight:1.5,marginBottom:10}}>{p.description||"\u2014"}</div>
+                      </div>
+                      <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
+                        <div style={{display:"flex",alignItems:"center",gap:5,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83"}}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M10 7H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><path d="M10 12H18" stroke="#8F8A83" strokeWidth="1.8" strokeLinecap="round"/><circle cx="6" cy="7" r="1.2" fill="#8F8A83"/><circle cx="6" cy="12" r="1.2" fill="#8F8A83"/></svg>
+                          {p.tasks.filter(t=>t.done).length} / {p.tasks.length} tasks
+                        </div>
+                        {p.dueDate&&<div style={{display:"flex",alignItems:"center",gap:5,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83"}}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="6.5" width="14" height="13" rx="2.5" stroke="#8F8A83" strokeWidth="1.7"/><path d="M8 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M16 4.5V8" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/><path d="M5.5 10H18.5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/></svg>
+                          Due {new Date(p.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}
+                        </div>}
+                        {!p.dueDate&&<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83"}}>Due Ongoing</div>}
+                        <span style={{background:priBg[p.priority]||priBg.medium,color:priClr[p.priority]||priClr.medium,borderRadius:12,padding:"2px 10px",fontSize:10,fontFamily:"'DM Sans',sans-serif",fontWeight:500}}>{p.priority.charAt(0).toUpperCase()+p.priority.slice(1)}</span>
+                      </div>
+                    </div>
+                    <div style={{display:"flex",alignItems:"center",gap:10}}>
+                      <div className="proj-prog-bar" style={{flex:1}}><div className="proj-prog-fill" style={{width:pct+"%"}}/></div>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:"#B9855E",minWidth:32,textAlign:"right"}}>{pct}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              );
+            })}
+
+            {/* Recent Milestones & Wins */}
+            {recentWins.length>0&&(
+              <div style={{marginTop:12}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:600,color:"var(--ink)"}}>Recent Milestones & Wins</span>
+                  <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#B9855E",cursor:"pointer"}}>View all →</span>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:12}}>
+                  {recentWins.map((w,wi)=>(
+                    <div key={wi} style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:12,padding:"14px 16px",display:"flex",alignItems:"flex-start",gap:12}}>
+                      <div style={{flexShrink:0,marginTop:2}}>{PROJ_ICONS[w.icon]?<div style={{width:32,height:32}}>{React.cloneElement(PROJ_ICONS[w.icon],{width:32,height:32})}</div>:null}</div>
+                      <div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:"var(--ink)",marginBottom:2}}>{w.title}</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83"}}>{w.project}</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#B9855E",marginTop:4}}>{new Date(w.date+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* New Project Modal */}
+            {showNewProj&&(
+              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNewProj(false)}>
+                <div style={{background:"#fff",borderRadius:18,padding:"28px 32px",width:480,maxWidth:"90vw",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
+                  <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:"var(--ink)",marginBottom:20}}>New Project</h2>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Project Name *</label>
+                    <input value={newProjTitle} onChange={e=>setNewProjTitle(e.target.value)} placeholder="e.g. Launch Productivity App" style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Description</label>
+                    <textarea value={newProjDesc} onChange={e=>setNewProjDesc(e.target.value)} placeholder="What is this project about?" style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"none",height:72,boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
+                      <select value={newProjPriority} onChange={e=>setNewProjPriority(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Due Date (optional)</label>
+                      <input type="date" value={newProjDue} onChange={e=>setNewProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                    </div>
+                  </div>
+                  <div style={{marginBottom:20}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Icon</label>
+                    <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                      {PROJ_ICON_KEYS.map(k=>(
+                        <button key={k} onClick={()=>setNewProjIcon(k)} style={{background:"none",border:"2px solid "+(newProjIcon===k?"#B9855E":"transparent"),borderRadius:12,padding:4,cursor:"pointer",opacity:newProjIcon===k?1:0.6}}>
+                          {React.cloneElement(PROJ_ICONS[k],{width:40,height:40})}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+                    <button onClick={()=>setShowNewProj(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                    <button onClick={addProject} style={{background:"#B9855E",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Create Project</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          );
+        })()}
       </main>
     </>
   );
