@@ -1167,7 +1167,7 @@ export default function App() {
   const [gratitude,setGratitude]=useDB("sab_gratitude",{});
   const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
   const [projects,setProjects]=useDB("sab_projects",[]);
-  const [selProjId,setSelProjId]=useState(null);
+  const [selProjId,setSelProjId]=useDB("sab_sel_proj_id",null);
   const [projTab,setProjTab]=useState("active");
   const [projSort,setProjSort]=useState("recent");
   const [showNewProj,setShowNewProj]=useState(false);
@@ -4345,7 +4345,7 @@ export default function App() {
                             <button key={v} onClick={()=>setEditTaskPri(v)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:editTaskPri===v?600:400,padding:"3px 10px",borderRadius:10,border:"1px solid "+(editTaskPri===v?cl:"#EAE4DC"),background:editTaskPri===v?bg:"transparent",color:editTaskPri===v?cl:"#8F8A83",cursor:"pointer"}}>{v}</button>
                           ))}
                           <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",marginLeft:8}}>Due:</span>
-                          <input type="date" value={editTaskDue} onChange={e=>setEditTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#fff",outline:"none"}}/>
+                          <input type="date" value={editTaskDue} onChange={e=>setEditTaskDue(e.target.value)} onInput={e=>setEditTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#fff",outline:"none"}}/>
                           {editTaskDue&&<button onClick={()=>setEditTaskDue("")} style={{background:"none",border:"none",cursor:"pointer",color:"#C4B9AD",fontSize:12,padding:"0 2px"}}>✕</button>}
                         </div>
                         <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
@@ -4367,7 +4367,7 @@ export default function App() {
                       <button key={v} onClick={()=>setNewProjTaskPri(v)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:newProjTaskPri===v?600:400,padding:"3px 10px",borderRadius:10,border:"1px solid "+(newProjTaskPri===v?cl:"#EAE4DC"),background:newProjTaskPri===v?bg:"transparent",color:newProjTaskPri===v?cl:"#8F8A83",cursor:"pointer",transition:"all .15s"}}>{v}</button>
                     ))}
                     <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",flexShrink:0,marginLeft:8}}>Due:</span>
-                    <input type="date" value={newProjTaskDue} onChange={e=>setNewProjTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#faf7f3",outline:"none",cursor:"pointer"}}/>
+                    <input type="date" value={newProjTaskDue} onChange={e=>setNewProjTaskDue(e.target.value)} onInput={e=>setNewProjTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#faf7f3",outline:"none",cursor:"pointer"}}/>
                   </div>
                 </div>
               </div>
@@ -4543,12 +4543,12 @@ export default function App() {
                     </div>
                     <div>
                       <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start Date</label>
-                      <input type="date" value={editProjStart} onChange={e=>setEditProjStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                      <input type="date" value={editProjStart} onChange={e=>setEditProjStart(e.target.value)} onInput={e=>setEditProjStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
                     </div>
                   </div>
                   <div style={{marginBottom:14}}>
                     <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Due Date (optional)</label>
-                    <input type="date" value={editProjDue} onChange={e=>setEditProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                    <input type="date" value={editProjDue} onChange={e=>setEditProjDue(e.target.value)} onInput={e=>setEditProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
                   </div>
                   <div style={{marginBottom:20}}>
                     <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Icon</label>
@@ -4691,7 +4691,7 @@ export default function App() {
                     </div>
                     <div>
                       <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Due Date (optional)</label>
-                      <input type="date" value={newProjDue} onChange={e=>setNewProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                      <input type="date" value={newProjDue} onChange={e=>setNewProjDue(e.target.value)} onInput={e=>setNewProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
                     </div>
                   </div>
                   <div style={{marginBottom:20}}>
