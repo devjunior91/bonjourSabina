@@ -1177,6 +1177,8 @@ export default function App() {
   const [newProjPriority,setNewProjPriority]=useState("medium");
   const [newProjDue,setNewProjDue]=useState("");
   const [newProjTaskText,setNewProjTaskText]=useState("");
+  const [newProjTaskPri,setNewProjTaskPri]=useState("medium");
+  const [newProjTaskDue,setNewProjTaskDue]=useState("");
   const [newProjMilText,setNewProjMilText]=useState("");
   const [projNotesEdit,setProjNotesEdit]=useState(false);
   const [editProjNotes,setEditProjNotes]=useState("");
@@ -1343,6 +1345,22 @@ export default function App() {
     const t=setInterval(check,60000);
     return()=>clearInterval(t);
   },[gratReminders,gratitude,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Overdue project task notifications
+  useEffect(()=>{
+    if(!projects||projects.length===0)return;
+    projects.forEach(p=>{
+      (p.tasks||[]).forEach(t=>{
+        if(!t.done&&t.dueDate&&t.dueDate<TODAY){
+          setNotifications(ns=>{
+            const key="proj-task-overdue-"+t.id;
+            if(ns.some(n=>n.key===key))return ns;
+            return[...ns,{id:Date.now(),key,type:"proj-task-overdue",date:TODAY,text:"Overdue task in “"+p.title+"”: "+t.text,read:false}];
+          });
+        }
+      });
+    });
+  },[projects,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Streak protection: if no habits checked by 5pm and there's an active streak, alert
   useEffect(()=>{
@@ -1728,14 +1746,14 @@ export default function App() {
   };
   const addProject=()=>{
     if(!newProjTitle.trim())return;
-    setProjects(ps=>[...ps,{id:Date.now(),title:newProjTitle.trim(),description:newProjDesc.trim(),icon:newProjIcon,status:"active",priority:newProjPriority,startDate:TODAY,dueDate:newProjDue,tasks:[],milestones:[],notes:[],createdAt:TODAY}]);
+    setProjects(ps=>[...ps,{id:Date.now(),title:newProjTitle.trim(),description:newProjDesc.trim(),icon:newProjIcon,status:"active",priority:newProjPriority,startDate:TODAY,dueDate:newProjDue,tasks:[],milestones:[],notes:[],attachments:[],createdAt:TODAY}]);
     setNewProjTitle("");setNewProjDesc("");setNewProjIcon("laptop");setNewProjPriority("medium");setNewProjDue("");setShowNewProj(false);
   };
   const toggleProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id!==taskId?t:{...t,done:!t.done,doneAt:!t.done?new Date().toISOString():null})}));
   const addProjTask=(projId)=>{
     if(!newProjTaskText.trim())return;
-    setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:[...p.tasks,{id:Date.now(),text:newProjTaskText.trim(),done:false,dueDate:"",priority:"medium",doneAt:null}]}));
-    setNewProjTaskText("");
+    setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:[...p.tasks,{id:Date.now(),text:newProjTaskText.trim(),done:false,dueDate:newProjTaskDue,priority:newProjTaskPri,doneAt:null}]}));
+    setNewProjTaskText("");setNewProjTaskPri("medium");setNewProjTaskDue("");
   };
   const deleteProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.filter(t=>t.id!==taskId)}));
   const toggleProjMil=(projId,milId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,milestones:p.milestones.map(m=>m.id!==milId?m:{...m,done:!m.done,doneDate:!m.done?TODAY:null})}));
@@ -1753,6 +1771,28 @@ export default function App() {
   const saveEditProject=()=>{if(!editProjTitle.trim())return;setProjects(ps=>ps.map(p=>p.id!==editProjId?p:{...p,title:editProjTitle.trim(),description:editProjDesc.trim(),icon:editProjIcon,priority:editProjPriority,dueDate:editProjDue,startDate:editProjStart,status:editProjStatus}));setShowEditProj(false);};
   const openEditProj=(p)=>{setEditProjId(p.id);setEditProjTitle(p.title);setEditProjDesc(p.description||"");setEditProjIcon(p.icon||"laptop");setEditProjPriority(p.priority||"medium");setEditProjDue(p.dueDate||"");setEditProjStart(p.startDate||TODAY);setEditProjStatus(p.status||"active");setShowEditProj(true);};
   const saveTaskEdit=(projId)=>{if(!editTaskText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id===editTaskId?{...t,text:editTaskText.trim()}:t)}));setEditTaskId(null);setEditTaskText("");};
+  const addProjAttachment=(projId,file)=>{
+    if(!file)return;
+    if(file.size>8*1024*1024){alert("File is too large (max 8 MB). Try a smaller file.");return;}
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const att={id:Date.now(),name:file.name,size:file.size,type:file.type,data:e.target.result,addedAt:TODAY};
+      setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,attachments:[...(p.attachments||[]),att]}));
+    };
+    reader.readAsDataURL(file);
+  };
+  const deleteProjAttachment=(projId,attId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,attachments:(p.attachments||[]).filter(a=>a.id!==attId)}));
+  const downloadAttachment=(att)=>{
+    const a=document.createElement("a");a.href=att.data;a.download=att.name;a.click();
+  };
+  const fmtBytes=(b)=>b<1024?b+"B":b<1048576?(b/1024).toFixed(1)+"KB":(b/1048576).toFixed(1)+"MB";
+  const attIcon=(type)=>{
+    if(type.startsWith("image/"))return'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#7E9AAF" strokeWidth="1.7"/><circle cx="8.5" cy="8.5" r="1.5" fill="#7E9AAF"/><path d="M21 15l-5-5L5 21" stroke="#7E9AAF" strokeWidth="1.7" strokeLinejoin="round"/></svg>';
+    if(type.includes("pdf"))return'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#C98F8F" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14 2v6h6" stroke="#C98F8F" strokeWidth="1.7" strokeLinejoin="round"/><path d="M9 13h1.5a1 1 0 0 1 0 2H9v-4h1.5a1 1 0 0 1 0 2" stroke="#C98F8F" strokeWidth="1.4" strokeLinecap="round"/></svg>';
+    if(type.includes("word")||type.includes("document"))return'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#7F8F68" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14 2v6h6" stroke="#7F8F68" strokeWidth="1.7" strokeLinejoin="round"/><path d="M8 13l2 6 2-4 2 4 2-6" stroke="#7F8F68" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>';
+    if(type.includes("sheet")||type.includes("excel")||type.includes("csv"))return'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#7F8F68" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14 2v6h6" stroke="#7F8F68" strokeWidth="1.7" strokeLinejoin="round"/><path d="M8 12h8M8 16h8M8 12v8" stroke="#7F8F68" strokeWidth="1.4" strokeLinecap="round"/></svg>';
+    return'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#B9855E" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14 2v6h6" stroke="#B9855E" strokeWidth="1.7" strokeLinejoin="round"/></svg>';
+  };
   const NAV=[
     {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
@@ -4270,14 +4310,24 @@ export default function App() {
                       ?<input autoFocus value={editTaskText} onChange={e=>setEditTaskText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")saveTaskEdit(selProj.id);if(e.key==="Escape"){setEditTaskId(null);setEditTaskText("");}}} onBlur={()=>saveTaskEdit(selProj.id)} style={{flex:1,border:"1px solid #B9855E",borderRadius:6,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
                       :<span onDoubleClick={()=>{setEditTaskId(t.id);setEditTaskText(t.text);}} style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1,cursor:"text"}} title="Double-click to edit">{t.text}</span>
                     }
-                    {t.dueDate&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83"}}>{new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}
+                    {t.dueDate&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:(!t.done&&t.dueDate<TODAY)?"#C98F8F":"#8F8A83",fontWeight:(!t.done&&t.dueDate<TODAY)?600:400}} title={!t.done&&t.dueDate<TODAY?"Overdue":undefined}>{!t.done&&t.dueDate<TODAY?"⚠ ":""}{new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}
                     <span className="proj-pri-badge" style={{background:priBg[t.priority]||priBg.medium,color:priClr[t.priority]||priClr.medium}}>{t.priority||"medium"}</span>
                     <button onClick={()=>deleteProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}}>×</button>
                   </div>
                 ))}
-                <div style={{display:"flex",gap:8,marginTop:14}}>
-                  <input value={newProjTaskText} onChange={e=>setNewProjTaskText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjTask(selProj.id)} placeholder="Add a task..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
-                  <button onClick={()=>addProjTask(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add</button>
+                <div style={{marginTop:14}}>
+                  <div style={{display:"flex",gap:8,marginBottom:6}}>
+                    <input value={newProjTaskText} onChange={e=>setNewProjTaskText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjTask(selProj.id)} placeholder="Add a task..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
+                    <button onClick={()=>addProjTask(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",flexShrink:0}}>+ Add</button>
+                  </div>
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",flexShrink:0}}>Priority:</span>
+                    {[["low","#EEF3EA","#6F7F55"],["medium","#FFF3DF","#A8793C"],["high","#F7EDEA","#C98F8F"]].map(([v,bg,cl])=>(
+                      <button key={v} onClick={()=>setNewProjTaskPri(v)} style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:newProjTaskPri===v?600:400,padding:"3px 10px",borderRadius:10,border:"1px solid "+(newProjTaskPri===v?cl:"#EAE4DC"),background:newProjTaskPri===v?bg:"transparent",color:newProjTaskPri===v?cl:"#8F8A83",cursor:"pointer",transition:"all .15s"}}>{v}</button>
+                    ))}
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",flexShrink:0,marginLeft:8}}>Due:</span>
+                    <input type="date" value={newProjTaskDue} onChange={e=>setNewProjTaskDue(e.target.value)} style={{border:"1px solid #EAE4DC",borderRadius:7,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink)",background:"#faf7f3",outline:"none",cursor:"pointer"}}/>
+                  </div>
                 </div>
               </div>
 
@@ -4363,6 +4413,62 @@ export default function App() {
                 );
               })()}
 
+            {/* Attachments */}
+            {(()=>{
+              const atts=selProj.attachments||[];
+              return(
+              <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:14,padding:"20px 24px",boxShadow:"var(--shadow)",marginBottom:14}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Attachments</span>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 8px"}}>{atts.length}</span>
+                  </div>
+                  <label style={{display:"flex",alignItems:"center",gap:5,background:"#f5f0ea",border:"1px solid #EAE4DC",borderRadius:8,padding:"5px 12px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink-light)"}}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Attach file
+                    <input type="file" style={{display:"none"}} onChange={e=>{if(e.target.files[0])addProjAttachment(selProj.id,e.target.files[0]);e.target.value="";}} accept="*/*"/>
+                  </label>
+                </div>
+                {atts.length===0&&(
+                  <div
+                    style={{border:"2px dashed #EAE4DC",borderRadius:10,padding:"28px 20px",textAlign:"center",cursor:"pointer"}}
+                    onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor="#B9855E";}}
+                    onDragLeave={e=>{e.currentTarget.style.borderColor="#EAE4DC";}}
+                    onDrop={e=>{e.preventDefault();e.currentTarget.style.borderColor="#EAE4DC";const f=e.dataTransfer.files[0];if(f)addProjAttachment(selProj.id,f);}}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style={{margin:"0 auto 8px",display:"block"}}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" stroke="#C4B9AD" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83"}}>Drop a file here or use <span style={{color:"#B9855E"}}>Attach file</span> above</div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#C4B9AD",marginTop:4}}>Max 8 MB per file</div>
+                  </div>
+                )}
+                {atts.length>0&&(
+                  <div
+                    style={{border:"2px dashed transparent",borderRadius:10,transition:"border-color .15s"}}
+                    onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor="#B9855E";}}
+                    onDragLeave={e=>{e.currentTarget.style.borderColor="transparent";}}
+                    onDrop={e=>{e.preventDefault();e.currentTarget.style.borderColor="transparent";const f=e.dataTransfer.files[0];if(f)addProjAttachment(selProj.id,f);}}
+                  >
+                    {atts.map(att=>(
+                      <div key={att.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 12px",background:"#faf7f3",borderRadius:9,marginBottom:8,border:"1px solid #EAE4DC"}}>
+                        <div style={{flexShrink:0}} dangerouslySetInnerHTML={{__html:attIcon(att.type||"")}} />
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"var(--ink)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{att.name}</div>
+                          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83",marginTop:2}}>{fmtBytes(att.size)} · {att.addedAt?new Date(att.addedAt+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):""}</div>
+                        </div>
+                        <button onClick={()=>downloadAttachment(att)} title="Download" style={{background:"none",border:"none",cursor:"pointer",color:"#8F8A83",padding:4,flexShrink:0}}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </button>
+                        <button onClick={()=>deleteProjAttachment(selProj.id,att.id)} title="Remove" style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}}>×</button>
+                      </div>
+                    ))}
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#C4B9AD",marginTop:4,textAlign:"center"}}>Drop more files here · Max 8 MB each</div>
+                  </div>
+                )}
+              </div>
+              );
+            })()}
+
             {/* Edit Project Modal — must live inside detail view */}
             {showEditProj&&(
               <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowEditProj(false)}>
@@ -4437,7 +4543,7 @@ export default function App() {
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Plan, track and bring your ideas to life.</div>
               </div>
               <div className="dash-search">
-                <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"#B9855E",color:"#fff",border:"none",borderRadius:10,padding:"9px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
+                <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:10,padding:"9px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   New Project
                 </button>
