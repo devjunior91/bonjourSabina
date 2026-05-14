@@ -4325,15 +4325,18 @@ export default function App() {
           return(
           <div style={{padding:"0 24px 64px"}}>
             {/* Header */}
-            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:20}}>
+            <div className="dash-page-header">
               <div>
-                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)"}}>Project Planner</h1>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"var(--ink)",margin:0}}>Project Planner</h1>
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Plan, track and bring your ideas to life.</div>
               </div>
-              <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"#B9855E",color:"#fff",border:"none",borderRadius:10,padding:"10px 18px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                New Project
-              </button>
+              <div className="dash-search">
+                <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"#B9855E",color:"#fff",border:"none",borderRadius:10,padding:"9px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  New Project
+                </button>
+                {headerIcons}
+              </div>
             </div>
 
             {/* Tabs + Sort */}
@@ -4399,7 +4402,7 @@ export default function App() {
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:12}}>
                   {recentWins.map((w,wi)=>(
                     <div key={wi} style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:12,padding:"14px 16px",display:"flex",alignItems:"flex-start",gap:12}}>
-                      <div style={{flexShrink:0,marginTop:2}}>{PROJ_ICONS[w.icon]?<div style={{width:32,height:32}}>{React.cloneElement(PROJ_ICONS[w.icon],{width:32,height:32})}</div>:null}</div>
+                      <div style={{flexShrink:0,marginTop:2,width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center"}}>{PROJ_ICONS[w.icon]||null}</div>
                       <div>
                         <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:"var(--ink)",marginBottom:2}}>{w.title}</div>
                         <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83"}}>{w.project}</div>
@@ -4443,7 +4446,7 @@ export default function App() {
                     <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
                       {PROJ_ICON_KEYS.map(k=>(
                         <button key={k} onClick={()=>setNewProjIcon(k)} style={{background:"none",border:"2px solid "+(newProjIcon===k?"#B9855E":"transparent"),borderRadius:12,padding:4,cursor:"pointer",opacity:newProjIcon===k?1:0.6}}>
-                          {React.cloneElement(PROJ_ICONS[k],{width:40,height:40})}
+                          {PROJ_ICONS[k]}
                         </button>
                       ))}
                     </div>
