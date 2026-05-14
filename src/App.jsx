@@ -1180,6 +1180,20 @@ export default function App() {
   const [newProjMilText,setNewProjMilText]=useState("");
   const [projNotesEdit,setProjNotesEdit]=useState(false);
   const [editProjNotes,setEditProjNotes]=useState("");
+  const [showEditProj,setShowEditProj]=useState(false);
+  const [editProjId,setEditProjId]=useState(null);
+  const [editProjTitle,setEditProjTitle]=useState("");
+  const [editProjDesc,setEditProjDesc]=useState("");
+  const [editProjIcon,setEditProjIcon]=useState("laptop");
+  const [editProjPriority,setEditProjPriority]=useState("medium");
+  const [editProjDue,setEditProjDue]=useState("");
+  const [editProjStart,setEditProjStart]=useState("");
+  const [editProjStatus,setEditProjStatus]=useState("active");
+  const [newNoteText,setNewNoteText]=useState("");
+  const [editNoteId,setEditNoteId]=useState(null);
+  const [editNoteText,setEditNoteText]=useState("");
+  const [editTaskId,setEditTaskId]=useState(null);
+  const [editTaskText,setEditTaskText]=useState("");
   const [gratInput,setGratInput]=useState("");
   const [gratMenuId,setGratMenuId]=useState(null);
   const [gratViewOffset,setGratViewOffset]=useState(0);
@@ -1714,7 +1728,7 @@ export default function App() {
   };
   const addProject=()=>{
     if(!newProjTitle.trim())return;
-    setProjects(ps=>[...ps,{id:Date.now(),title:newProjTitle.trim(),description:newProjDesc.trim(),icon:newProjIcon,status:"active",priority:newProjPriority,startDate:TODAY,dueDate:newProjDue,tasks:[],milestones:[],notes:"",createdAt:TODAY}]);
+    setProjects(ps=>[...ps,{id:Date.now(),title:newProjTitle.trim(),description:newProjDesc.trim(),icon:newProjIcon,status:"active",priority:newProjPriority,startDate:TODAY,dueDate:newProjDue,tasks:[],milestones:[],notes:[],createdAt:TODAY}]);
     setNewProjTitle("");setNewProjDesc("");setNewProjIcon("laptop");setNewProjPriority("medium");setNewProjDue("");setShowNewProj(false);
   };
   const toggleProjTask=(projId,taskId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id!==taskId?t:{...t,done:!t.done,doneAt:!t.done?new Date().toISOString():null})}));
@@ -1732,6 +1746,13 @@ export default function App() {
   };
   const deleteProjMil=(projId,milId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,milestones:p.milestones.filter(m=>m.id!==milId)}));
   const saveProjNotes=(projId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:editProjNotes}));
+  const getProjNotes=(p)=>{if(!p.notes)return[];if(typeof p.notes==="string")return p.notes?[{id:0,text:p.notes,createdAt:p.startDate||TODAY}]:[];return p.notes;};
+  const addProjNote=(projId)=>{if(!newNoteText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:[...getProjNotes(p),{id:Date.now(),text:newNoteText.trim(),createdAt:TODAY}]}));setNewNoteText("");};
+  const deleteProjNote=(projId,noteId)=>setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:getProjNotes(p).filter(n=>n.id!==noteId)}));
+  const saveNoteEdit=(projId)=>{if(!editNoteText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,notes:getProjNotes(p).map(n=>n.id===editNoteId?{...n,text:editNoteText.trim()}:n)}));setEditNoteId(null);setEditNoteText("");};
+  const saveEditProject=()=>{if(!editProjTitle.trim())return;setProjects(ps=>ps.map(p=>p.id!==editProjId?p:{...p,title:editProjTitle.trim(),description:editProjDesc.trim(),icon:editProjIcon,priority:editProjPriority,dueDate:editProjDue,startDate:editProjStart,status:editProjStatus}));setShowEditProj(false);};
+  const openEditProj=(p)=>{setEditProjId(p.id);setEditProjTitle(p.title);setEditProjDesc(p.description||"");setEditProjIcon(p.icon||"laptop");setEditProjPriority(p.priority||"medium");setEditProjDue(p.dueDate||"");setEditProjStart(p.startDate||TODAY);setEditProjStatus(p.status||"active");setShowEditProj(true);};
+  const saveTaskEdit=(projId)=>{if(!editTaskText.trim())return;setProjects(ps=>ps.map(p=>p.id!==projId?p:{...p,tasks:p.tasks.map(t=>t.id===editTaskId?{...t,text:editTaskText.trim()}:t)}));setEditTaskId(null);setEditTaskText("");};
   const NAV=[
     {id:"dashboard",label:"Dashboard",icon:<S><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></S>},
     {id:"calendar",label:"Calendar",icon:<S><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></S>},
@@ -4184,9 +4205,15 @@ export default function App() {
               <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:16,padding:"24px 28px",boxShadow:"var(--shadow)",marginBottom:16}}>
                 <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:20}}>
                   <div style={{display:"flex",alignItems:"flex-start",gap:18,flex:1}}>
-                    <div style={{flexShrink:0}}>{PROJ_ICONS[selProj.icon]||PROJ_ICONS.laptop}</div>
+                    <div style={{flexShrink:0,cursor:"pointer"}} onClick={()=>openEditProj(selProj)} title="Edit project">{PROJ_ICONS[selProj.icon]||PROJ_ICONS.laptop}</div>
                     <div style={{flex:1}}>
-                      <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",margin:"0 0 6px"}}>{selProj.title}</h1>
+                      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+                        <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",margin:0}}>{selProj.title}</h1>
+                        <button onClick={()=>openEditProj(selProj)} title="Edit project" style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,color:"#8F8A83",flexShrink:0}}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 18.5L5.8 15L15.5 5.3C16.2 4.6 17.3 4.6 18 5.3L18.7 6C19.4 6.7 19.4 7.8 18.7 8.5L9 18.2L5 18.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14.5 6.5L17.5 9.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11}}>Edit</span>
+                        </button>
+                      </div>
                       <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"#8F8A83",margin:"0 0 20px",lineHeight:1.5}}>{selProj.description||"No description yet."}</p>
                       <div style={{display:"flex",flexWrap:"wrap",gap:24}}>
                         {[
@@ -4239,7 +4266,10 @@ export default function App() {
                         :<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#BFA58D" strokeWidth="1.6"/></svg>
                       }
                     </button>
-                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1}}>{t.text}</span>
+                    {editTaskId===t.id
+                      ?<input autoFocus value={editTaskText} onChange={e=>setEditTaskText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")saveTaskEdit(selProj.id);if(e.key==="Escape"){setEditTaskId(null);setEditTaskText("");}}} onBlur={()=>saveTaskEdit(selProj.id)} style={{flex:1,border:"1px solid #B9855E",borderRadius:6,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
+                      :<span onDoubleClick={()=>{setEditTaskId(t.id);setEditTaskText(t.text);}} style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:t.done?"#8F8A83":"var(--ink)",textDecoration:t.done?"line-through":"none",flex:1,cursor:"text"}} title="Double-click to edit">{t.text}</span>
+                    }
                     {t.dueDate&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83"}}>{new Date(t.dueDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span>}
                     <span className="proj-pri-badge" style={{background:priBg[t.priority]||priBg.medium,color:priClr[t.priority]||priClr.medium}}>{t.priority||"medium"}</span>
                     <button onClick={()=>deleteProjTask(selProj.id,t.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}}>×</button>
@@ -4292,27 +4322,46 @@ export default function App() {
               </div>
 
               {/* Notes */}
-              <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:14,padding:"20px 24px",boxShadow:"var(--shadow)",marginBottom:14}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Notes</span>
-                  <button onClick={()=>{setProjNotesEdit(e=>!e);setEditProjNotes(selProj.notes||"");}} style={{background:"none",border:"none",cursor:"pointer",color:"#8F8A83"}}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 18.5L5.8 15L15.5 5.3C16.2 4.6 17.3 4.6 18 5.3L18.7 6C19.4 6.7 19.4 7.8 18.7 8.5L9 18.2L5 18.5Z" stroke="#8F8A83" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14.5 6.5L17.5 9.5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/></svg>
-                  </button>
-                </div>
-                {projNotesEdit?(
-                  <div>
-                    <textarea value={editProjNotes} onChange={e=>setEditProjNotes(e.target.value)} style={{width:"100%",minHeight:100,border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
-                    <div style={{display:"flex",gap:8,marginTop:8,justifyContent:"flex-end"}}>
-                      <button onClick={()=>setProjNotesEdit(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                      <button onClick={()=>{saveProjNotes(selProj.id);setProjNotesEdit(false);}} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>Save</button>
+              {(()=>{
+                const projNotes=getProjNotes(selProj);
+                return(
+                <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:14,padding:"20px 24px",boxShadow:"var(--shadow)",marginBottom:14}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#8F8A83" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14 2v6h6" stroke="#8F8A83" strokeWidth="1.7" strokeLinejoin="round"/><path d="M8 13h8M8 17h5" stroke="#8F8A83" strokeWidth="1.7" strokeLinecap="round"/></svg>
+                      <span style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Notes</span>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 8px"}}>{projNotes.length}</span>
                     </div>
                   </div>
-                ):(
-                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:selProj.notes?"var(--ink)":"#8F8A83",lineHeight:1.6,whiteSpace:"pre-wrap",fontStyle:selProj.notes?"normal":"italic"}}>
-                    {selProj.notes||"Add notes, ideas or anything important for this project..."}
+                  {projNotes.length===0&&<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"#8F8A83",lineHeight:1.6,fontStyle:"italic",marginBottom:16}}>No notes yet. Add your first thought below.</div>}
+                  {projNotes.map(note=>(
+                    <div key={note.id} style={{background:"#faf7f3",border:"1px solid #EAE4DC",borderRadius:10,padding:"12px 14px",marginBottom:10,position:"relative"}}>
+                      {editNoteId===note.id
+                        ?(<div>
+                            <textarea autoFocus value={editNoteText} onChange={e=>setEditNoteText(e.target.value)} style={{width:"100%",minHeight:72,border:"1px solid #B9855E",borderRadius:6,padding:"8px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#fff",outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
+                            <div style={{display:"flex",gap:6,marginTop:6,justifyContent:"flex-end"}}>
+                              <button onClick={()=>{setEditNoteId(null);setEditNoteText("");}} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:6,padding:"4px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                              <button onClick={()=>saveNoteEdit(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:6,padding:"4px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>Save</button>
+                            </div>
+                          </div>)
+                        :(<>
+                            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",lineHeight:1.6,whiteSpace:"pre-wrap",paddingRight:48}}>{note.text}</div>
+                            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83",marginTop:6}}>{note.createdAt?new Date(note.createdAt+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):""}</div>
+                            <div style={{position:"absolute",top:10,right:10,display:"flex",gap:4}}>
+                              <button onClick={()=>{setEditNoteId(note.id);setEditNoteText(note.text);}} style={{background:"none",border:"none",cursor:"pointer",color:"#8F8A83",padding:2}} title="Edit note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 18.5L5.8 15L15.5 5.3C16.2 4.6 17.3 4.6 18 5.3L18.7 6C19.4 6.7 19.4 7.8 18.7 8.5L9 18.2L5 18.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/><path d="M14.5 6.5L17.5 9.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg></button>
+                              <button onClick={()=>deleteProjNote(selProj.id,note.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px",lineHeight:1}} title="Delete note">×</button>
+                            </div>
+                          </>)
+                      }
+                    </div>
+                  ))}
+                  <div style={{display:"flex",gap:8,marginTop:4}}>
+                    <textarea value={newNoteText} onChange={e=>setNewNoteText(e.target.value)} placeholder="Write a note..." rows={2} style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"none"}}/>
+                    <button onClick={()=>addProjNote(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",alignSelf:"flex-end"}}>+ Add</button>
                   </div>
-                )}
-              </div>
+                </div>
+                );
+              })()}
 
             </div>
             );
@@ -4414,6 +4463,63 @@ export default function App() {
               </div>
             )}
 
+            {/* Edit Project Modal */}
+            {showEditProj&&(
+              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowEditProj(false)}>
+                <div style={{background:"#fff",borderRadius:18,padding:"28px 32px",width:500,maxWidth:"92vw",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
+                  <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:600,color:"var(--ink)",marginBottom:20}}>Edit Project</h2>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Project Name *</label>
+                    <input value={editProjTitle} onChange={e=>setEditProjTitle(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Description</label>
+                    <textarea value={editProjDesc} onChange={e=>setEditProjDesc(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"none",height:72,boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:14}}>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Status</label>
+                      <select value={editProjStatus} onChange={e=>setEditProjStatus(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                        <option value="active">Active</option>
+                        <option value="paused">Paused</option>
+                        <option value="completed">Completed</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
+                      <select value={editProjPriority} onChange={e=>setEditProjPriority(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start Date</label>
+                      <input type="date" value={editProjStart} onChange={e=>setEditProjStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                    </div>
+                  </div>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Due Date (optional)</label>
+                    <input type="date" value={editProjDue} onChange={e=>setEditProjDue(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{marginBottom:20}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Icon</label>
+                    <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                      {PROJ_ICON_KEYS.map(k=>(
+                        <button key={k} onClick={()=>setEditProjIcon(k)} style={{background:"none",border:"2px solid "+(editProjIcon===k?"#B9855E":"transparent"),borderRadius:12,padding:4,cursor:"pointer",opacity:editProjIcon===k?1:0.6}}>
+                          {PROJ_ICONS[k]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+                    <button onClick={()=>setShowEditProj(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                    <button onClick={saveEditProject} style={{background:"#B9855E",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Save Changes</button>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* New Project Modal */}
             {showNewProj&&(
               <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNewProj(false)}>
