@@ -2223,7 +2223,7 @@ export default function App() {
   {/* Page header */}
   <div className="dash-page-header">
     <div>
-      <div className="dash-page-title">Bonjour, <em>Sabina</em> ✦</div>
+      <div className="dash-page-title">Dashboard</div>
       <div className="dash-page-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</div>
     </div>
     <div className="dash-search">
@@ -2310,7 +2310,7 @@ export default function App() {
         <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",transition:"width .6s",borderRadius:3}}/>
       </div>
       {/* Category rows with mini bars */}
-      <div style={{display:"flex",flexDirection:"column",gap:12,flex:1}}>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {[
           {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
