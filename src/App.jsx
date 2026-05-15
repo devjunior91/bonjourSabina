@@ -2797,7 +2797,10 @@ export default function App() {
                       {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
                     </div>
                     <div className="tr2-body">
-                      <div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>{todo.text}</div>
+                      <div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
+                        {todo.recurringId&&<span title="Recurring task" style={{fontSize:10,color:"#B9855E",marginRight:5,opacity:.8}}>↻</span>}
+                        {todo.text}
+                      </div>
                       <span className="tr2-tg">{todo.tag}</span>
                     </div>
                     <div className="tr2-pri">{pflag(todo.priority)}</div>
