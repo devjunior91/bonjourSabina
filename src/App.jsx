@@ -1956,14 +1956,7 @@ export default function App() {
             </div>
           ))}
         </div>
-        <div className="sb-quickadd">
-          <div className="sb-qa-label">Quick Add</div>
-          <div className="sb-qa-sub">Add a task quickly</div>
-          <div className="sb-qa-row">
-            <input className="sb-qa-inp" placeholder="What needs to be done?" value={newTodo} onChange={e=>setNewTodo(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTodo()}/>
-            <button className="sb-qa-btn" onClick={addTodo}>+</button>
-          </div>
-        </div>
+
         <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
 
