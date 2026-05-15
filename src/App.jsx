@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import sabinaPhoto from "./assets/sabina.jpg";
-import ptLogo from "./assets/The PT Transparent logo.png";
+import ptLogo from "./assets/pt-logo.png";
 import tipsBg from "./assets/image.png";
 import homePhilImg from "./assets/image2.png";
 import { createClient } from "@supabase/supabase-js";
