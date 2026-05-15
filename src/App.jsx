@@ -207,7 +207,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ni:hover{background:rgba(26,20,16,.04);color:var(--ink);}
 .ni.on{background:#ede8e1;color:var(--ink);}
 .ni svg{flex-shrink:0;}
-.sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);border-top:1px solid rgba(26,20,16,.07);}
+.sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);}
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:clip;}
@@ -1957,6 +1957,7 @@ export default function App() {
           ))}
         </div>
 
+        <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
 
       <main className="main">
