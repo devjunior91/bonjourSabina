@@ -1168,6 +1168,7 @@ export default function App() {
   const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
   const [projects,setProjects]=useDB("sab_projects",[]);
   const [recurringTasks,setRecurringTasks]=useDB("sab_recurring",[]);
+  const [recurringDone,setRecurringDone]=useDB("sab_rec_done",{});
   const [selProjId,setSelProjId]=useDB("sab_sel_proj_id",null);
   const [projTab,setProjTab]=useState("active");
   const [projSort,setProjSort]=useState("recent");
@@ -1359,23 +1360,6 @@ export default function App() {
     return()=>clearInterval(t);
   },[gratReminders,gratitude,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-generate recurring todos for today
-  useEffect(()=>{
-    if(!recurringTasks||recurringTasks.length===0)return;
-    const todayDow=(new Date(TODAY+"T12:00:00").getDay()+6)%7;
-    recurringTasks.forEach(rt=>{
-      if(!rt.active)return;
-      if(rt.startDate&&rt.startDate>TODAY)return;
-      if(rt.endType==="date"&&rt.endDate&&rt.endDate<TODAY)return;
-      if(!rt.days.includes(todayDow))return;
-      setTodos(current=>{
-        const exists=current.some(t=>t.recurringId===rt.id&&t.date===TODAY);
-        if(exists)return current;
-        return[...current,{id:Date.now()+Math.floor(Math.random()*99999),text:rt.text,done:false,tag:rt.tag||"Personal",date:TODAY,priority:rt.priority||"medium",subtasks:[],recurringId:rt.id,doneAt:null}];
-      });
-    });
-  },[TODAY,recurringTasks]);// eslint-disable-line react-hooks/exhaustive-deps
-
   // Overdue project task notifications
   useEffect(()=>{
     if(!projects||projects.length===0)return;
@@ -1460,6 +1444,11 @@ export default function App() {
   const addTodoDash=()=>addTodoFor(dashTodoDay==="today"?TODAY:TOMORROW);
   const toggleTodo=id=>setTodos(t=>t.map(td=>{if(td.id!==id)return td;if(!td.done)shout();const nowDone=!td.done;return{...td,done:nowDone,doneAt:nowDone?new Date().toISOString():null};}));
   const delTodo=id=>setTodos(t=>t.filter(td=>td.id!==id));
+  const toggleRecDone=(rtId,date)=>{
+    shout();
+    const k=rtId+"_"+date;
+    setRecurringDone(rd=>({...rd,[k]:!rd[k]}));
+  };
   const startEditTodo=todo=>{setEditTodoId(todo.id);setEditTodoTxt(todo.text);};
   const saveEditTodo=()=>{if(editTodoTxt.trim())setTodos(t=>t.map(td=>td.id===editTodoId?{...td,text:editTodoTxt}:td));setEditTodoId(null);};
   const addTag=()=>{if(!newTag.trim()||tags.includes(newTag.trim()))return;setTags(t=>[...t,newTag.trim()]);setNewTag("");};
@@ -2538,12 +2527,31 @@ export default function App() {
           const tTotal=todos.filter(t=>t.date===viewDate).length;
           const tDone=todos.filter(t=>t.done&&t.date===viewDate).length;
           const pct=tTotal?Math.round(tDone/tTotal*100):0;
-          const viewTodos=byPri(todos.filter(t=>{
+          // Virtual recurring todos for this date
+          const recVirtual=(()=>{
+            const dow=(new Date(viewDate+"T12:00:00").getDay()+6)%7;
+            return (recurringTasks||[]).filter(rt=>{
+              if(!rt.active)return false;
+              if(rt.startDate&&rt.startDate>viewDate)return false;
+              if(rt.endType==="date"&&rt.endDate&&rt.endDate<viewDate)return false;
+              return rt.days.includes(dow);
+            }).map(rt=>{
+              const done=!!(recurringDone&&recurringDone[rt.id+"_"+viewDate]);
+              return{id:"__rec__"+rt.id,_virtualRtId:rt.id,text:rt.text,done,tag:rt.tag||"Personal",date:viewDate,priority:rt.priority||"medium",subtasks:[],recurringId:rt.id,doneAt:done?viewDate:null,_virtual:true};
+            });
+          })();
+          const realTodos=todos.filter(t=>{
             const md=t.date===viewDate;
             const mf=tFilter==="all"||(tFilter==="active"?!t.done:t.done);
             const mt=tagFilter==="all"||t.tag===tagFilter;
-            return md&&mf&&mt;
-          }));
+            return md&&mf&&mt&&!t.recurringId;
+          });
+          const recFiltered=recVirtual.filter(t=>{
+            const mf=tFilter==="all"||(tFilter==="active"?!t.done:t.done);
+            const mt=tagFilter==="all"||t.tag===tagFilter;
+            return mf&&mt;
+          });
+          const viewTodos=byPri([...realTodos,...recFiltered]);
           // Modal add
           const handleModalAdd=()=>{
             if(!newModalText.trim())return;
@@ -2798,11 +2806,11 @@ export default function App() {
                   return(
                   <div key={todo.id}>
                   <div className="tr2">
-                    <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
+                    <div className={`tr2-ck ${todo.done?"done":""}`} onClick={()=>todo._virtual?toggleRecDone(todo._virtualRtId,todo.date):toggleTodo(todo.id)}>
                       {todo.done&&<span style={{fontSize:9,color:"#fff"}}>✓</span>}
                     </div>
                     <div className="tr2-body">
-                      <div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>toggleTodo(todo.id)}>
+                      <div className={`tr2-txt ${todo.done?"done":""}`} onClick={()=>todo._virtual?toggleRecDone(todo._virtualRtId,todo.date):toggleTodo(todo.id)}>
                         {todo.recurringId&&<span title="Recurring task" style={{fontSize:10,color:"#B9855E",marginRight:5,opacity:.8}}>↻</span>}
                         {todo.text}
                       </div>
@@ -2818,10 +2826,11 @@ export default function App() {
                     <button className="tr2-dot" onClick={e=>{e.stopPropagation();setShowTaskMenu(showTaskMenu===todo.id?null:todo.id);}}>⋮</button>
                     {showTaskMenu===todo.id&&(
                       <div className={`tmenu${menuUp?" up":""}`} onClick={e=>e.stopPropagation()}>
-                        <div className="tmi" onClick={()=>{setEditModal({...todo});setShowTaskMenu(null);}}>✎ &nbsp;Edit task</div>
-                        {viewDayOffset===0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TOMORROW}:t));setShowTaskMenu(null);}}>→ &nbsp;Move to Tomorrow</div>}
-                        {viewDayOffset>0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TODAY}:t));setShowTaskMenu(null);}}>← &nbsp;Move to Today</div>}
-                        <div className="tmi del" onClick={()=>{delTodo(todo.id);setShowTaskMenu(null);}}>✕ &nbsp;Delete</div>
+                        {!todo._virtual&&<div className="tmi" onClick={()=>{setEditModal({...todo});setShowTaskMenu(null);}}>✎ &nbsp;Edit task</div>}
+                        {!todo._virtual&&viewDayOffset===0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TOMORROW}:t));setShowTaskMenu(null);}}>→ &nbsp;Move to Tomorrow</div>}
+                        {!todo._virtual&&viewDayOffset>0&&<div className="tmi" onClick={()=>{setTodos(ts=>ts.map(t=>t.id===todo.id?{...t,date:TODAY}:t));setShowTaskMenu(null);}}>← &nbsp;Move to Today</div>}
+                        {!todo._virtual&&<div className="tmi del" onClick={()=>{delTodo(todo.id);setShowTaskMenu(null);}}>✕ &nbsp;Delete</div>}
+                        {todo._virtual&&<div className="tmi" onClick={()=>{setShowTaskMenu(null);setShowNewRec(true);}}>↻ &nbsp;Manage recurring</div>}
                       </div>
                     )}
                   </div>
