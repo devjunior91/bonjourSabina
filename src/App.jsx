@@ -193,8 +193,8 @@ const CSS=`
   --shadow:0 1px 3px rgba(26,20,16,.04),0 6px 22px rgba(26,20,16,.08);
   --shadow-lg:0 4px 14px rgba(26,20,16,.08),0 16px 48px rgba(26,20,16,.14);
   --sidebar-w:220px;
-  --brand:#9B0006;
-  --brand-dark:#7a0005;
+  --brand:#8E1C1C;
+  --brand-dark:#6e1515;
 }
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:#faf7f3;border-right:1px solid rgba(26,20,16,.08);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
