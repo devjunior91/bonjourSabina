@@ -193,6 +193,8 @@ const CSS=`
   --shadow:0 1px 3px rgba(26,20,16,.04),0 6px 22px rgba(26,20,16,.08);
   --shadow-lg:0 4px 14px rgba(26,20,16,.08),0 16px 48px rgba(26,20,16,.14);
   --sidebar-w:220px;
+  --brand:#9B0006;
+  --brand-dark:#7a0005;
 }
 body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:#faf7f3;border-right:1px solid rgba(26,20,16,.08);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
@@ -277,7 +279,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .cal-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px;}
 .cal-week-day{text-align:center;font-size:9px;color:var(--ink-light);letter-spacing:.06em;padding-bottom:4px;}
 .cal-week-date{text-align:center;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);cursor:pointer;margin:0 auto;}
-.cal-week-date.today{background:var(--ink);color:white;}
+.cal-week-date.today{background:var(--brand);color:white;}
 .cal-today-hd{font-size:10px;color:var(--ink-light);letter-spacing:.06em;margin-bottom:8px;padding-top:8px;border-top:1px solid var(--border);}
 .cal-ev-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
 .cal-ev-time{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--ink-light);min-width:36px;}
@@ -359,12 +361,12 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .pomo-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
 .pomo-presets{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
 .pomo-preset{padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
-.pomo-preset:hover,.pomo-preset.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.pomo-preset:hover,.pomo-preset.on{background:var(--brand);color:#f4ede3;border-color:var(--brand);}
 .pomo-svg{filter:drop-shadow(0 2px 8px rgba(201,168,124,.18));}
 .pomo-btns{display:flex;gap:8px;}
 .pomo-btn{padding:6px 18px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;letter-spacing:.02em;}
-.pomo-btn.start{background:var(--ink);color:#f4ede3;}
-.pomo-btn.start:hover{background:var(--gold-deep);}
+.pomo-btn.start{background:var(--brand);color:#f4ede3;}
+.pomo-btn.start:hover{background:var(--brand-dark);}
 .pomo-btn.pause{background:var(--parchment);color:var(--ink);border:1px solid var(--border);}
 .pomo-btn.pause:hover{background:var(--gold-pale);}
 .pomo-btn.stop{background:transparent;color:var(--ink-light);border:1px solid var(--border);}
@@ -478,14 +480,14 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .inp:focus{border-color:var(--gold);}
 .inp::placeholder{color:rgba(122,98,82,.4);}
 .sel{padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--parchment);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;cursor:pointer;}
-.bp{padding:10px 20px;background:var(--ink);color:#f4ede3;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;letter-spacing:.02em;}
+.bp{padding:10px 20px;background:var(--brand);color:#f4ede3;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;letter-spacing:.02em;}
 .bp:hover{background:var(--gold-deep);}
 .sb2{background:none;border:none;cursor:pointer;padding:3px 7px;border-radius:6px;font-size:12px;transition:all .15s;color:var(--ink-light);line-height:1;}
 .sb2:hover{background:var(--gold-pale);color:var(--gold-deep);}
 .sb2.d:hover{background:#fde8e8;color:#c05050;}
 .tb{display:flex;align-items:center;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
 .pb{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:#ffffff;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--ink-light);cursor:pointer;transition:all .18s;white-space:nowrap;box-shadow:0 1px 3px rgba(26,20,16,.06);}
-.pb:hover,.pb.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.pb:hover,.pb.on{background:var(--brand);color:#f4ede3;border-color:var(--brand);}
 .pb.ton{background:var(--gold-pale);color:var(--gold-deep);border-color:var(--gold);}
 .tl{display:flex;flex-direction:column;gap:7px;}
 .ti{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;border:1px solid rgba(26,20,16,.06);background:#E4E1DC;transition:all .18s;}
@@ -625,7 +627,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .ri{width:100%;accent-color:var(--gold-deep);cursor:pointer;}
 .fbr{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
 .bc2{padding:8px 15px;background:transparent;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;}
-.bs{padding:8px 18px;background:var(--ink);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:#f4ede3;cursor:pointer;}
+.bs{padding:8px 18px;background:var(--brand);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:#f4ede3;cursor:pointer;}
 .bs:hover{background:var(--gold-deep);}
 .cg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .cd{background:var(--ivory);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);}
@@ -644,7 +646,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .car{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
 .cai{flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:7px;background:var(--parchment);font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink);outline:none;}
 .cai:focus{border-color:var(--gold);}
-.cab{padding:6px 10px;background:var(--ink);color:#f4ede3;border:none;border-radius:7px;font-size:11px;cursor:pointer;}
+.cab{padding:6px 10px;background:var(--brand);color:#f4ede3;border:none;border-radius:7px;font-size:11px;cursor:pointer;}
 .cab:hover{background:var(--gold-deep);}
 .cah{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
 .caml{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);}
@@ -681,7 +683,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .emp{text-align:center;padding:24px 0;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-light);font-size:13px;}
 .bil-tabs{display:flex;gap:4px;margin-bottom:20px;}
 .bil-tab{padding:6px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-light);cursor:pointer;transition:all .18s;}
-.bil-tab.on{background:var(--ink);color:#f0e8dc;border-color:var(--ink);}
+.bil-tab.on{background:var(--brand);color:#f4ede3;border-color:var(--brand);}
 .pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 .pack-cat{background:var(--ivory);border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:0;}
 .pack-cat-hd{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
@@ -723,7 +725,7 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .grat-inp{width:100%;border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;background:#faf8f5;resize:none;min-height:52px;transition:border-color .2s;box-sizing:border-box;}
 .grat-inp:focus{border-color:var(--gold);}
 .grat-inp::placeholder{color:rgba(26,20,16,.35);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;}
-.grat-add-btn{display:flex;align-items:center;gap:6px;padding:"10px 20px";background:var(--ink);color:#f4ede3;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.grat-add-btn{display:flex;align-items:center;gap:6px;padding:"10px 20px";background:var(--brand);color:#f4ede3;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
 .grat-add-btn:hover{background:var(--gold-deep);}
 .grat-list-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .grat-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(26,20,16,.05);position:relative;}
@@ -874,8 +876,8 @@ body,#root{background:var(--cream);min-height:100vh;font-family:'DM Sans',sans-s
 .sb-qa-inp{flex:1;padding:6px 9px;border:1px solid rgba(26,20,16,.1);border-radius:8px;background:rgba(26,20,16,.03);font-family:'DM Sans',sans-serif;font-size:10.5px;color:var(--ink);outline:none;transition:border-color .15s;}
 .sb-qa-inp:focus{border-color:var(--gold);}
 .sb-qa-inp::placeholder{color:rgba(26,20,16,.3);font-family:'Cormorant Garamond',serif;font-style:italic;}
-.sb-qa-btn{width:25px;height:25px;border-radius:7px;background:var(--ink);border:none;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
-.sb-qa-btn:hover{background:var(--gold-deep);}
+.sb-qa-btn{width:25px;height:25px;border-radius:7px;background:var(--brand);border:none;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
+.sb-qa-btn:hover{background:var(--brand-dark);}
 @media(max-width:900px){.todo-body{grid-template-columns:1fr;}.todo-side{display:none;}}
 
 /* ── RESPONSIVE ── */
@@ -1901,7 +1903,7 @@ export default function App() {
             style={{width:"100%",padding:"12px 16px",border:`1.5px solid ${pwErr?"#c05050":"var(--border)"}`,borderRadius:10,background:"var(--parchment)",fontFamily:"'DM Sans',sans-serif",fontSize:14,color:"var(--ink)",outline:"none",marginBottom:12,transition:"border-color .2s",textAlign:"center",letterSpacing:".1em"}}
           />
           {pwErr&&<div style={{fontSize:11,color:"#c05050",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",marginBottom:10}}>Incorrect password — try again</div>}
-          <button onClick={checkPw} style={{width:"100%",padding:"12px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:10,fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",transition:"background .2s"}}>
+          <button onClick={checkPw} style={{width:"100%",padding:"12px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:10,fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",transition:"background .2s"}}>
             Enter ✦
           </button>
         </div>
@@ -1985,7 +1987,7 @@ export default function App() {
             <span className="hab-nav-lbl">{habitViewWeekLabel}</span>
             <button className="hab-nav-arrow" disabled={habitViewWeek===0} onClick={()=>setHabitViewWeek(w=>w-1)}>›</button>
           </div>
-          <button onClick={()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HABIT_ICON_LIST[idx%HABIT_ICON_LIST.length],color:HCOLORS[idx],days:Array(7).fill(false),dayTimes:Array(7).fill(null)}]);setNewHabit("");}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New habit</button>
+          <button onClick={()=>{if(!newHabit.trim())return;const idx=habits.length%HCOLORS.length;setHabits(h=>[...h,{id:Date.now(),name:newHabit,icon:HABIT_ICON_LIST[idx%HABIT_ICON_LIST.length],color:HCOLORS[idx],days:Array(7).fill(false),dayTimes:Array(7).fill(null)}]);setNewHabit("");}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New habit</button>
           {headerIcons}
         </div>
       </div>
@@ -2229,7 +2231,7 @@ export default function App() {
         </select>
         <div style={{display:"flex",gap:8}}>
           <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowDashModal(false)}>Cancel</button>
-          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
+          <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--brand)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={addDashTask}>Add Task</button>
         </div>
       </div>
     </div>
@@ -2321,8 +2323,8 @@ export default function App() {
       </svg>
       <div style={{display:"flex",gap:8,alignItems:"center"}}>
         {!pomoActive
-          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
-          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
         }
         <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
       </div>
@@ -2583,7 +2585,7 @@ export default function App() {
                 </select>
                 <div style={{display:"flex",gap:8}}>
                   <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowNewModal(false)}>Cancel</button>
-                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={handleModalAdd}>Add Task</button>
+                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--brand)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={handleModalAdd}>Add Task</button>
                 </div>
               </div>
             </div>
@@ -2608,7 +2610,7 @@ export default function App() {
                 </select>
                 <div style={{display:"flex",gap:8}}>
                   <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setEditModal(null)}>Cancel</button>
-                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={()=>{if(!editModal.text.trim())return;setTodos(ts=>ts.map(t=>t.id===editModal.id?{...t,...editModal}:t));setEditModal(null);}}>Save changes</button>
+                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--brand)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={()=>{if(!editModal.text.trim())return;setTodos(ts=>ts.map(t=>t.id===editModal.id?{...t,...editModal}:t));setEditModal(null);}}>Save changes</button>
                 </div>
               </div>
             </div>
@@ -2622,7 +2624,7 @@ export default function App() {
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Stay organised, focus on what matters.</div>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
-                <button onClick={()=>setShowNewModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New Task</button>
+                <button onClick={()=>setShowNewModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New Task</button>
                 <button onClick={()=>setShowNewRec(true)} title="Manage recurring tasks" style={{display:"flex",alignItems:"center",gap:5,padding:"8px 14px",background:"#f5f0ea",color:"var(--ink)",border:"1px solid #EAE4DC",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",whiteSpace:"nowrap"}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
                   Recurring{recurringTasks.filter(r=>r.active).length>0?" ("+recurringTasks.filter(r=>r.active).length+")":""}
@@ -3533,7 +3535,7 @@ export default function App() {
                 {gDraft.milestones.length<5&&<button onClick={gMsAdd} style={{border:"1px dashed var(--border)",background:"none",borderRadius:8,padding:"7px 14px",fontSize:12,color:"var(--ink-light)",cursor:"pointer",width:"100%",marginBottom:20}}>+ Add milestone</button>}
                 <div style={{display:"flex",gap:8,marginTop:8}}>
                   <button style={{flex:1,padding:"10px",border:"1px solid var(--border)",borderRadius:10,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink)"}} onClick={()=>setShowGoalModal(false)}>Cancel</button>
-                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--ink)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={saveGoal}>Save Goal ✦</button>
+                  <button style={{flex:2,padding:"10px",border:"none",borderRadius:10,background:"var(--brand)",color:"#f4ede3",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}} onClick={saveGoal}>Save Goal ✦</button>
                 </div>
               </div>
             </div>
@@ -3550,7 +3552,7 @@ export default function App() {
                 <span style={{minWidth:90,textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)"}}>{vmLabel}</span>
                 <button onClick={nmG} disabled={vMonth>=MK} style={{border:"none",background:"none",cursor:"pointer",color:vMonth>=MK?"var(--border)":"var(--ink-light)",fontSize:16,padding:"0 4px",lineHeight:1}}>›</button>
               </div>
-              <button onClick={openAddG} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:10,padding:"8px 18px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>+ New Goal</button>
+              <button onClick={openAddG} style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:10,padding:"8px 18px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>+ New Goal</button>
             </div>
           </div>
           {/* Stats row */}
@@ -3994,7 +3996,7 @@ export default function App() {
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>A clean space, a clear mind.</div>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <button onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Task</button>
+                <button onClick={()=>{setHrDraft({text:"",category:"General",duration:10});setHrModal(true);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Task</button>
                 {headerIcons}
               </div>
             </div>
@@ -4190,7 +4192,7 @@ export default function App() {
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Focus on the good, and watch your life grow.</div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:8}}>
-                  <button onClick={()=>{setGratViewOffset(0);setTimeout(()=>document.getElementById("grat-input-field")?.focus(),50);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
+                  <button onClick={()=>{setGratViewOffset(0);setTimeout(()=>document.getElementById("grat-input-field")?.focus(),50);}} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add Gratitude</button>
                   {headerIcons}
                 </div>
               </div>
@@ -4204,7 +4206,7 @@ export default function App() {
                 {gratViewOffset>0&&<span style={{fontSize:11,color:"var(--ink-light)",marginLeft:8,fontFamily:"'DM Sans',sans-serif"}}>{new Date(viewGratDate+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</span>}
               </div>
               <button className="grat-nav-btn" disabled={gratViewOffset===0} onClick={()=>setGratViewOffset(o=>o-1)}>›</button>
-              {gratViewOffset>0&&<button style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,padding:"5px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}} onClick={()=>setGratViewOffset(0)}>← Today</button>}
+              {gratViewOffset>0&&<button style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,padding:"5px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}} onClick={()=>setGratViewOffset(0)}>← Today</button>}
             </div>
 
             {/* Body */}
@@ -4257,7 +4259,7 @@ export default function App() {
                     </div>
                     <div style={{display:"flex",gap:10,alignItems:"center"}}>
                       <input id="grat-input-field" className="grat-inp" style={{minHeight:44}} placeholder={PROMPTS[promptIdx]} value={gratInput} onChange={e=>setGratInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addGrat()}/>
-                      <button style={{display:"flex",alignItems:"center",gap:6,padding:"12px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}} onClick={addGrat}>+ Add</button>
+                      <button style={{display:"flex",alignItems:"center",gap:6,padding:"12px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}} onClick={addGrat}>+ Add</button>
                     </div>
                   </div>
                 )}
@@ -4506,7 +4508,7 @@ export default function App() {
                         </div>
                         <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
                           <button onClick={()=>setEditTaskId(null)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:7,padding:"6px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                          <button onClick={()=>saveTaskEdit(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:7,padding:"6px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>Save</button>
+                          <button onClick={()=>saveTaskEdit(selProj.id)} style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:7,padding:"6px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>Save</button>
                         </div>
                       </div>
                     )}
@@ -4515,7 +4517,7 @@ export default function App() {
                 <div style={{marginTop:14}}>
                   <div style={{display:"flex",gap:8,marginBottom:6}}>
                     <input value={newProjTaskText} onChange={e=>setNewProjTaskText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjTask(selProj.id)} placeholder="Add a task..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
-                    <button onClick={()=>addProjTask(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",flexShrink:0}}>+ Add</button>
+                    <button onClick={()=>addProjTask(selProj.id)} style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",flexShrink:0}}>+ Add</button>
                   </div>
                   <div style={{display:"flex",gap:8,alignItems:"center"}}>
                     <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",flexShrink:0}}>Priority:</span>
@@ -4564,7 +4566,7 @@ export default function App() {
                 )}
                 <div style={{display:"flex",gap:8}}>
                   <input value={newProjMilText} onChange={e=>setNewProjMilText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addProjMil(selProj.id)} placeholder="Add a milestone..." style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none"}}/>
-                  <button onClick={()=>addProjMil(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add</button>
+                  <button onClick={()=>addProjMil(selProj.id)} style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}}>+ Add</button>
                 </div>
               </div>
 
@@ -4588,7 +4590,7 @@ export default function App() {
                             <textarea autoFocus value={editNoteText} onChange={e=>setEditNoteText(e.target.value)} style={{width:"100%",minHeight:72,border:"1px solid #B9855E",borderRadius:6,padding:"8px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#fff",outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
                             <div style={{display:"flex",gap:6,marginTop:6,justifyContent:"flex-end"}}>
                               <button onClick={()=>{setEditNoteId(null);setEditNoteText("");}} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:6,padding:"4px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                              <button onClick={()=>saveNoteEdit(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:6,padding:"4px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>Save</button>
+                              <button onClick={()=>saveNoteEdit(selProj.id)} style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:6,padding:"4px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>Save</button>
                             </div>
                           </div>)
                         :(<>
@@ -4604,7 +4606,7 @@ export default function App() {
                   ))}
                   <div style={{display:"flex",gap:8,marginTop:4}}>
                     <textarea value={newNoteText} onChange={e=>setNewNoteText(e.target.value)} placeholder="Write a note..." rows={2} style={{flex:1,border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",background:"#faf7f3",outline:"none",resize:"none"}}/>
-                    <button onClick={()=>addProjNote(selProj.id)} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",alignSelf:"flex-end"}}>+ Add</button>
+                    <button onClick={()=>addProjNote(selProj.id)} style={{background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:8,padding:"8px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",alignSelf:"flex-end"}}>+ Add</button>
                   </div>
                 </div>
                 );
@@ -4718,7 +4720,7 @@ export default function App() {
                   </div>
                   <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
                     <button onClick={()=>setShowEditProj(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                    <button onClick={saveEditProject} style={{background:"#B9855E",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Save Changes</button>
+                    <button onClick={saveEditProject} style={{background:"var(--brand)",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Save Changes</button>
                   </div>
                 </div>
               </div>
@@ -4740,7 +4742,7 @@ export default function App() {
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginTop:3}}>Plan, track and bring your ideas to life.</div>
               </div>
               <div className="dash-search">
-                <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:10,padding:"9px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
+                <button onClick={()=>setShowNewProj(true)} style={{display:"flex",alignItems:"center",gap:6,background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:10,padding:"9px 16px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",flexShrink:0}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   New Project
                 </button>
@@ -4862,7 +4864,7 @@ export default function App() {
                   </div>
                   <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
                     <button onClick={()=>setShowNewProj(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                    <button onClick={addProject} style={{background:"#B9855E",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Create Project</button>
+                    <button onClick={addProject} style={{background:"var(--brand)",color:"#fff",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Create Project</button>
                   </div>
                 </div>
               </div>
