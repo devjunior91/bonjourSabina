@@ -1957,7 +1957,6 @@ export default function App() {
           ))}
         </div>
 
-        <div className="sb-date">{NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
       </aside>
 
       <main className="main">
