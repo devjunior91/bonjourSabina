@@ -2269,6 +2269,8 @@ export default function App() {
           </div>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
         </div>
+        {/* Vertical divider */}
+        <div style={{width:1,background:"#9B0006",alignSelf:"stretch",margin:"18px 4px",flexShrink:0}}/>
         {/* Bullets */}
         <div style={{display:"flex",flexDirection:"column",gap:10,justifyContent:"center",minWidth:160,flexShrink:0}}>
           {[
