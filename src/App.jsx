@@ -2615,108 +2615,113 @@ export default function App() {
               </div>
               <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
                 <button onClick={()=>setShowNewModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 20px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>+ New Task</button>
+                <button onClick={()=>setShowNewRec(true)} title="Manage recurring tasks" style={{display:"flex",alignItems:"center",gap:5,padding:"8px 14px",background:"#f5f0ea",color:"var(--ink)",border:"1px solid #EAE4DC",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",whiteSpace:"nowrap"}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  Recurring{recurringTasks.filter(r=>r.active).length>0?" ("+recurringTasks.filter(r=>r.active).length+")":""}
+                </button>
                 {headerIcons}
               </div>
             </div>
-            {/* ── Recurring Tasks Section ── */}
-            <div style={{marginBottom:16}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:showRecSection?12:0}}>
-                <button onClick={()=>setShowRecSection(s=>!s)} style={{display:"flex",alignItems:"center",gap:7,background:"none",border:"none",cursor:"pointer",padding:0}}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B9855E" strokeWidth="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>Recurring Tasks</span>
-                  {recurringTasks.length>0&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 7px"}}>{recurringTasks.filter(r=>r.active).length} active</span>}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8F8A83" strokeWidth="2" style={{transform:showRecSection?"rotate(180deg)":"rotate(0deg)",transition:"transform .2s"}}><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <button onClick={()=>setShowNewRec(true)} style={{display:"flex",alignItems:"center",gap:5,background:"#f5f0ea",border:"1px solid #EAE4DC",borderRadius:8,padding:"5px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  New recurring
-                </button>
-              </div>
-              {showRecSection&&(
-                <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:12,overflow:"hidden"}}>
-                  {recurringTasks.length===0&&(
-                    <div style={{padding:"18px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",fontStyle:"italic"}}>No recurring tasks yet. Click "+ New recurring" to create one.</div>
-                  )}
-                  {recurringTasks.map((rt,ri)=>{
-                    const dayLabels=["M","T","W","T","F","S","S"];
-                    const endStr=rt.endType==="date"&&rt.endDate?"Until "+new Date(rt.endDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"No end date";
-                    return(
-                    <div key={rt.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderBottom:ri<recurringTasks.length-1?"1px solid #f3ede6":"none",opacity:rt.active?1:0.5}}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={rt.active?"#B9855E":"#C4B9AD"} strokeWidth="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                      <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,color:"var(--ink)",marginBottom:4}}>{rt.text}</div>
-                        <div style={{display:"flex",alignItems:"center",gap:4,flexWrap:"wrap"}}>
-                          {dayLabels.map((dl,di)=>(
-                            <span key={di} style={{width:20,height:20,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,background:rt.days.includes(di)?"#B9855E":"#f0ebe4",color:rt.days.includes(di)?"#fff":"#C4B9AD"}}>{dl}</span>
-                          ))}
-                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83",marginLeft:4}}>{endStr}</span>
-                        </div>
-                      </div>
-                      <button onClick={()=>toggleRecurring(rt.id)} title={rt.active?"Pause":"Resume"} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:6,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",cursor:"pointer"}}>{rt.active?"Pause":"Resume"}</button>
-                      <button onClick={()=>deleteRecurring(rt.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px"}}>×</button>
-                    </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* ── New Recurring Task Modal ── */}
+            {/* ── Recurring Tasks Manager Modal ── */}
             {showNewRec&&(
-              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNewRec(false)}>
-                <div style={{background:"#fff",borderRadius:18,padding:"28px 32px",width:460,maxWidth:"92vw",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
-                  <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:21,fontWeight:600,color:"var(--ink)",marginBottom:20}}>New Recurring Task</h2>
-                  <div style={{marginBottom:14}}>
-                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Task name *</label>
-                    <input autoFocus value={newRecText} onChange={e=>setNewRecText(e.target.value)} placeholder="e.g. Review emails" style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
-                  </div>
-                  <div style={{marginBottom:14}}>
-                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Repeat on *</label>
-                    <div style={{display:"flex",gap:6}}>
-                      {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((dl,di)=>(
-                        <button key={di} onClick={()=>setNewRecDays(ds=>ds.includes(di)?ds.filter(d=>d!==di):[...ds,di].sort())} style={{flex:1,padding:"8px 2px",borderRadius:8,border:"1px solid "+(newRecDays.includes(di)?"#B9855E":"#EAE4DC"),background:newRecDays.includes(di)?"#B9855E":"transparent",color:newRecDays.includes(di)?"#fff":"#8F8A83",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer"}}>{dl}</button>
-                      ))}
+              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}} onClick={()=>setShowNewRec(false)}>
+                <div style={{background:"#fff",borderRadius:18,width:500,maxWidth:"95vw",maxHeight:"88vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
+                  {/* Header */}
+                  <div style={{padding:"24px 28px 0",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:9}}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B9855E" strokeWidth="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                      <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:600,color:"var(--ink)",margin:0}}>Recurring Tasks</h2>
                     </div>
+                    <button onClick={()=>setShowNewRec(false)} style={{background:"none",border:"none",fontSize:20,color:"#C4B9AD",cursor:"pointer",lineHeight:1}}>×</button>
                   </div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
+                  {/* Existing templates */}
+                  {recurringTasks.length>0&&(
+                    <div style={{margin:"16px 28px 0",border:"1px solid #EAE4DC",borderRadius:12,overflow:"hidden"}}>
+                      {recurringTasks.map((rt,ri)=>{
+                        const dl=["M","T","W","T","F","S","S"];
+                        const endStr=rt.endType==="date"&&rt.endDate?"Until "+new Date(rt.endDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"No end";
+                        return(
+                        <div key={rt.id} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 14px",borderBottom:ri<recurringTasks.length-1?"1px solid #f3ede6":"none",background:rt.active?"#fff":"#faf7f3"}}>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,color:rt.active?"var(--ink)":"#8F8A83",marginBottom:5,display:"flex",alignItems:"center",gap:6}}>
+                              {!rt.active&&<span style={{fontSize:10,color:"#C4B9AD",fontWeight:400}}>(paused)</span>}
+                              {rt.text}
+                            </div>
+                            <div style={{display:"flex",alignItems:"center",gap:3,flexWrap:"wrap"}}>
+                              {dl.map((d,di)=>(
+                                <span key={di} style={{width:18,height:18,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,background:rt.days.includes(di)?"#B9855E":"#f0ebe4",color:rt.days.includes(di)?"#fff":"#C4B9AD"}}>{d}</span>
+                              ))}
+                              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83",marginLeft:3}}>{endStr}</span>
+                            </div>
+                          </div>
+                          <button onClick={()=>toggleRecurring(rt.id)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:6,padding:"3px 9px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",cursor:"pointer",flexShrink:0}}>{rt.active?"Pause":"Resume"}</button>
+                          <button onClick={()=>deleteRecurring(rt.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:18,padding:"0 2px",lineHeight:1,flexShrink:0}}>×</button>
+                        </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {recurringTasks.length===0&&(
+                    <div style={{margin:"12px 28px 0",padding:"14px 16px",background:"#faf7f3",borderRadius:10,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",fontStyle:"italic"}}>No recurring tasks yet — create one below.</div>
+                  )}
+                  {/* Divider */}
+                  <div style={{margin:"20px 28px 0",borderTop:"1px solid #EAE4DC",paddingTop:20}}>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:"#8F8A83",textTransform:"uppercase",letterSpacing:".05em",marginBottom:14}}>Add new recurring task</div>
+                  </div>
+                  {/* Form */}
+                  <div style={{padding:"0 28px 28px"}}>
+                    <div style={{marginBottom:12}}>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Task name *</label>
+                      <input value={newRecText} onChange={e=>setNewRecText(e.target.value)} placeholder="e.g. Review emails" style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                    </div>
+                    <div style={{marginBottom:12}}>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Repeat on *</label>
                       <div style={{display:"flex",gap:5}}>
-                        {[["low","#6F7F55","#EEF3EA"],["medium","#A8793C","#FFF3DF"],["high","#C98F8F","#F7EDEA"]].map(([v,cl,bg])=>(
-                          <button key={v} onClick={()=>setNewRecPriority(v)} style={{flex:1,padding:"6px 2px",borderRadius:7,border:"1px solid "+(newRecPriority===v?cl:"#EAE4DC"),background:newRecPriority===v?bg:"transparent",color:newRecPriority===v?cl:"#8F8A83",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:newRecPriority===v?600:400,cursor:"pointer"}}>{v}</button>
+                        {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,di)=>(
+                          <button key={di} onClick={()=>setNewRecDays(ds=>ds.includes(di)?ds.filter(x=>x!==di):[...ds,di].sort())} style={{flex:1,padding:"7px 2px",borderRadius:7,border:"1px solid "+(newRecDays.includes(di)?"#B9855E":"#EAE4DC"),background:newRecDays.includes(di)?"#B9855E":"transparent",color:newRecDays.includes(di)?"#fff":"#8F8A83",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer"}}>{d}</button>
                         ))}
                       </div>
                     </div>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Tag</label>
-                      <select value={newRecTag||(tags&&tags[0])||""} onChange={e=>setNewRecTag(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
-                        {(tags||[]).map(t=><option key={t}>{t}</option>)}
-                      </select>
-                    </div>
-                  </div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:20}}>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start date</label>
-                      <input type="date" value={newRecStart||TODAY} onChange={e=>setNewRecStart(e.target.value)} onInput={e=>setNewRecStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
-                    </div>
-                    <div>
-                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Ends on</label>
-                      <div style={{display:"flex",flexDirection:"column",gap:6}}>
-                        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-                          <input type="radio" id="rec-date" name="recEnd" checked={newRecEndType==="date"} onChange={()=>setNewRecEndType("date")} style={{accentColor:"#B9855E"}}/>
-                          <label htmlFor="rec-date" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>On date</label>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
+                      <div>
+                        <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
+                        <div style={{display:"flex",gap:5}}>
+                          {[["low","#6F7F55","#EEF3EA"],["medium","#A8793C","#FFF3DF"],["high","#C98F8F","#F7EDEA"]].map(([v,cl,bg])=>(
+                            <button key={v} onClick={()=>setNewRecPriority(v)} style={{flex:1,padding:"6px 2px",borderRadius:7,border:"1px solid "+(newRecPriority===v?cl:"#EAE4DC"),background:newRecPriority===v?bg:"transparent",color:newRecPriority===v?cl:"#8F8A83",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:newRecPriority===v?600:400,cursor:"pointer"}}>{v}</button>
+                          ))}
                         </div>
-                        {newRecEndType==="date"&&<input type="date" value={newRecEndDate} onChange={e=>setNewRecEndDate(e.target.value)} onInput={e=>setNewRecEndDate(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"7px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:12,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>}
-                        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-                          <input type="radio" id="rec-never" name="recEnd" checked={newRecEndType==="never"} onChange={()=>setNewRecEndType("never")} style={{accentColor:"#B9855E"}}/>
-                          <label htmlFor="rec-never" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>Never (until paused)</label>
+                      </div>
+                      <div>
+                        <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Tag</label>
+                        <select value={newRecTag||(tags&&tags[0])||""} onChange={e=>setNewRecTag(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                          {(tags||[]).map(t=><option key={t}>{t}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
+                      <div>
+                        <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start date</label>
+                        <input type="date" value={newRecStart||TODAY} onChange={e=>setNewRecStart(e.target.value)} onInput={e=>setNewRecStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                      </div>
+                      <div>
+                        <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Ends on</label>
+                        <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                            <input type="radio" id="rec-date2" name="recEnd2" checked={newRecEndType==="date"} onChange={()=>setNewRecEndType("date")} style={{accentColor:"#B9855E"}}/>
+                            <label htmlFor="rec-date2" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>On date</label>
+                          </div>
+                          {newRecEndType==="date"&&<input type="date" value={newRecEndDate} onChange={e=>setNewRecEndDate(e.target.value)} onInput={e=>setNewRecEndDate(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"7px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:12,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>}
+                          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                            <input type="radio" id="rec-never2" name="recEnd2" checked={newRecEndType==="never"} onChange={()=>setNewRecEndType("never")} style={{accentColor:"#B9855E"}}/>
+                            <label htmlFor="rec-never2" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>Never (until paused)</label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
-                    <button onClick={()=>setShowNewRec(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
-                    <button onClick={addRecurring} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Create</button>
+                    <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+                      <button onClick={()=>setShowNewRec(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Close</button>
+                      <button onClick={addRecurring} disabled={!newRecText.trim()||newRecDays.length===0} style={{background:newRecText.trim()&&newRecDays.length>0?"var(--ink)":"#C4B9AD",color:"#f4ede3",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:newRecText.trim()&&newRecDays.length>0?"pointer":"default"}}>+ Add Recurring</button>
+                    </div>
                   </div>
                 </div>
               </div>
