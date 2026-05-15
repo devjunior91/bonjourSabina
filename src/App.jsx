@@ -2240,7 +2240,7 @@ export default function App() {
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
   {/* ROW 1: Progress Card + Focus Timer — same height via stretch */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 340px",gap:16,alignItems:"stretch"}}>
+  <div style={{display:"grid",gridTemplateColumns:"minmax(0,560px) 340px",gap:16,alignItems:"stretch"}}>
 
     {/* Progress Card */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"20px 24px 0",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column"}}>
