@@ -1167,6 +1167,7 @@ export default function App() {
   const [gratitude,setGratitude]=useDB("sab_gratitude",{});
   const [gratReminders,setGratReminders]=useDB("sab_grat_rem",{morning:true,morningTime:"08:00",evening:true,eveningTime:"21:00"});
   const [projects,setProjects]=useDB("sab_projects",[]);
+  const [recurringTasks,setRecurringTasks]=useDB("sab_recurring",[]);
   const [selProjId,setSelProjId]=useDB("sab_sel_proj_id",null);
   const [projTab,setProjTab]=useState("active");
   const [projSort,setProjSort]=useState("recent");
@@ -1199,6 +1200,15 @@ export default function App() {
   const [editTaskPri,setEditTaskPri]=useState("medium");
   const [editTaskDue,setEditTaskDue]=useState("");
   const [taskMenuId,setTaskMenuId]=useState(null);
+  const [showNewRec,setShowNewRec]=useState(false);
+  const [newRecText,setNewRecText]=useState("");
+  const [newRecDays,setNewRecDays]=useState([0,1,2,3,4]);
+  const [newRecPriority,setNewRecPriority]=useState("medium");
+  const [newRecTag,setNewRecTag]=useState("");
+  const [newRecEndType,setNewRecEndType]=useState("date");
+  const [newRecEndDate,setNewRecEndDate]=useState("");
+  const [newRecStart,setNewRecStart]=useState("");
+  const [showRecSection,setShowRecSection]=useState(false);
   const [gratInput,setGratInput]=useState("");
   const [gratMenuId,setGratMenuId]=useState(null);
   const [gratViewOffset,setGratViewOffset]=useState(0);
@@ -1348,6 +1358,23 @@ export default function App() {
     const t=setInterval(check,60000);
     return()=>clearInterval(t);
   },[gratReminders,gratitude,TODAY]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-generate recurring todos for today
+  useEffect(()=>{
+    if(!recurringTasks||recurringTasks.length===0)return;
+    const todayDow=(new Date(TODAY+"T12:00:00").getDay()+6)%7;
+    recurringTasks.forEach(rt=>{
+      if(!rt.active)return;
+      if(rt.startDate&&rt.startDate>TODAY)return;
+      if(rt.endType==="date"&&rt.endDate&&rt.endDate<TODAY)return;
+      if(!rt.days.includes(todayDow))return;
+      setTodos(current=>{
+        const exists=current.some(t=>t.recurringId===rt.id&&t.date===TODAY);
+        if(exists)return current;
+        return[...current,{id:Date.now()+Math.floor(Math.random()*99999),text:rt.text,done:false,tag:rt.tag||"Personal",date:TODAY,priority:rt.priority||"medium",subtasks:[],recurringId:rt.id,doneAt:null}];
+      });
+    });
+  },[TODAY,recurringTasks]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Overdue project task notifications
   useEffect(()=>{
@@ -1747,6 +1774,14 @@ export default function App() {
     if(mp===null)return Math.round(tp*100);
     return Math.round(tp*40+mp*60);
   };
+  const addRecurring=()=>{
+    if(!newRecText.trim()||newRecDays.length===0)return;
+    const tag=newRecTag||(tags&&tags[0])||"Personal";
+    setRecurringTasks(rs=>[...rs,{id:Date.now(),text:newRecText.trim(),days:[...newRecDays],priority:newRecPriority,tag,startDate:newRecStart||TODAY,endType:newRecEndType,endDate:newRecEndType==="date"?newRecEndDate:"",active:true,createdAt:TODAY}]);
+    setNewRecText("");setNewRecDays([0,1,2,3,4]);setNewRecPriority("medium");setNewRecTag("");setNewRecEndType("date");setNewRecEndDate("");setNewRecStart("");setShowNewRec(false);
+  };
+  const deleteRecurring=(id)=>setRecurringTasks(rs=>rs.filter(r=>r.id!==id));
+  const toggleRecurring=(id)=>setRecurringTasks(rs=>rs.map(r=>r.id!==id?r:{...r,active:!r.active}));
   const addProject=()=>{
     if(!newProjTitle.trim())return;
     setProjects(ps=>[...ps,{id:Date.now(),title:newProjTitle.trim(),description:newProjDesc.trim(),icon:newProjIcon,status:"active",priority:newProjPriority,startDate:TODAY,dueDate:newProjDue,tasks:[],milestones:[],notes:[],attachments:[],createdAt:TODAY}]);
@@ -2583,6 +2618,110 @@ export default function App() {
                 {headerIcons}
               </div>
             </div>
+            {/* ── Recurring Tasks Section ── */}
+            <div style={{marginBottom:16}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:showRecSection?12:0}}>
+                <button onClick={()=>setShowRecSection(s=>!s)} style={{display:"flex",alignItems:"center",gap:7,background:"none",border:"none",cursor:"pointer",padding:0}}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B9855E" strokeWidth="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>Recurring Tasks</span>
+                  {recurringTasks.length>0&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",background:"#f5f0ea",borderRadius:10,padding:"1px 7px"}}>{recurringTasks.filter(r=>r.active).length} active</span>}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8F8A83" strokeWidth="2" style={{transform:showRecSection?"rotate(180deg)":"rotate(0deg)",transition:"transform .2s"}}><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <button onClick={()=>setShowNewRec(true)} style={{display:"flex",alignItems:"center",gap:5,background:"#f5f0ea",border:"1px solid #EAE4DC",borderRadius:8,padding:"5px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  New recurring
+                </button>
+              </div>
+              {showRecSection&&(
+                <div style={{background:"#fff",border:"1px solid #EAE4DC",borderRadius:12,overflow:"hidden"}}>
+                  {recurringTasks.length===0&&(
+                    <div style={{padding:"18px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",fontStyle:"italic"}}>No recurring tasks yet. Click "+ New recurring" to create one.</div>
+                  )}
+                  {recurringTasks.map((rt,ri)=>{
+                    const dayLabels=["M","T","W","T","F","S","S"];
+                    const endStr=rt.endType==="date"&&rt.endDate?"Until "+new Date(rt.endDate+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"No end date";
+                    return(
+                    <div key={rt.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderBottom:ri<recurringTasks.length-1?"1px solid #f3ede6":"none",opacity:rt.active?1:0.5}}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={rt.active?"#B9855E":"#C4B9AD"} strokeWidth="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,color:"var(--ink)",marginBottom:4}}>{rt.text}</div>
+                        <div style={{display:"flex",alignItems:"center",gap:4,flexWrap:"wrap"}}>
+                          {dayLabels.map((dl,di)=>(
+                            <span key={di} style={{width:20,height:20,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,background:rt.days.includes(di)?"#B9855E":"#f0ebe4",color:rt.days.includes(di)?"#fff":"#C4B9AD"}}>{dl}</span>
+                          ))}
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"#8F8A83",marginLeft:4}}>{endStr}</span>
+                        </div>
+                      </div>
+                      <button onClick={()=>toggleRecurring(rt.id)} title={rt.active?"Pause":"Resume"} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:6,padding:"3px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8F8A83",cursor:"pointer"}}>{rt.active?"Pause":"Resume"}</button>
+                      <button onClick={()=>deleteRecurring(rt.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#ccc",fontSize:16,padding:"0 2px"}}>×</button>
+                    </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* ── New Recurring Task Modal ── */}
+            {showNewRec&&(
+              <div style={{position:"fixed",inset:0,background:"rgba(42,36,33,.45)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNewRec(false)}>
+                <div style={{background:"#fff",borderRadius:18,padding:"28px 32px",width:460,maxWidth:"92vw",boxShadow:"0 20px 60px rgba(0,0,0,.15)"}} onClick={e=>e.stopPropagation()}>
+                  <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:21,fontWeight:600,color:"var(--ink)",marginBottom:20}}>New Recurring Task</h2>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Task name *</label>
+                    <input autoFocus value={newRecText} onChange={e=>setNewRecText(e.target.value)} placeholder="e.g. Review emails" style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div style={{marginBottom:14}}>
+                    <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:8}}>Repeat on *</label>
+                    <div style={{display:"flex",gap:6}}>
+                      {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((dl,di)=>(
+                        <button key={di} onClick={()=>setNewRecDays(ds=>ds.includes(di)?ds.filter(d=>d!==di):[...ds,di].sort())} style={{flex:1,padding:"8px 2px",borderRadius:8,border:"1px solid "+(newRecDays.includes(di)?"#B9855E":"#EAE4DC"),background:newRecDays.includes(di)?"#B9855E":"transparent",color:newRecDays.includes(di)?"#fff":"#8F8A83",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer"}}>{dl}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Priority</label>
+                      <div style={{display:"flex",gap:5}}>
+                        {[["low","#6F7F55","#EEF3EA"],["medium","#A8793C","#FFF3DF"],["high","#C98F8F","#F7EDEA"]].map(([v,cl,bg])=>(
+                          <button key={v} onClick={()=>setNewRecPriority(v)} style={{flex:1,padding:"6px 2px",borderRadius:7,border:"1px solid "+(newRecPriority===v?cl:"#EAE4DC"),background:newRecPriority===v?bg:"transparent",color:newRecPriority===v?cl:"#8F8A83",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:newRecPriority===v?600:400,cursor:"pointer"}}>{v}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Tag</label>
+                      <select value={newRecTag||(tags&&tags[0])||""} onChange={e=>setNewRecTag(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"8px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none"}}>
+                        {(tags||[]).map(t=><option key={t}>{t}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:20}}>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Start date</label>
+                      <input type="date" value={newRecStart||TODAY} onChange={e=>setNewRecStart(e.target.value)} onInput={e=>setNewRecStart(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"9px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:13,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>
+                    </div>
+                    <div>
+                      <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"#8F8A83",display:"block",marginBottom:5}}>Ends on</label>
+                      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                          <input type="radio" id="rec-date" name="recEnd" checked={newRecEndType==="date"} onChange={()=>setNewRecEndType("date")} style={{accentColor:"#B9855E"}}/>
+                          <label htmlFor="rec-date" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>On date</label>
+                        </div>
+                        {newRecEndType==="date"&&<input type="date" value={newRecEndDate} onChange={e=>setNewRecEndDate(e.target.value)} onInput={e=>setNewRecEndDate(e.target.value)} style={{width:"100%",border:"1px solid #EAE4DC",borderRadius:8,padding:"7px 10px",fontFamily:"'DM Sans',sans-serif",fontSize:12,background:"#faf7f3",outline:"none",boxSizing:"border-box"}}/>}
+                        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                          <input type="radio" id="rec-never" name="recEnd" checked={newRecEndType==="never"} onChange={()=>setNewRecEndType("never")} style={{accentColor:"#B9855E"}}/>
+                          <label htmlFor="rec-never" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--ink)",cursor:"pointer"}}>Never (until paused)</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+                    <button onClick={()=>setShowNewRec(false)} style={{background:"none",border:"1px solid #EAE4DC",borderRadius:8,padding:"10px 20px",fontFamily:"'DM Sans',sans-serif",fontSize:13,cursor:"pointer",color:"var(--ink-light)"}}>Cancel</button>
+                    <button onClick={addRecurring} style={{background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:8,padding:"10px 22px",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>Create</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Progress card — full width */}
             <div className="todo-prog-full">
               <div style={{display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
