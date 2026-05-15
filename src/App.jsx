@@ -2194,7 +2194,7 @@ export default function App() {
 
         {/* ── DASHBOARD ── */}
         {page==="dashboard"&&(
-<div style={{padding:"0 24px"}}>
+<div style={{padding:"0 24px",maxWidth:1280,boxSizing:"border-box"}}>
   {/* Dashboard Add Task Modal */}
   {showDashModal&&(
     <div className="mov" onClick={()=>setShowDashModal(false)}>
