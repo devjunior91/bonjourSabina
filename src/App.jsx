@@ -2301,54 +2301,10 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Focus Timer full-width left + empty right, or just focus timer */}
-  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"start"}}>
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
-      <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
-      <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
-        {POMO_PRESETS.map(p=>(
-          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"4px 12px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
-        ))}
-      </div>
-      <svg width="110" height="110" viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
-        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-        <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
-      </svg>
-      <div style={{display:"flex",gap:8,alignItems:"center"}}>
-        {!pomoActive
-          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
-          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
-        }
-        <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
-      </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
-    </div>
-    {/* Activity cards — MOVE, EXERCISE, STAND in 3 equal columns */}
-    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,alignItems:"stretch"}}>
-      {[
-        {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 22C8.3 22 5.5 19.2 5.5 15.6C5.5 12.7 7.2 10.6 9.1 8.7C10.4 7.4 11.4 5.9 11.6 3.8C11.7 3.1 12.6 2.8 13.1 3.3C15.3 5.5 18.5 9.1 18.5 14.8C18.5 19 15.6 22 12 22Z" fill="#B89576"/><path d="M12.1 19.4C10.3 19.4 9 18.1 9 16.4C9 15.1 9.8 14.1 10.7 13.2C11.3 12.6 11.8 11.9 11.9 10.9C12 10.4 12.6 10.2 13 10.6C14 11.7 15.2 13.3 15.2 15.8C15.2 17.9 13.8 19.4 12.1 19.4Z" fill="#F4EFE8"/></svg>,label:"MOVE",val:todayFit&&fitMove!=null?Math.round(fitMove):null,unit:"kcal burned",color:"#B89576",bg:"rgba(184,149,118,.12)",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
-        {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M17.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M4 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M20 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M7.5 12H16.5" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/></svg>,label:"EXERCISE",val:todayFit&&fitEx!=null?Math.round(fitEx):null,unit:"sessions",color:"#A9B39F",bg:"rgba(169,179,159,.12)",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
-        {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="2" fill="#9BAFC7"/><path d="M12 8V15" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M8.5 10.5H15.5" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 21L12 15L14 21" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"STAND",val:todayFit&&standHrs!=null?standHrs:null,unit:"hours",color:"#9BAFC7",bg:"rgba(155,175,199,.12)",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
-      ].map(s=>(
-        <div key={s.label} style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 16px 0",boxShadow:"var(--shadow)",overflow:"hidden",position:"relative",minHeight:100}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
-            <span style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".08em",fontFamily:"'DM Sans',sans-serif"}}>{s.label}</span>
-          </div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",lineHeight:1,marginBottom:2}}>{s.val!=null?s.val:"—"}</div>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:26}}>{s.unit}</div>
-          <svg viewBox="0 0 180 50" preserveAspectRatio="none" height="22" style={{position:"absolute",bottom:0,left:0,right:0,width:"100%",opacity:.32}}><path d={s.wave} fill={s.color}/></svg>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  {/* ROW 3: Recent Wins (under profile) | Today's Tasks (under progress) */}
+  {/* ROW 2: Recent Wins (above focus timer) | Today's Tasks */}
   <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"stretch"}}>
 
-    {/* Recent Wins — left, under profile card */}
+    {/* Recent Wins — left, above focus timer */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -2369,7 +2325,7 @@ export default function App() {
       </div>
     </div>
 
-    {/* Today's Tasks — right, under progress card */}
+    {/* Today's Tasks — right */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:280}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -2397,6 +2353,50 @@ export default function App() {
       </div>
     </div>
 
+  </div>
+
+  {/* ROW 3: Focus Timer (below recent wins) | Activity Cards (below today's tasks) */}
+  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"start"}}>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
+      <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
+      <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
+        {POMO_PRESETS.map(p=>(
+          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"4px 12px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
+        ))}
+      </div>
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
+        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+        <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
+      </svg>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        {!pomoActive
+          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+        }
+        <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
+      </div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
+    </div>
+    {/* Activity cards — MOVE, EXERCISE, STAND below Today's Tasks */}
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,alignItems:"stretch"}}>
+      {[
+        {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 22C8.3 22 5.5 19.2 5.5 15.6C5.5 12.7 7.2 10.6 9.1 8.7C10.4 7.4 11.4 5.9 11.6 3.8C11.7 3.1 12.6 2.8 13.1 3.3C15.3 5.5 18.5 9.1 18.5 14.8C18.5 19 15.6 22 12 22Z" fill="#B89576"/><path d="M12.1 19.4C10.3 19.4 9 18.1 9 16.4C9 15.1 9.8 14.1 10.7 13.2C11.3 12.6 11.8 11.9 11.9 10.9C12 10.4 12.6 10.2 13 10.6C14 11.7 15.2 13.3 15.2 15.8C15.2 17.9 13.8 19.4 12.1 19.4Z" fill="#F4EFE8"/></svg>,label:"MOVE",val:todayFit&&fitMove!=null?Math.round(fitMove):null,unit:"kcal burned",color:"#B89576",bg:"rgba(184,149,118,.12)",wave:"M0,20 C15,8 30,30 45,18 C60,6 75,28 90,16 C105,4 120,22 135,14 C150,6 165,24 180,16 L180,50 L0,50Z"},
+        {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M17.5 8V16" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M4 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M20 10V14" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/><path d="M7.5 12H16.5" stroke="#A9B39F" strokeWidth="2" strokeLinecap="round"/></svg>,label:"EXERCISE",val:todayFit&&fitEx!=null?Math.round(fitEx):null,unit:"sessions",color:"#A9B39F",bg:"rgba(169,179,159,.12)",wave:"M0,25 C20,12 35,32 55,20 C75,8 90,30 110,18 C130,6 145,28 165,18 C175,14 178,20 180,18 L180,50 L0,50Z"},
+        {icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="2" fill="#9BAFC7"/><path d="M12 8V15" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M8.5 10.5H15.5" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round"/><path d="M10 21L12 15L14 21" stroke="#9BAFC7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,label:"STAND",val:todayFit&&standHrs!=null?standHrs:null,unit:"hours",color:"#9BAFC7",bg:"rgba(155,175,199,.12)",wave:"M0,18 C25,10 40,28 60,16 C80,4 95,26 115,14 C135,2 150,24 170,14 C176,11 178,16 180,14 L180,50 L0,50Z"},
+      ].map(s=>(
+        <div key={s.label} style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 16px 0",boxShadow:"var(--shadow)",overflow:"hidden",position:"relative",minHeight:100}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+            <div style={{width:32,height:32,borderRadius:"50%",background:s.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
+            <span style={{fontSize:10,color:"var(--ink-light)",letterSpacing:".08em",fontFamily:"'DM Sans',sans-serif"}}>{s.label}</span>
+          </div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:600,color:"var(--ink)",lineHeight:1,marginBottom:2}}>{s.val!=null?s.val:"—"}</div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:26}}>{s.unit}</div>
+          <svg viewBox="0 0 180 50" preserveAspectRatio="none" height="22" style={{position:"absolute",bottom:0,left:0,right:0,width:"100%",opacity:.32}}><path d={s.wave} fill={s.color}/></svg>
+        </div>
+      ))}
+    </div>
   </div>
 
   {/* ROW 4: Habits | Upcoming | Home Reset */}
