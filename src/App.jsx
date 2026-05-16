@@ -2462,25 +2462,18 @@ export default function App() {
       </div>
     </div>
 
-    {/* Home Reset — compact */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",flex:1}}>
+    {/* Gratitude — compact count */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",flex:1,display:"flex",flexDirection:"column"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
-        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Gratitude</div>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink-light)"}}>{todayGrat.length}/{GRAT_TARGET} today</span>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
-        {cleaningTodayArr.slice(0,4).map((task,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
-            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#741313":"rgba(26,20,16,.2)"}`,background:task.done?"#741313":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
-              {task.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
-            </div>
-            <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
-          </div>
-        ))}
-        {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Rest day ✦</div>}
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,padding:"8px 0"}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,color:"var(--ink)",lineHeight:1}}>{todayGrat.length}</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>of {GRAT_TARGET} entries today</div>
       </div>
-      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
-        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#741313",borderRadius:2,transition:"width .5s"}}/>
+      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden",marginTop:10}}>
+        <div style={{height:"100%",width:`${Math.min(100,Math.round(todayGrat.length/GRAT_TARGET*100))}%`,background:"#741313",borderRadius:2,transition:"width .5s"}}/>
       </div>
     </div>
 
@@ -2488,8 +2481,8 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Activity Rings | Monthly Goals | Gratitude */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,alignItems:"start"}}>
+  {/* ROW 2: Activity Rings | Monthly Goals | Home Reset */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,alignItems:"stretch"}}>
 
     {/* Activity Rings */}
     {(()=>{
@@ -2503,7 +2496,7 @@ export default function App() {
       const arc=(r,pct)=>{const c=2*Math.PI*r;return{dash:c,offset:c-(c*pct/100)};};
       const a1=arc(R1,movePct),a2=arc(R2,exPct),a3=arc(R3,standPct);
       return(
-        <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+        <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",height:"100%",boxSizing:"border-box"}}>
           <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",marginBottom:16}}>Activity Rings</div>
           <div style={{display:"flex",alignItems:"center",gap:20}}>
             <svg width="100" height="100" viewBox="0 0 100 100" style={{flexShrink:0}}>
@@ -2538,7 +2531,7 @@ export default function App() {
     })()}
 
     {/* Monthly Goals */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",height:"100%",boxSizing:"border-box"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Monthly Goals</div>
         <button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
@@ -2564,31 +2557,25 @@ export default function App() {
       })}
     </div>
 
-    {/* Gratitude */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+    {/* Home Reset */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Gratitude</div>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink-light)"}}>{todayGrat.length}/{GRAT_TARGET} today</span>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
+        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:12}}>
-        {todayGrat.length===0?(
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>What are you grateful for today? ✦</div>
-        ):todayGrat.slice(0,4).map((e,i)=>(
-          <div key={e.id} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
-            <span style={{color:"#c9a87c",fontSize:11,marginTop:1,flexShrink:0}}>✦</span>
-            <div style={{fontSize:12,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",lineHeight:1.4}}>{e.text}</div>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10,flex:1}}>
+        {cleaningTodayArr.slice(0,6).map((task,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
+            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#741313":"rgba(26,20,16,.2)"}`,background:task.done?"#741313":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
+              {task.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+            </div>
+            <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
           </div>
         ))}
+        {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>Rest day ✦</div>}
       </div>
-      <div style={{display:"flex",gap:8}}>
-        <input
-          placeholder="Add a moment of gratitude…"
-          value={gratInput}
-          onChange={e=>setGratInput(e.target.value)}
-          onKeyDown={e=>e.key==="Enter"&&addGrat()}
-          style={{flex:1,border:"1px solid var(--border)",borderRadius:20,padding:"6px 12px",fontSize:12,fontFamily:"'DM Sans',sans-serif",outline:"none",background:"var(--parchment)",color:"var(--ink)"}}
-        />
-        <button onClick={addGrat} style={{padding:"6px 14px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer"}}>Add</button>
+      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
+        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#741313",borderRadius:2,transition:"width .5s"}}/>
       </div>
     </div>
 
