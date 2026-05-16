@@ -2371,33 +2371,8 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Habits — full width under Today's Progress */}
-  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
-        <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
-      </div>
-      <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-    </div>
-    <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
-      {habits.slice(0,12).map(hab=>(
-        <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
-          <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
-          <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
-          <div style={{display:"flex",gap:3,flexShrink:0}}>
-            {hab.days.map((done,i)=>(
-              <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
-            ))}
-          </div>
-        </div>
-      ))}
-      {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"28px 0",textAlign:"center"}}>No habits yet ✦</div>}
-    </div>
-  </div>
-
-  {/* ROW 3: Activity Rings (small) | Today's Tasks (wide) */}
-  <div style={{display:"grid",gridTemplateColumns:"320px 1fr",gap:16,alignItems:"stretch"}}>
+  {/* ROW 2: Activity Rings (small) | Today's Tasks (wide) */}
+  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"stretch"}}>
 
     {/* Activity Rings — small left column */}
     {(()=>{
@@ -2469,6 +2444,31 @@ export default function App() {
       </div>
     </div>
 
+  </div>
+
+  {/* ROW 3: Habits — full width */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
+        <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
+      </div>
+      <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+    </div>
+    <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
+      {habits.slice(0,12).map(hab=>(
+        <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
+          <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
+          <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
+          <div style={{display:"flex",gap:3,flexShrink:0}}>
+            {hab.days.map((done,i)=>(
+              <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
+            ))}
+          </div>
+        </div>
+      ))}
+      {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"28px 0",textAlign:"center"}}>No habits yet ✦</div>}
+    </div>
   </div>
 
   {/* ROW 4: Recent Wins */}
