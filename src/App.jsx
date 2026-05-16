@@ -1891,28 +1891,42 @@ export default function App() {
   if(!unlocked) return (
     <>
       <style>{CSS}</style>
-      <svg viewBox="0 0 200 380" style={{position:"fixed",bottom:0,right:"5vw",height:"72vh",pointerEvents:"none",zIndex:0,fill:"#261d12",opacity:0.045}} aria-hidden="true">
-        <polygon points="99,5 101,5 102,26 98,26"/><polygon points="86,54 114,54 102,26 98,26"/><rect x="83" y="51" width="34" height="6"/><polygon points="72,116 128,116 114,57 86,57"/><rect x="70" y="113" width="60" height="6"/><polygon points="52,174 148,174 128,119 72,119"/><rect x="49" y="171" width="102" height="7"/><polygon points="52,178 80,178 68,380 5,380"/><polygon points="120,178 148,178 195,380 132,380"/>
-      </svg>
-      <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--cream)",padding:24}}>
-        <div style={{background:"var(--ivory)",border:"1px solid var(--gold)",borderRadius:20,padding:"40px 44px",boxShadow:"0 8px 40px rgba(38,29,18,.13)",textAlign:"center",maxWidth:360,width:"100%"}}>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--gold)",letterSpacing:".18em",marginBottom:6}}>Welcome back</div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:28,fontWeight:400,color:"var(--ink)",marginBottom:6}}>Bonjour, <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Sabina</em></div>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginBottom:28}}>Your personal space awaits</div>
+      <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"#F5F0EA",padding:24}}>
+        {/* Logo */}
+        <img src={ptLogo} alt="The Productivity Theory" style={{width:220,marginBottom:32,display:"block"}}/>
+
+        {/* Divider */}
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:32,width:220}}>
+          <div style={{flex:1,height:1,background:"#741313"}}/>
+          <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="#741313"/></svg>
+          <div style={{flex:1,height:1,background:"#741313"}}/>
+        </div>
+
+        {/* Lock icon */}
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#741313" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{marginBottom:12}}>
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+
+        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,letterSpacing:".2em",color:"#741313",marginBottom:8}}>LOCKED</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:14,color:"var(--ink-light)",marginBottom:28}}>Enter your password to continue</div>
+
+        {/* Password field */}
+        <div style={{position:"relative",width:300}}>
           <input
             type="password"
-            placeholder="Enter your password"
+            placeholder="Enter password"
             value={pwInput}
             onChange={e=>{setPwInput(e.target.value);setPwErr(false);}}
             onKeyDown={e=>e.key==="Enter"&&checkPw()}
             autoFocus
-            style={{width:"100%",padding:"12px 16px",border:`1.5px solid ${pwErr?"#c05050":"var(--border)"}`,borderRadius:10,background:"var(--parchment)",fontFamily:"'DM Sans',sans-serif",fontSize:14,color:"var(--ink)",outline:"none",marginBottom:12,transition:"border-color .2s",textAlign:"center",letterSpacing:".1em"}}
+            style={{width:"100%",padding:"13px 48px 13px 18px",border:`1.5px solid ${pwErr?"#c05050":"rgba(116,19,19,.25)"}`,borderRadius:30,background:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"var(--ink)",outline:"none",boxSizing:"border-box",transition:"border-color .2s"}}
           />
-          {pwErr&&<div style={{fontSize:11,color:"#c05050",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",marginBottom:10}}>Incorrect password — try again</div>}
-          <button onClick={checkPw} style={{width:"100%",padding:"12px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:10,fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:500,cursor:"pointer",transition:"background .2s"}}>
-            Enter ✦
+          <button onClick={checkPw} style={{position:"absolute",right:6,top:"50%",transform:"translateY(-50%)",width:34,height:34,borderRadius:"50%",background:"#741313",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
         </div>
+        {pwErr&&<div style={{fontSize:11,color:"#c05050",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",marginTop:10}}>Incorrect password — try again</div>}
       </div>
     </>
   );
