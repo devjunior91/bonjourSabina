@@ -2277,7 +2277,7 @@ export default function App() {
             <image href={userPhoto||sabinaPhoto} x="24" y="24" width="72" height="72" clipPath="url(#ppClip)" preserveAspectRatio="xMidYMid slice"/>
           </svg>
         );})()}
-        <div onClick={()=>photoInputRef.current&&(photoInputRef.current.value="",photoInputRef.current.click())} style={{position:"absolute",bottom:10,right:10,width:22,height:22,borderRadius:"50%",background:"var(--gold)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.2)",zIndex:2}}>
+        <div onClick={()=>photoInputRef.current&&(photoInputRef.current.value="",photoInputRef.current.click())} style={{position:"absolute",bottom:22,right:22,width:22,height:22,borderRadius:"50%",background:"var(--gold)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.2)",zIndex:2}}>
           <span style={{color:"#fff",fontSize:16,lineHeight:1,fontWeight:300,marginTop:"-1px"}}>+</span>
         </div>
         <input ref={photoInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoChange}/>
