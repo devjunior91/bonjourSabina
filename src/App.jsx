@@ -2262,7 +2262,6 @@ export default function App() {
 
     {/* Profile section */}
     <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center"}}>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)",letterSpacing:".12em",marginBottom:6,textTransform:"uppercase"}}>Your personal space</div>
       <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:400,color:"var(--ink)",marginBottom:16}}>Bonjour, <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Sabina</em> ✦</div>
       <div style={{position:"relative",marginBottom:14}}>
         {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
@@ -2364,7 +2363,7 @@ export default function App() {
       const doy=Math.floor((NOW-new Date(NOW.getFullYear(),0,0))/86400000);
       const q=DAILY_QUOTES[doy%DAILY_QUOTES.length];
       return(
-        <div style={{background:"#9B0006",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:10}}>
+        <div style={{background:"#731111",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:10}}>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"rgba(255,255,255,.65)",letterSpacing:".14em",textTransform:"uppercase"}}>Today's Motivation</div>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:15,color:"#fff",lineHeight:1.6}}>"{q}"</div>
         </div>
