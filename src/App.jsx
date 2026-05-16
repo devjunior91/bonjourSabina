@@ -2374,47 +2374,75 @@ export default function App() {
   {/* ROW 2: Activity Rings (small) | Today's Tasks (wide) */}
   <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"stretch"}}>
 
-    {/* Activity Rings — small left column */}
-    {(()=>{
-      const moveVal=todayFit&&fitMove!=null?Math.round(fitMove):null;
-      const exVal=todayFit&&fitEx!=null?Math.round(fitEx):null;
-      const standVal=todayFit&&standHrs!=null?standHrs:null;
-      const movePct=moveVal!=null?Math.min(100,Math.round(moveVal/300*100)):0;
-      const exPct=exVal!=null?Math.min(100,Math.round(exVal/30*100)):0;
-      const standPct=standVal!=null?Math.min(100,Math.round(standVal/12*100)):0;
-      const R1=44,R2=34,R3=24,CX=55,CY=55;
-      const arc=(r,pct)=>{const c=2*Math.PI*r;return{dash:c,offset:c-(c*pct/100)};};
-      const a1=arc(R1,movePct),a2=arc(R2,exPct),a3=arc(R3,standPct);
-      return(
-        <div style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",alignItems:"center",gap:20}}>
-          <svg width="100" height="100" viewBox="0 0 110 110" style={{flexShrink:0}}>
-            <circle cx={CX} cy={CY} r={R1} fill="none" stroke="rgba(184,149,118,.18)" strokeWidth="8"/>
-            <circle cx={CX} cy={CY} r={R1} fill="none" stroke="#B89576" strokeWidth="8" strokeDasharray={a1.dash} strokeDashoffset={a1.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-            <circle cx={CX} cy={CY} r={R2} fill="none" stroke="rgba(169,179,159,.18)" strokeWidth="8"/>
-            <circle cx={CX} cy={CY} r={R2} fill="none" stroke="#A9B39F" strokeWidth="8" strokeDasharray={a2.dash} strokeDashoffset={a2.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-            <circle cx={CX} cy={CY} r={R3} fill="none" stroke="rgba(155,175,199,.18)" strokeWidth="8"/>
-            <circle cx={CX} cy={CY} r={R3} fill="none" stroke="#9BAFC7" strokeWidth="8" strokeDasharray={a3.dash} strokeDashoffset={a3.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-          </svg>
-          <div style={{flex:1}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",marginBottom:4}}>Activity Rings</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:14}}>Move · Exercise · Stand</div>
-            <div style={{display:"flex",flexDirection:"column",gap:10}}>
-              {[
-                {dot:"#B89576",label:"Move",val:moveVal,unit:"kcal",goal:300},
-                {dot:"#A9B39F",label:"Exercise",val:exVal,unit:"min",goal:30},
-                {dot:"#9BAFC7",label:"Stand",val:standVal,unit:"hrs",goal:12},
-              ].map(r=>(
-                <div key={r.label} style={{display:"flex",alignItems:"center",gap:8}}>
-                  <div style={{width:7,height:7,borderRadius:"50%",background:r.dot,flexShrink:0}}/>
-                  <div style={{fontSize:12,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",flex:1}}>{r.label}</div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{r.val!=null?`${r.val}/${r.goal}${r.unit}`:"—"}</div>
-                </div>
-              ))}
+    {/* Left column: Activity Rings + Focus Timer stacked */}
+    <div style={{display:"flex",flexDirection:"column",gap:16}}>
+
+      {/* Activity Rings — compact */}
+      {(()=>{
+        const moveVal=todayFit&&fitMove!=null?Math.round(fitMove):null;
+        const exVal=todayFit&&fitEx!=null?Math.round(fitEx):null;
+        const standVal=todayFit&&standHrs!=null?standHrs:null;
+        const movePct=moveVal!=null?Math.min(100,Math.round(moveVal/300*100)):0;
+        const exPct=exVal!=null?Math.min(100,Math.round(exVal/30*100)):0;
+        const standPct=standVal!=null?Math.min(100,Math.round(standVal/12*100)):0;
+        const R1=36,R2=27,R3=18,CX=44,CY=44;
+        const arc=(r,pct)=>{const c=2*Math.PI*r;return{dash:c,offset:c-(c*pct/100)};};
+        const a1=arc(R1,movePct),a2=arc(R2,exPct),a3=arc(R3,standPct);
+        return(
+          <div style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>Activity Rings</div>
+            <div style={{display:"flex",alignItems:"center",gap:14}}>
+              <svg width="80" height="80" viewBox="0 0 88 88" style={{flexShrink:0}}>
+                <circle cx={CX} cy={CY} r={R1} fill="none" stroke="rgba(184,149,118,.18)" strokeWidth="7"/>
+                <circle cx={CX} cy={CY} r={R1} fill="none" stroke="#B89576" strokeWidth="7" strokeDasharray={a1.dash} strokeDashoffset={a1.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
+                <circle cx={CX} cy={CY} r={R2} fill="none" stroke="rgba(169,179,159,.18)" strokeWidth="7"/>
+                <circle cx={CX} cy={CY} r={R2} fill="none" stroke="#A9B39F" strokeWidth="7" strokeDasharray={a2.dash} strokeDashoffset={a2.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
+                <circle cx={CX} cy={CY} r={R3} fill="none" stroke="rgba(155,175,199,.18)" strokeWidth="7"/>
+                <circle cx={CX} cy={CY} r={R3} fill="none" stroke="#9BAFC7" strokeWidth="7" strokeDasharray={a3.dash} strokeDashoffset={a3.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
+              </svg>
+              <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
+                {[
+                  {dot:"#B89576",label:"Move",val:moveVal,unit:"kcal",goal:300},
+                  {dot:"#A9B39F",label:"Exercise",val:exVal,unit:"min",goal:30},
+                  {dot:"#9BAFC7",label:"Stand",val:standVal,unit:"hrs",goal:12},
+                ].map(r=>(
+                  <div key={r.label} style={{display:"flex",alignItems:"center",gap:6}}>
+                    <div style={{width:6,height:6,borderRadius:"50%",background:r.dot,flexShrink:0}}/>
+                    <div style={{fontSize:11,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",flex:1}}>{r.label}</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:11,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{r.val!=null?`${r.val}/${r.goal}`:"—"}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+        );
+      })()}
+
+      {/* Focus Timer */}
+      <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10,flex:1}}>
+        <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
+        <div style={{display:"flex",gap:4,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
+          {POMO_PRESETS.map(p=>(
+            <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
+          ))}
         </div>
-      );
-    })()}
+        <svg width="90" height="90" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
+          <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+          <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
+        </svg>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          {!pomoActive
+            ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+            :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+          }
+          <button onClick={pomoStop} style={{width:30,height:30,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12,color:"var(--ink-light)"}}>↺</button>
+        </div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
+      </div>
+
+    </div>
 
     {/* Today's Tasks — wide right column */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
