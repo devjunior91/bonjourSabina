@@ -2255,7 +2255,7 @@ export default function App() {
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
   {/* ROW 1: [Progress + Today's Tasks] | [Focus Timer + Recent Wins + Upcoming] */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"start"}}>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"stretch"}}>
 
   {/* Left column: Progress card + Today's Tasks */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
@@ -2374,7 +2374,7 @@ export default function App() {
   </div>{/* end left column */}
 
   {/* Right column: Focus Timer + Upcoming + Recent Wins + Home Reset */}
-  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+  <div style={{display:"flex",flexDirection:"column",gap:16,height:"100%"}}>
 
     {/* Focus Timer — compact */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"12px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -2456,7 +2456,7 @@ export default function App() {
     </div>
 
     {/* Home Reset — compact */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",minHeight:380,boxSizing:"border-box"}}>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",flex:1}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
         <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
