@@ -2371,10 +2371,38 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Activity Rings (small) | Today's Tasks (wide) */}
-  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"stretch"}}>
+  {/* ROW 2: Today's Tasks (wide) | Activity Rings + Focus Timer (narrow) */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 260px",gap:16,alignItems:"stretch"}}>
 
-    {/* Left column: Activity Rings + Focus Timer stacked */}
+    {/* Today's Tasks — wide left column */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
+          <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY&&!t.done).length}</span>
+        </div>
+        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
+        {byPri(todos.filter(t=>t.date===TODAY&&!t.done)).map(todo=>(
+          <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:"1px solid var(--border)"}}>
+            <div onClick={()=>toggleTodo(todo.id)} style={{width:18,height:18,borderRadius:"50%",border:"1.5px solid rgba(26,20,16,.2)",background:"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}/>
+            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{todo.text}</div>
+            <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
+          </div>
+        ))}
+        {todos.filter(t=>t.date===TODAY&&!t.done).length===0&&(
+          <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"28px 0"}}>
+            {todos.filter(t=>t.date===TODAY).length>0?"All done — great work! ✦":"Nothing planned for today ✦"}
+          </div>
+        )}
+      </div>
+      <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0,borderRadius:"0 0 14px 14px"}}>
+        <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
+      </div>
+    </div>
+
+    {/* Right column: Activity Rings + Focus Timer stacked */}
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
       {/* Activity Rings — compact */}
@@ -2442,34 +2470,6 @@ export default function App() {
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
       </div>
 
-    </div>
-
-    {/* Today's Tasks — wide right column */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
-          <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY&&!t.done).length}</span>
-        </div>
-        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-      </div>
-      <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
-        {byPri(todos.filter(t=>t.date===TODAY&&!t.done)).map(todo=>(
-          <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:"1px solid var(--border)"}}>
-            <div onClick={()=>toggleTodo(todo.id)} style={{width:18,height:18,borderRadius:"50%",border:"1.5px solid rgba(26,20,16,.2)",background:"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}/>
-            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{todo.text}</div>
-            <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
-          </div>
-        ))}
-        {todos.filter(t=>t.date===TODAY&&!t.done).length===0&&(
-          <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"28px 0"}}>
-            {todos.filter(t=>t.date===TODAY).length>0?"All done — great work! ✦":"Nothing planned for today ✦"}
-          </div>
-        )}
-      </div>
-      <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0,borderRadius:"0 0 14px 14px"}}>
-        <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
-      </div>
     </div>
 
   </div>
