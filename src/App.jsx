@@ -213,7 +213,7 @@ body,#root{background:#ffffff;min-height:100vh;font-family:'DM Sans',sans-serif;
 .sb-date{padding:14px 20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:rgba(26,20,16,.3);background:#ffffff;flex-shrink:0;}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:clip;background:#F1EAE2;}
+.main{margin-left:var(--sidebar-w);padding:28px 0 64px;min-height:100vh;position:relative;z-index:1;width:calc(100% - var(--sidebar-w));box-sizing:border-box;overflow-x:clip;background:#F5F0EA;}
 
 /* ── GLOBAL BUTTON HOVER ACCENTS ── */
 /* Inline brand-bg buttons (background:var(--brand) set via style prop) */
