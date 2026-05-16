@@ -2254,8 +2254,11 @@ export default function App() {
   {/* ── DASHBOARD ROWS ── */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
-  {/* ROW 1: Profile+Progress card | Quote + Focus Timer column */}
+  {/* ROW 1: [Progress + Today's Tasks] | [Focus Timer + Recent Wins + Upcoming] */}
   <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"start"}}>
+
+  {/* Left column: Progress card + Today's Tasks */}
+  <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
   {/* Merged Profile + Progress card */}
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
@@ -2315,7 +2318,37 @@ export default function App() {
 
   </div>
 
-  {/* Right column: Focus Timer + Upcoming stacked */}
+  {/* Today's Tasks — under progress */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
+        <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY&&!t.done).length}</span>
+      </div>
+      <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
+    </div>
+    <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
+      {byPri(todos.filter(t=>t.date===TODAY&&!t.done)).map(todo=>(
+        <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:"1px solid var(--border)"}}>
+          <div onClick={()=>toggleTodo(todo.id)} style={{width:18,height:18,borderRadius:"50%",border:"1.5px solid rgba(26,20,16,.2)",background:"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}/>
+          <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{todo.text}</div>
+          <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
+        </div>
+      ))}
+      {todos.filter(t=>t.date===TODAY&&!t.done).length===0&&(
+        <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"28px 0"}}>
+          {todos.filter(t=>t.date===TODAY).length>0?"All done — great work! ✦":"Nothing planned for today ✦"}
+        </div>
+      )}
+    </div>
+    <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0,borderRadius:"0 0 14px 14px"}}>
+      <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
+    </div>
+  </div>
+
+  </div>{/* end left column */}
+
+  {/* Right column: Focus Timer + Recent Wins + Upcoming */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
     {/* Focus Timer — compact */}
@@ -2338,6 +2371,27 @@ export default function App() {
           :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
         }
         <button onClick={pomoStop} style={{width:30,height:30,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12,color:"var(--ink-light)"}}>↺</button>
+      </div>
+    </div>
+
+    {/* Recent Wins — compact */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {recentWins.length===0?(
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
+        ):recentWins.slice(0,3).map((w,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
+            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
+            <div>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -2380,39 +2434,8 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Today's Tasks + Habits (wide) | Activity Rings + Focus Timer (narrow) */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"stretch"}}>
-
-    {/* Left column: Today's Tasks + Habits stacked */}
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-
-    {/* Today's Tasks */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
-          <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY&&!t.done).length}</span>
-        </div>
-        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
-      </div>
-      <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
-        {byPri(todos.filter(t=>t.date===TODAY&&!t.done)).map(todo=>(
-          <div key={todo.id} style={{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:"1px solid var(--border)"}}>
-            <div onClick={()=>toggleTodo(todo.id)} style={{width:18,height:18,borderRadius:"50%",border:"1.5px solid rgba(26,20,16,.2)",background:"transparent",flexShrink:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}/>
-            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{todo.text}</div>
-            <span className={`tg ${todo.tag}`} style={{flexShrink:0,fontSize:10}}>{todo.tag}</span>
-          </div>
-        ))}
-        {todos.filter(t=>t.date===TODAY&&!t.done).length===0&&(
-          <div style={{textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",padding:"28px 0"}}>
-            {todos.filter(t=>t.date===TODAY).length>0?"All done — great work! ✦":"Nothing planned for today ✦"}
-          </div>
-        )}
-      </div>
-      <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0,borderRadius:"0 0 14px 14px"}}>
-        <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
-      </div>
-    </div>
+  {/* ROW 2: Habits | Activity Rings */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"start"}}>
 
     {/* Habits */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
@@ -2439,9 +2462,7 @@ export default function App() {
       </div>
     </div>
 
-    </div>{/* end left column */}
-
-    {/* Right column: Activity Rings + Focus Timer stacked */}
+    {/* Right column: Activity Rings */}
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
       {/* Activity Rings — compact */}
@@ -2489,33 +2510,7 @@ export default function App() {
 
   </div>
 
-  {/* ROW 3: Recent Wins */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,alignItems:"start"}}>
-
-    {/* Recent Wins */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:10}}>
-        {recentWins.length===0?(
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
-        ):recentWins.map((w,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
-            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
-            <div>
-              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-  </div>
-
-  {/* ROW 4: Home Reset — full width */}
+  {/* ROW 3: Home Reset — full width */}
   <div>
 
     {/* Home Reset */}
