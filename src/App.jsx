@@ -1893,14 +1893,7 @@ export default function App() {
       <style>{CSS}</style>
       <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"#F5F0EA",padding:24}}>
         {/* Logo */}
-        <img src={ptLogo} alt="The Productivity Theory" style={{width:220,marginBottom:32,display:"block"}}/>
-
-        {/* Divider */}
-        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:32,width:220}}>
-          <div style={{flex:1,height:1,background:"#741313"}}/>
-          <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="#741313"/></svg>
-          <div style={{flex:1,height:1,background:"#741313"}}/>
-        </div>
+        <img src={ptLogo} alt="The Productivity Theory" style={{width:320,marginBottom:40,display:"block"}}/>
 
         {/* Lock icon */}
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#741313" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{marginBottom:12}}>
