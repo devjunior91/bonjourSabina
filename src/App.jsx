@@ -2262,8 +2262,11 @@ export default function App() {
 
     {/* Profile section */}
     <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center"}}>
-      <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:400,color:"var(--ink)",marginBottom:16}}>Bonjour, <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Sabina</em> ✦</div>
-      <div style={{position:"relative",marginBottom:14}}>
+      <div style={{alignSelf:"flex-start",marginBottom:16}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,color:"var(--ink)",marginBottom:2}}>Today's Progress</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Habits · To-Do · Home Reset · Gratitude</div>
+      </div>
+      <div style={{position:"relative",marginBottom:16}}>
         {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
           <svg width="140" height="140" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
             <circle cx="60" cy="60" r={R} fill="none" stroke="var(--parchment)" strokeWidth="6"/>
@@ -2277,19 +2280,12 @@ export default function App() {
         </div>
         <input ref={photoInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoChange}/>
       </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:10}}>
-        {NOW.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
-      </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginBottom:6}}>Keep showing up for you.</div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginBottom:10}}>Keep showing up for you.</div>
       <div style={{color:"#731111",fontSize:18,lineHeight:1}}>♥</div>
     </div>
 
     {/* Today's Progress section */}
-    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",gap:14}}>
-      <div>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:"var(--ink)",marginBottom:2}}>Today's Progress</div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Habits · To-Do · Home Reset · Gratitude</div>
-      </div>
+    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",alignItems:"center",gap:16}}>
         <div style={{display:"flex",alignItems:"baseline",gap:3,flexShrink:0}}>
           <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
@@ -2302,7 +2298,7 @@ export default function App() {
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
         </div>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:11}}>
+      <div style={{display:"flex",flexDirection:"column",gap:16}}>
         {[
           {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
