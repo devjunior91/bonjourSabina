@@ -2285,7 +2285,7 @@ export default function App() {
     </div>
 
     {/* Today's Progress section */}
-    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",gap:16}}>
+    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",justifyContent:"center",gap:26}}>
       <div style={{display:"flex",alignItems:"center",gap:16}}>
         <div style={{display:"flex",alignItems:"baseline",gap:3,flexShrink:0}}>
           <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
