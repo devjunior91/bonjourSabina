@@ -2316,32 +2316,11 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Recent Wins (above focus timer) | Today's Tasks */}
-  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"stretch"}}>
+  {/* ROW 2: Today's Tasks | Habits — equal columns, directly under profile+progress */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,alignItems:"stretch"}}>
 
-    {/* Recent Wins — left, above focus timer */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:10}}>
-        {recentWins.length===0?(
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
-        ):recentWins.map((w,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
-            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
-            <div>
-              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Today's Tasks — right */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,overflow:"hidden",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:280}}>
+    {/* Today's Tasks */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
@@ -2363,15 +2342,42 @@ export default function App() {
           </div>
         )}
       </div>
-      <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0}}>
+      <div onClick={()=>setShowDashModal(true)} style={{display:"flex",alignItems:"center",gap:6,padding:"11px 20px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"var(--gold-deep)",borderTop:"1px solid var(--border)",flexShrink:0,borderRadius:"0 0 14px 14px"}}>
         <span style={{fontSize:16,lineHeight:1}}>+</span> Add Task
+      </div>
+    </div>
+
+    {/* Habits */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
+          <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
+        </div>
+        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
+        {habits.slice(0,12).map(hab=>(
+          <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
+            <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
+            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
+            <div style={{display:"flex",gap:3,flexShrink:0}}>
+              {hab.days.map((done,i)=>(
+                <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
+              ))}
+            </div>
+          </div>
+        ))}
+        {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"28px 0",textAlign:"center"}}>No habits yet ✦</div>}
       </div>
     </div>
 
   </div>
 
-  {/* ROW 3: Focus Timer (below recent wins) | Activity Cards (below today's tasks) */}
-  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"start"}}>
+  {/* ROW 3: Focus Timer | Activity Rings | Recent Wins */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,alignItems:"start"}}>
+
+    {/* Focus Timer */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
       <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
       <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
@@ -2394,7 +2400,8 @@ export default function App() {
       </div>
       <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
     </div>
-    {/* Activity Rings — single combined card */}
+
+    {/* Activity Rings */}
     {(()=>{
       const moveVal=todayFit&&fitMove!=null?Math.round(fitMove):null;
       const exVal=todayFit&&fitEx!=null?Math.round(fitEx):null;
@@ -2406,20 +2413,15 @@ export default function App() {
       const arc=(r,pct)=>{const c=2*Math.PI*r;return{dash:c,offset:c-(c*pct/100)};};
       const a1=arc(R1,movePct),a2=arc(R2,exPct),a3=arc(R3,standPct);
       return(
-        <div style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",alignItems:"center",gap:24}}>
-          {/* Ring graphic */}
-          <svg width="110" height="110" viewBox="0 0 110 110" style={{flexShrink:0}}>
-            {/* Move ring */}
+        <div style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",alignItems:"center",gap:20}}>
+          <svg width="100" height="100" viewBox="0 0 110 110" style={{flexShrink:0}}>
             <circle cx={CX} cy={CY} r={R1} fill="none" stroke="rgba(184,149,118,.18)" strokeWidth="8"/>
             <circle cx={CX} cy={CY} r={R1} fill="none" stroke="#B89576" strokeWidth="8" strokeDasharray={a1.dash} strokeDashoffset={a1.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-            {/* Exercise ring */}
             <circle cx={CX} cy={CY} r={R2} fill="none" stroke="rgba(169,179,159,.18)" strokeWidth="8"/>
             <circle cx={CX} cy={CY} r={R2} fill="none" stroke="#A9B39F" strokeWidth="8" strokeDasharray={a2.dash} strokeDashoffset={a2.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-            {/* Stand ring */}
             <circle cx={CX} cy={CY} r={R3} fill="none" stroke="rgba(155,175,199,.18)" strokeWidth="8"/>
             <circle cx={CX} cy={CY} r={R3} fill="none" stroke="#9BAFC7" strokeWidth="8" strokeDasharray={a3.dash} strokeDashoffset={a3.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
           </svg>
-          {/* Stats list */}
           <div style={{flex:1}}>
             <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",marginBottom:4}}>Activity Rings</div>
             <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:14}}>Move · Exercise · Stand</div>
@@ -2432,9 +2434,7 @@ export default function App() {
                 <div key={r.label} style={{display:"flex",alignItems:"center",gap:8}}>
                   <div style={{width:7,height:7,borderRadius:"50%",background:r.dot,flexShrink:0}}/>
                   <div style={{fontSize:12,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",flex:1}}>{r.label}</div>
-                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",whiteSpace:"nowrap"}}>
-                    {r.val!=null?`${r.val}/${r.goal}${r.unit}`:"—"}
-                  </div>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{r.val!=null?`${r.val}/${r.goal}${r.unit}`:"—"}</div>
                 </div>
               ))}
             </div>
@@ -2442,35 +2442,32 @@ export default function App() {
         </div>
       );
     })()}
-  </div>
 
-  {/* ROW 4: Habits | Upcoming | Home Reset */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
-
-    {/* Habits */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 18px",boxShadow:"var(--shadow)",height:280,overflow:"hidden",display:"flex",flexDirection:"column"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12,flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
-          <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
-        </div>
-        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+    {/* Recent Wins */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:9,overflowY:"auto",flex:1,minHeight:0}}>
-        {habits.slice(0,8).map(hab=>(
-          <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8}}>
-            <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
-            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
-            <div style={{display:"flex",gap:3,flexShrink:0}}>
-              {hab.days.map((done,i)=>(
-                <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
-              ))}
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {recentWins.length===0?(
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
+        ):recentWins.map((w,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
+            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
+            <div>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
             </div>
           </div>
         ))}
-        {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No habits yet ✦</div>}
       </div>
     </div>
+
+  </div>
+
+  {/* ROW 4: Upcoming | Home Reset */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
 
     {/* Upcoming */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
