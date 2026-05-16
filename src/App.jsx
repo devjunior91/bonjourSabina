@@ -2456,7 +2456,7 @@ export default function App() {
     </div>
 
     {/* Home Reset — compact */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)"}}>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",minHeight:380,boxSizing:"border-box"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
         <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
