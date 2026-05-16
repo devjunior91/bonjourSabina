@@ -2261,11 +2261,7 @@ export default function App() {
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
 
     {/* Profile section */}
-    <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center"}}>
-      <div style={{alignSelf:"flex-start",marginBottom:16}}>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,color:"var(--ink)",marginBottom:2}}>Today's Progress</div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Habits · To-Do · Home Reset · Gratitude</div>
-      </div>
+    <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",justifyContent:"center"}}>
       <div style={{position:"relative",marginBottom:16}}>
         {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
           <svg width="140" height="140" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
@@ -2285,35 +2281,35 @@ export default function App() {
     </div>
 
     {/* Today's Progress section */}
-    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",justifyContent:"center",gap:26}}>
-      <div style={{display:"flex",alignItems:"center",gap:16}}>
-        <div style={{display:"flex",alignItems:"baseline",gap:3,flexShrink:0}}>
-          <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
-          <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink-light)",fontWeight:400}}>%</span>
-        </div>
-        <div style={{flex:1,display:"flex",flexDirection:"column",gap:5}}>
+    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",gap:20}}>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>Today's Progress</div>
+      <div style={{display:"flex",gap:32,alignItems:"flex-start"}}>
+        {/* Left: % + count + bar */}
+        <div style={{display:"flex",flexDirection:"column",gap:8,minWidth:160}}>
+          <div style={{display:"flex",alignItems:"baseline",gap:3}}>
+            <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
+            <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink-light)",fontWeight:400}}>%</span>
+          </div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
           <div style={{height:8,background:"var(--parchment)",borderRadius:8,overflow:"hidden"}}>
             <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",transition:"width .6s",borderRadius:8}}/>
           </div>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
         </div>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:16}}>
-        {[
-          {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
-          {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
-          {label:"Home Reset",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
-          {label:"Gratitude",done:todayGrat.length,total:GRAT_TARGET,color:"#b0889a"},
-        ].map(row=>{const pct=row.total?Math.round(row.done/row.total*100):0;return(
-          <div key={row.label} style={{display:"grid",gridTemplateColumns:"12px 1fr 44px 1fr",alignItems:"center",gap:10}}>
-            <div style={{width:10,height:10,borderRadius:"50%",background:row.color}}/>
-            <div style={{fontSize:13,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500}}>{row.label}</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:13,color:"var(--ink-light)",textAlign:"right",whiteSpace:"nowrap"}}>{row.done}/{row.total}</div>
-            <div style={{height:5,background:"var(--parchment)",borderRadius:4,overflow:"hidden"}}>
-              <div style={{height:"100%",width:`${pct}%`,background:row.color,borderRadius:4,transition:"width .5s"}}/>
+        {/* Right: category list — dot + label + count only */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",gap:18,paddingTop:8}}>
+          {[
+            {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
+            {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
+            {label:"Home Reset",done:cleaningDoneToday,total:cleaningTotalToday,color:"#7090a8"},
+            {label:"Gratitude",done:todayGrat.length,total:GRAT_TARGET,color:"#b0889a"},
+          ].map(row=>(
+            <div key={row.label} style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:10,height:10,borderRadius:"50%",background:row.color,flexShrink:0}}/>
+              <div style={{fontSize:13,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,flex:1}}>{row.label}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:13,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{row.done}/{row.total}</div>
             </div>
-          </div>
-        );})}
+          ))}
+        </div>
       </div>
     </div>
 
