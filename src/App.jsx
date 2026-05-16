@@ -2261,13 +2261,13 @@ export default function App() {
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
 
     {/* Profile section */}
-    <div style={{padding:"14px 20px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-      <div style={{alignSelf:"flex-start",marginBottom:10}}>
+    <div style={{padding:"10px 16px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+      <div style={{alignSelf:"flex-start",marginBottom:8}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Progress</div>
       </div>
       <div style={{position:"relative"}}>
         {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
-          <svg width="160" height="160" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
+          <svg width="140" height="140" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
             <circle cx="60" cy="60" r={R} fill="none" stroke="var(--parchment)" strokeWidth="6"/>
             <circle cx="60" cy="60" r={R} fill="none" stroke={rc} strokeWidth="6" strokeDasharray={C} strokeDashoffset={C*(1-dayPct/100)} strokeLinecap="round" transform="rotate(-90 60 60)" style={{transition:"stroke-dashoffset .6s"}}/>
             <clipPath id="ppClip"><circle cx="60" cy="60" r="36"/></clipPath>
@@ -2282,10 +2282,10 @@ export default function App() {
     </div>
 
     {/* Today's Progress section */}
-    <div style={{padding:"14px 26px 14px",display:"flex",flexDirection:"column",gap:14,justifyContent:"center"}}>
+    <div style={{padding:"10px 22px",display:"flex",flexDirection:"column",gap:10,justifyContent:"center"}}>
       <div style={{display:"flex",gap:32,alignItems:"flex-start"}}>
         {/* Left: % + count + bar */}
-        <div style={{display:"flex",flexDirection:"column",gap:7,minWidth:150}}>
+        <div style={{display:"flex",flexDirection:"column",gap:6,minWidth:150}}>
           <div style={{display:"flex",alignItems:"baseline",gap:3}}>
             <span style={{fontFamily:"'Playfair Display',serif",fontSize:58,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
             <span style={{fontFamily:"'Playfair Display',serif",fontSize:26,color:"var(--ink-light)",fontWeight:400}}>%</span>
@@ -2296,7 +2296,7 @@ export default function App() {
           </div>
         </div>
         {/* Right: category list — dot + label + count only */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",gap:14,paddingTop:4}}>
+        <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",gap:10,paddingTop:2}}>
           {[
             {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
             {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
@@ -2326,7 +2326,7 @@ export default function App() {
           <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
         ))}
       </div>
-      <svg width="80" height="80" viewBox="0 0 110 110">
+      <svg width="100" height="100" viewBox="0 0 110 110">
         <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
         <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
         <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
