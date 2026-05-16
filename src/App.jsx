@@ -2255,7 +2255,7 @@ export default function App() {
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
   {/* ROW 1: Profile+Progress card | Quote + Focus Timer column */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"stretch"}}>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"start"}}>
 
   {/* Merged Profile + Progress card */}
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
@@ -2316,7 +2316,7 @@ export default function App() {
   </div>
 
   {/* Right column: Focus Timer + Upcoming stacked */}
-  <div style={{display:"flex",flexDirection:"column",gap:16,height:"100%"}}>
+  <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
     {/* Focus Timer — compact */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"12px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
@@ -2342,7 +2342,7 @@ export default function App() {
     </div>
 
     {/* Upcoming — redesigned */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",flex:1}}>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column"}}>
       <div style={{padding:"14px 18px 10px",flexShrink:0}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Upcoming</div>
       </div>
