@@ -2347,7 +2347,7 @@ export default function App() {
   </div>
 
   {/* Habits — under Today's Tasks */}
-  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:380}}>
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
       <div style={{display:"flex",alignItems:"center",gap:8}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
@@ -2481,53 +2481,108 @@ export default function App() {
 
   </div>
 
-  {/* ROW 2: Activity Rings — full width */}
-  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+  {/* ROW 2: Activity Rings | Monthly Goals | Gratitude */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,alignItems:"start"}}>
 
     {/* Activity Rings */}
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-
-      {/* Activity Rings — compact */}
-      {(()=>{
-        const moveVal=todayFit&&fitMove!=null?Math.round(fitMove):null;
-        const exVal=todayFit&&fitEx!=null?Math.round(fitEx):null;
-        const standVal=todayFit&&standHrs!=null?standHrs:null;
-        const movePct=moveVal!=null?Math.min(100,Math.round(moveVal/300*100)):0;
-        const exPct=exVal!=null?Math.min(100,Math.round(exVal/30*100)):0;
-        const standPct=standVal!=null?Math.min(100,Math.round(standVal/12*100)):0;
-        const R1=36,R2=27,R3=18,CX=44,CY=44;
-        const arc=(r,pct)=>{const c=2*Math.PI*r;return{dash:c,offset:c-(c*pct/100)};};
-        const a1=arc(R1,movePct),a2=arc(R2,exPct),a3=arc(R3,standPct);
-        return(
-          <div style={{background:"var(--ivory)",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:12}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>Activity Rings</div>
-            <div style={{display:"flex",alignItems:"center",gap:14}}>
-              <svg width="80" height="80" viewBox="0 0 88 88" style={{flexShrink:0}}>
-                <circle cx={CX} cy={CY} r={R1} fill="none" stroke="rgba(184,149,118,.18)" strokeWidth="7"/>
-                <circle cx={CX} cy={CY} r={R1} fill="none" stroke="#B89576" strokeWidth="7" strokeDasharray={a1.dash} strokeDashoffset={a1.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-                <circle cx={CX} cy={CY} r={R2} fill="none" stroke="rgba(169,179,159,.18)" strokeWidth="7"/>
-                <circle cx={CX} cy={CY} r={R2} fill="none" stroke="#A9B39F" strokeWidth="7" strokeDasharray={a2.dash} strokeDashoffset={a2.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-                <circle cx={CX} cy={CY} r={R3} fill="none" stroke="rgba(155,175,199,.18)" strokeWidth="7"/>
-                <circle cx={CX} cy={CY} r={R3} fill="none" stroke="#9BAFC7" strokeWidth="7" strokeDasharray={a3.dash} strokeDashoffset={a3.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
-              </svg>
-              <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
-                {[
-                  {dot:"#B89576",label:"Move",val:moveVal,unit:"kcal",goal:300},
-                  {dot:"#A9B39F",label:"Exercise",val:exVal,unit:"min",goal:30},
-                  {dot:"#9BAFC7",label:"Stand",val:standVal,unit:"hrs",goal:12},
-                ].map(r=>(
-                  <div key={r.label} style={{display:"flex",alignItems:"center",gap:6}}>
-                    <div style={{width:6,height:6,borderRadius:"50%",background:r.dot,flexShrink:0}}/>
-                    <div style={{fontSize:11,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",flex:1}}>{r.label}</div>
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:11,color:"var(--ink-light)",whiteSpace:"nowrap"}}>{r.val!=null?`${r.val}/${r.goal}`:"—"}</div>
+    {(()=>{
+      const moveVal=todayFit&&fitMove!=null?Math.round(fitMove):null;
+      const exVal=todayFit&&fitEx!=null?Math.round(fitEx):null;
+      const standVal=todayFit&&standHrs!=null?standHrs:null;
+      const movePct=moveVal!=null?Math.min(100,Math.round(moveVal/300*100)):0;
+      const exPct=exVal!=null?Math.min(100,Math.round(exVal/30*100)):0;
+      const standPct=standVal!=null?Math.min(100,Math.round(standVal/12*100)):0;
+      const R1=40,R2=30,R3=20,CX=50,CY=50;
+      const arc=(r,pct)=>{const c=2*Math.PI*r;return{dash:c,offset:c-(c*pct/100)};};
+      const a1=arc(R1,movePct),a2=arc(R2,exPct),a3=arc(R3,standPct);
+      return(
+        <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",marginBottom:16}}>Activity Rings</div>
+          <div style={{display:"flex",alignItems:"center",gap:20}}>
+            <svg width="100" height="100" viewBox="0 0 100 100" style={{flexShrink:0}}>
+              <circle cx={CX} cy={CY} r={R1} fill="none" stroke="rgba(184,149,118,.18)" strokeWidth="8"/>
+              <circle cx={CX} cy={CY} r={R1} fill="none" stroke="#B89576" strokeWidth="8" strokeDasharray={a1.dash} strokeDashoffset={a1.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
+              <circle cx={CX} cy={CY} r={R2} fill="none" stroke="rgba(169,179,159,.18)" strokeWidth="8"/>
+              <circle cx={CX} cy={CY} r={R2} fill="none" stroke="#A9B39F" strokeWidth="8" strokeDasharray={a2.dash} strokeDashoffset={a2.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
+              <circle cx={CX} cy={CY} r={R3} fill="none" stroke="rgba(155,175,199,.18)" strokeWidth="8"/>
+              <circle cx={CX} cy={CY} r={R3} fill="none" stroke="#9BAFC7" strokeWidth="8" strokeDasharray={a3.dash} strokeDashoffset={a3.offset} strokeLinecap="round" transform={`rotate(-90 ${CX} ${CY})`}/>
+            </svg>
+            <div style={{flex:1,display:"flex",flexDirection:"column",gap:12}}>
+              {[
+                {dot:"#B89576",label:"Move",val:moveVal,unit:"kcal",goal:300},
+                {dot:"#A9B39F",label:"Exercise",val:exVal,unit:"min",goal:30},
+                {dot:"#9BAFC7",label:"Stand",val:standVal,unit:"hrs",goal:12},
+              ].map(r=>(
+                <div key={r.label}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                    <div style={{width:8,height:8,borderRadius:"50%",background:r.dot,flexShrink:0}}/>
+                    <div style={{fontSize:12,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",flex:1,fontWeight:500}}>{r.label}</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)"}}>{r.val!=null?`${r.val}/${r.goal} ${r.unit}`:"—"}</div>
                   </div>
-                ))}
-              </div>
+                  <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
+                    <div style={{height:"100%",width:`${r.val!=null?Math.min(100,Math.round(r.val/r.goal*100)):0}%`,background:r.dot,borderRadius:2,transition:"width .5s"}}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    })()}
+
+    {/* Monthly Goals */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Monthly Goals</div>
+        <button onClick={()=>setPage("goals")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
+      </div>
+      {monthGoalsArr.length===0?(
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>No goals this month ✦</div>
+      ):monthGoalsArr.slice(0,4).map(g=>{
+        const done=(g.milestones||[]).filter(m=>m.done).length;
+        const total=(g.milestones||[]).length;
+        const pct=total>0?Math.round(done/total*100):0;
+        return(
+          <div key={g.id} style={{marginBottom:14}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
+              <span style={{fontSize:15}}>{g.icon||"✦"}</span>
+              <div style={{flex:1,fontSize:12,fontFamily:"'DM Sans',sans-serif",fontWeight:500,color:"var(--ink)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.title}</div>
+              <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:12,color:"var(--ink-light)",flexShrink:0}}>{pct}%</span>
+            </div>
+            <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
+              <div style={{height:"100%",width:`${pct}%`,background:"var(--sage)",borderRadius:2,transition:"width .5s"}}/>
             </div>
           </div>
         );
-      })()}
+      })}
+    </div>
 
+    {/* Gratitude */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Gratitude</div>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"var(--ink-light)"}}>{todayGrat.length}/{GRAT_TARGET} today</span>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:12}}>
+        {todayGrat.length===0?(
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>What are you grateful for today? ✦</div>
+        ):todayGrat.slice(0,4).map((e,i)=>(
+          <div key={e.id} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
+            <span style={{color:"#c9a87c",fontSize:11,marginTop:1,flexShrink:0}}>✦</span>
+            <div style={{fontSize:12,fontFamily:"'DM Sans',sans-serif",color:"var(--ink)",lineHeight:1.4}}>{e.text}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <input
+          placeholder="Add a moment of gratitude…"
+          value={gratInput}
+          onChange={e=>setGratInput(e.target.value)}
+          onKeyDown={e=>e.key==="Enter"&&addGrat()}
+          style={{flex:1,border:"1px solid var(--border)",borderRadius:20,padding:"6px 12px",fontSize:12,fontFamily:"'DM Sans',sans-serif",outline:"none",background:"var(--parchment)",color:"var(--ink)"}}
+        />
+        <button onClick={addGrat} style={{padding:"6px 14px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:20,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer"}}>Add</button>
+      </div>
     </div>
 
   </div>
