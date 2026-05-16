@@ -185,7 +185,7 @@ const CSS=`
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --cream:#ece6de;--parchment:#e1d8ce;--ivory:#ffffff;
+  --cream:#F5F0EA;--parchment:#e1d8ce;--ivory:#ffffff;
   --ink:#1a1410;--ink-light:#675850;
   --gold:#c9a87c;--gold-deep:#a8865a;--gold-pale:#eddcc8;
   --sage:#7a9070;
@@ -2346,9 +2346,34 @@ export default function App() {
     </div>
   </div>
 
+  {/* Habits — under Today's Tasks */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
+        <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
+      </div>
+      <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
+    </div>
+    <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
+      {habits.slice(0,12).map(hab=>(
+        <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
+          <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
+          <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
+          <div style={{display:"flex",gap:3,flexShrink:0}}>
+            {hab.days.map((done,i)=>(
+              <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
+            ))}
+          </div>
+        </div>
+      ))}
+      {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"28px 0",textAlign:"center"}}>No habits yet ✦</div>}
+    </div>
+  </div>
+
   </div>{/* end left column */}
 
-  {/* Right column: Focus Timer + Recent Wins + Upcoming */}
+  {/* Right column: Focus Timer + Upcoming + Recent Wins + Home Reset */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
     {/* Focus Timer — compact */}
@@ -2371,27 +2396,6 @@ export default function App() {
           :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
         }
         <button onClick={pomoStop} style={{width:30,height:30,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12,color:"var(--ink-light)"}}>↺</button>
-      </div>
-    </div>
-
-    {/* Recent Wins — compact */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:10}}>
-        {recentWins.length===0?(
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
-        ):recentWins.slice(0,3).map((w,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
-            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
-            <div>
-              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
 
@@ -2428,41 +2432,57 @@ export default function App() {
           View calendar <span style={{fontSize:14}}>→</span>
         </button>
       </div>
-    </div>
-
-  </div>
-
-  </div>
-
-  {/* ROW 2: Habits | Activity Rings */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"start"}}>
-
-    {/* Habits */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",height:300}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px",flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
-          <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
-        </div>
-        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
+    {/* Recent Wins — compact */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c9a87c" strokeWidth="1.75"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Recent Wins</div>
       </div>
-      <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
-        {habits.slice(0,12).map(hab=>(
-          <div key={hab.id} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid var(--border)"}}>
-            <div style={{width:26,height:26,borderRadius:"50%",background:hab.color+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{HI(hab.icon,hab.color,13)}</div>
-            <div style={{flex:1,minWidth:0,fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{hab.name}</div>
-            <div style={{display:"flex",gap:3,flexShrink:0}}>
-              {hab.days.map((done,i)=>(
-                <div key={i} onClick={()=>toggleDay(hab.id,i)} style={{width:10,height:10,borderRadius:"50%",background:done?hab.color:"var(--parchment)",border:`1px solid ${done?hab.color:"var(--border)"}`,cursor:"pointer",transition:"background .2s"}}/>
-              ))}
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {recentWins.length===0?(
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Your wins will appear here ✦</div>
+        ):recentWins.slice(0,3).map((w,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8}}>
+            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{w.icon}</span>
+            <div>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"var(--ink)",marginBottom:1}}>{w.title}</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",lineHeight:1.4}}>{w.text}</div>
             </div>
           </div>
         ))}
-        {habits.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"28px 0",textAlign:"center"}}>No habits yet ✦</div>}
       </div>
     </div>
 
-    {/* Right column: Activity Rings */}
+    {/* Home Reset — compact */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
+        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
+        {cleaningTodayArr.slice(0,4).map((task,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
+            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(26,20,16,.2)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
+              {task.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+            </div>
+            <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
+          </div>
+        ))}
+        {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Rest day ✦</div>}
+      </div>
+      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
+        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#7090a8",borderRadius:2,transition:"width .5s"}}/>
+      </div>
+    </div>
+
+  </div>
+
+  </div>
+
+  {/* ROW 2: Activity Rings — full width */}
+  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+
+    {/* Activity Rings */}
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
       {/* Activity Rings — compact */}
@@ -2506,35 +2526,6 @@ export default function App() {
         );
       })()}
 
-    </div>
-
-  </div>
-
-  {/* ROW 3: Home Reset — full width */}
-  <div>
-
-    {/* Home Reset */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
-        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
-        {cleaningTodayArr.slice(0,4).map((task,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
-            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(26,20,16,.2)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
-              {task.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
-            </div>
-            <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
-          </div>
-        ))}
-        {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Rest day ✦</div>}
-        {cleaningTodayArr.length>4&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>+{cleaningTodayArr.length-4} more</div>}
-      </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:5}}>{cleaningDoneToday} of {cleaningTotalToday} done</div>
-      <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
-        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#7090a8",borderRadius:2,transition:"width .5s"}}/>
-      </div>
     </div>
 
   </div>
