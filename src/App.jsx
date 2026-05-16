@@ -2471,7 +2471,7 @@ export default function App() {
       <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
         {cleaningTodayArr.slice(0,4).map((task,i)=>(
           <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
-            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#7090a8":"rgba(26,20,16,.2)"}`,background:task.done?"#7090a8":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
+            <div onClick={()=>toggleClean(TODAY_DAY,i)} style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${task.done?"#741313":"rgba(26,20,16,.2)"}`,background:task.done?"#741313":"transparent",cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .15s"}}>
               {task.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
             </div>
             <span style={{fontSize:12,color:task.done?"var(--ink-light)":"var(--ink)",textDecoration:task.done?"line-through":"none",fontFamily:"'DM Sans',sans-serif",lineHeight:1.3}}>{task.text}</span>
@@ -2480,7 +2480,7 @@ export default function App() {
         {cleaningTodayArr.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>Rest day ✦</div>}
       </div>
       <div style={{height:4,background:"var(--parchment)",borderRadius:2,overflow:"hidden"}}>
-        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#7090a8",borderRadius:2,transition:"width .5s"}}/>
+        <div style={{height:"100%",width:cleaningTotalToday>0?`${Math.round((cleaningDoneToday/cleaningTotalToday)*100)}%`:"0%",background:"#741313",borderRadius:2,transition:"width .5s"}}/>
       </div>
     </div>
 
