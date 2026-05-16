@@ -2255,13 +2255,16 @@ export default function App() {
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
   {/* ROW 1: Profile+Progress card | Quote + Focus Timer column */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"start"}}>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"stretch"}}>
 
   {/* Merged Profile + Progress card */}
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
 
     {/* Profile section */}
-    <div style={{padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+    <div style={{padding:"14px 20px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+      <div style={{alignSelf:"flex-start",marginBottom:10}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>Today's Progress</div>
+      </div>
       <div style={{position:"relative"}}>
         {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
           <svg width="160" height="160" viewBox="0 0 120 120" style={{filter:"drop-shadow(0 2px 10px rgba(201,168,124,.18))"}}>
@@ -2279,8 +2282,7 @@ export default function App() {
     </div>
 
     {/* Today's Progress section */}
-    <div style={{padding:"14px 26px 14px",display:"flex",flexDirection:"column",gap:14}}>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>Today's Progress</div>
+    <div style={{padding:"14px 26px 14px",display:"flex",flexDirection:"column",gap:14,justifyContent:"center"}}>
       <div style={{display:"flex",gap:32,alignItems:"flex-start"}}>
         {/* Left: % + count + bar */}
         <div style={{display:"flex",flexDirection:"column",gap:7,minWidth:150}}>
@@ -2358,9 +2360,9 @@ export default function App() {
       const doy=Math.floor((NOW-new Date(NOW.getFullYear(),0,0))/86400000);
       const q=DAILY_QUOTES[doy%DAILY_QUOTES.length];
       return(
-        <div style={{background:"#731111",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:10}}>
+        <div style={{background:"#731111",borderRadius:14,padding:"22px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:12,height:"100%",boxSizing:"border-box",justifyContent:"center"}}>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"rgba(255,255,255,.65)",letterSpacing:".14em",textTransform:"uppercase"}}>Today's Motivation</div>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:15,color:"#fff",lineHeight:1.6}}>"{q}"</div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:16,color:"#fff",lineHeight:1.7}}>"{q}"</div>
         </div>
       );
     })()}
