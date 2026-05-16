@@ -2432,6 +2432,8 @@ export default function App() {
           View calendar <span style={{fontSize:14}}>→</span>
         </button>
       </div>
+    </div>
+
     {/* Recent Wins — compact */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)"}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
