@@ -2254,11 +2254,11 @@ export default function App() {
   {/* ── DASHBOARD ROWS ── */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
-  {/* ROW 1: Profile card | Progress card — same height */}
-  <div style={{display:"grid",gridTemplateColumns:"260px 1fr",gap:16,alignItems:"stretch"}}>
+  {/* ROW 1: Combined Profile + Progress card */}
+  <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
 
-    {/* Profile card */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 20px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center"}}>
+    {/* Profile section */}
+    <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",borderRight:"1px solid var(--border)"}}>
       <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)",letterSpacing:".12em",marginBottom:6,textTransform:"uppercase"}}>Your personal space</div>
       <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:400,color:"var(--ink)",marginBottom:16}}>Bonjour, <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Sabina</em> ✦</div>
       <div style={{position:"relative",marginBottom:14}}>
@@ -2280,8 +2280,8 @@ export default function App() {
       </div>
     </div>
 
-    {/* Today's Progress card */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"22px 26px 0",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column"}}>
+    {/* Today's Progress section */}
+    <div style={{padding:"22px 26px 0",display:"flex",flexDirection:"column"}}>
       <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",marginBottom:3}}>Today's Progress</div>
       <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:14}}>Habits · To-Do · Home Reset · Gratitude</div>
       <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:4}}>
@@ -2309,7 +2309,7 @@ export default function App() {
           </div>
         );})}
       </div>
-      <div style={{height:7,background:"var(--parchment)",borderRadius:"0 0 14px 14px",overflow:"hidden",margin:"auto -26px 0",marginTop:16}}>
+      <div style={{height:7,background:"var(--parchment)",overflow:"hidden",margin:"auto -26px 0",marginTop:16}}>
         <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",transition:"width .6s"}}/>
       </div>
     </div>
