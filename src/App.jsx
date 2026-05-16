@@ -1080,7 +1080,8 @@ const MONTHLY_TIPS={
   11:[["✓","December — finish strong and celebrate your growth."],["✦","Rest, reflect and plan for a powerful new year."],["↺","Write 3 things you achieved this year that you are proud of."]],
 };
 export default function App() {
-  const [page,setPage]=useState(()=>localStorage.getItem("sab_page")||"dashboard");
+  const PAGES=["dashboard","todos","habits","goals","cleaning","calendar","bilan"];
+  const [page,setPage]=useState(()=>{const p=window.location.pathname.replace("/","");return PAGES.includes(p)?p:localStorage.getItem("sab_page")||"dashboard";});
   const [habits,setHabits]=useDB("sab_habits",DEF_HABITS);
   const [tags,setTags]=useDB("sab_tags",DEF_TAGS);
   const [todos,setTodos]=useDB("sab_todos",[]);
@@ -1253,7 +1254,16 @@ export default function App() {
   useEffect(()=>{const h=()=>setShowTaskMenu(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
   useEffect(()=>{const h=()=>setHabMenuId(null);document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
   useEffect(()=>{const h=()=>{setShowSettingsMenu(false);setShowNotifs(false);};document.addEventListener("click",h);return()=>document.removeEventListener("click",h);},[]);
-  useEffect(()=>{localStorage.setItem("sab_page",page);},[page]);
+  useEffect(()=>{
+    localStorage.setItem("sab_page",page);
+    const url=page==="dashboard"?"/":"/"+page;
+    if(window.location.pathname!==url) window.history.pushState({page},"",url);
+  },[page]);
+  useEffect(()=>{
+    const h=(e)=>{const p=e.state?.page||(window.location.pathname.replace("/","")||"dashboard");setPage(PAGES.includes(p)?p:"dashboard");};
+    window.addEventListener("popstate",h);
+    return()=>window.removeEventListener("popstate",h);
+  },[]);
   useEffect(()=>()=>clearInterval(pomoInterval.current),[]);
   // Snap pomo time when tab becomes visible again (avoids throttled intervals)
   useEffect(()=>{
