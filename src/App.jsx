@@ -198,7 +198,7 @@ const CSS=`
   --accent:#9B0006;
   --accent-pale:rgba(155,0,6,.08);
 }
-body,#root{background:#ffffff;min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
+body,#root{background:#F5F0EA;min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--ink);}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:#ffffff;border-right:1px solid rgba(26,20,16,.08);display:flex;flex-direction:column;z-index:200;overflow:hidden;-webkit-transform:translateZ(0);}
 .sb-brand{padding:32px 4px 32px;margin-bottom:0;flex-shrink:0;}
 .sb-eye{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:var(--ink-light);letter-spacing:.16em;margin-bottom:3px;opacity:.6;}
