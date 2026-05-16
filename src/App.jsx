@@ -2254,7 +2254,10 @@ export default function App() {
   {/* ── DASHBOARD ROWS ── */}
   <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
-  {/* ROW 1: Combined Profile + Progress card */}
+  {/* ROW 1: Profile+Progress card | Quote + Focus Timer column */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:16,alignItems:"stretch"}}>
+
+  {/* Merged Profile + Progress card */}
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
 
     {/* Profile section */}
@@ -2316,6 +2319,86 @@ export default function App() {
 
   </div>
 
+  {/* Right column: Daily Quote + Focus Timer stacked */}
+  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+
+    {/* Daily Quote card */}
+    {(()=>{
+      const DAILY_QUOTES=[
+        "Small steps each day compound into extraordinary results.",
+        "Clarity of purpose turns ordinary hours into momentum.",
+        "The quality of your focus determines the quality of your output.",
+        "Rest is not idleness — it is part of the process.",
+        "Do less, but do it completely.",
+        "Every expert was once a beginner who chose not to quit.",
+        "Systems beat motivation. Build the habit, not the feeling.",
+        "Progress, not perfection, is the daily goal.",
+        "Your attention is your most valuable asset. Spend it wisely.",
+        "One deep work session can change the trajectory of the day.",
+        "Start before you feel ready. Refine as you go.",
+        "The work you avoid is usually the work that matters most.",
+        "Discipline is choosing what you want most over what you want now.",
+        "Simplify. Focus. Repeat.",
+        "Energy flows where attention goes.",
+        "A clear space creates a clear mind and a clear path forward.",
+        "Do the most important thing first, before the world wakes up.",
+        "Slow down to speed up. Deep thinking precedes great work.",
+        "Small wins today are the foundation of big wins tomorrow.",
+        "You do not need more time — you need fewer distractions.",
+        "Show up consistently and trust the process.",
+        "Protect your focus time like an appointment you cannot cancel.",
+        "The goal is not to be busy — the goal is to be effective.",
+        "Every completed task builds momentum for the next.",
+        "Excellence is built one focused hour at a time.",
+        "Routine is the scaffold that creativity climbs.",
+        "Plan the work. Then work the plan.",
+        "A productive day begins the evening before.",
+        "Your environment shapes your habits. Design it with intention.",
+        "Less scrolling, more doing.",
+        "The best time to start was yesterday. The next best time is now.",
+        "Make space for thinking — it is not wasted time, it is investment.",
+        "Every task done with full attention is a small act of mastery.",
+        "Measure outcomes, not hours.",
+        "Depth of work matters more than volume of tasks.",
+      ];
+      const doy=Math.floor((NOW-new Date(NOW.getFullYear(),0,0))/86400000);
+      const q=DAILY_QUOTES[doy%DAILY_QUOTES.length];
+      return(
+        <div style={{background:"#9B0006",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:10}}>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"rgba(255,255,255,.65)",letterSpacing:".14em",textTransform:"uppercase"}}>Today's Motivation</div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:15,color:"#fff",lineHeight:1.6}}>"{q}"</div>
+        </div>
+      );
+    })()}
+
+    {/* Focus Timer */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10,flex:1}}>
+      <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
+      <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
+        {POMO_PRESETS.map(p=>(
+          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"4px 12px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
+        ))}
+      </div>
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
+        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+        <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
+      </svg>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        {!pomoActive
+          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+        }
+        <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
+      </div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
+    </div>
+
+  </div>
+
+  </div>
+
   {/* ROW 2: Today's Tasks | Habits — equal columns, directly under profile+progress */}
   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,alignItems:"stretch"}}>
 
@@ -2374,32 +2457,8 @@ export default function App() {
 
   </div>
 
-  {/* ROW 3: Focus Timer | Activity Rings | Recent Wins */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,alignItems:"start"}}>
-
-    {/* Focus Timer */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
-      <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
-      <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
-        {POMO_PRESETS.map(p=>(
-          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"4px 12px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
-        ))}
-      </div>
-      <svg width="110" height="110" viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
-        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-        <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
-      </svg>
-      <div style={{display:"flex",gap:8,alignItems:"center"}}>
-        {!pomoActive
-          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
-          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
-        }
-        <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
-      </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
-    </div>
+  {/* ROW 3: Activity Rings | Recent Wins */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,alignItems:"start"}}>
 
     {/* Activity Rings */}
     {(()=>{
