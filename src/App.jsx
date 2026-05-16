@@ -2285,18 +2285,24 @@ export default function App() {
     </div>
 
     {/* Today's Progress section */}
-    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
-      <div style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:"var(--ink)",marginBottom:3}}>Today's Progress</div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)",marginBottom:16}}>Habits · To-Do · Home Reset · Gratitude</div>
-      <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:4}}>
-        <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
-        <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink-light)",fontWeight:400}}>%</span>
+    <div style={{padding:"22px 26px 20px",display:"flex",flexDirection:"column",gap:14}}>
+      <div>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:"var(--ink)",marginBottom:2}}>Today's Progress</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--ink-light)"}}>Habits · To-Do · Home Reset · Gratitude</div>
       </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)",marginBottom:16}}>{dayDone} of {dayTotal} tasks completed</div>
-      <div style={{height:8,background:"var(--parchment)",borderRadius:8,overflow:"hidden",marginBottom:22}}>
-        <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",transition:"width .6s",borderRadius:8}}/>
+      <div style={{display:"flex",alignItems:"center",gap:16}}>
+        <div style={{display:"flex",alignItems:"baseline",gap:3,flexShrink:0}}>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:52,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
+          <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"var(--ink-light)",fontWeight:400}}>%</span>
+        </div>
+        <div style={{flex:1,display:"flex",flexDirection:"column",gap:5}}>
+          <div style={{height:8,background:"var(--parchment)",borderRadius:8,overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${dayPct}%`,background:dayPct===100?"var(--sage)":"linear-gradient(90deg,#c9a87c,#a8865a)",transition:"width .6s",borderRadius:8}}/>
+          </div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
+        </div>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:13}}>
+      <div style={{display:"flex",flexDirection:"column",gap:11}}>
         {[
           {label:"Habits",done:habitsDoneToday,total:habitsTotal,color:"#c9a87c"},
           {label:"To-Do List",done:todosDoneToday,total:todosTotalToday,color:"#7a9070"},
@@ -2370,42 +2376,27 @@ export default function App() {
     })()}
 
     {/* Focus Timer */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 16px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:12,flex:1}}>
-      <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)",alignSelf:"flex-start"}}>Focus Timer</div>
-
-      {/* Preset pill tabs */}
-      <div style={{display:"flex",background:"var(--parchment)",borderRadius:20,padding:"3px",gap:2,width:"100%"}}>
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"16px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10,flex:1}}>
+      <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
+      <div style={{display:"flex",gap:5,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
         {POMO_PRESETS.map(p=>(
-          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{flex:1,padding:"5px 0",borderRadius:18,border:"none",background:pomoDur===p.s?"#fff":"transparent",color:pomoDur===p.s?"var(--ink)":"var(--ink-light)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:pomoDur===p.s?600:400,cursor:"pointer",transition:"all .15s",boxShadow:pomoDur===p.s?"0 1px 4px rgba(0,0,0,.1)":"none"}}>{p.label}</button>
+          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"4px 12px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
         ))}
       </div>
-
-      {/* Ring */}
-      <svg width="130" height="130" viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="8"/>
-        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="8" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)" style={{transition:"stroke-dashoffset .5s"}}/>
-        <text x="55" y="50" textAnchor="middle" fontFamily="Georgia, serif" fontSize="20" fontWeight="700" fill="var(--ink)" letterSpacing="-0.5">{fmtPomo(pomoLeft)}</text>
-        <text x="55" y="65" textAnchor="middle" fontFamily="Georgia, serif" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"in focus":"ready"}</text>
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
+        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+        <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
       </svg>
-
-      {/* Controls */}
-      <div style={{display:"flex",gap:10,alignItems:"center"}}>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
         {!pomoActive
-          ?<button onClick={pomoStart} style={{padding:"9px 32px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,cursor:"pointer",letterSpacing:".04em"}}>Start</button>
-          :<button onClick={pomoPause} style={{padding:"9px 32px",background:"var(--ink)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,cursor:"pointer",letterSpacing:".04em"}}>Pause</button>
+          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 20px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
         }
-        <button onClick={pomoStop} style={{width:36,height:36,borderRadius:"50%",border:"1px solid var(--border)",background:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:16,color:"var(--ink-light)"}}>↺</button>
+        <button onClick={pomoStop} style={{width:34,height:34,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:13,color:"var(--ink-light)"}}>↺</button>
       </div>
-
-      {/* Session dots */}
-      <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
-        <div style={{display:"flex",gap:5}}>
-          {[0,1,2,3].map(i=>(
-            <div key={i} style={{width:7,height:7,borderRadius:"50%",background:i<pomoCount?"#c9a87c":"var(--parchment)",border:`1px solid ${i<pomoCount?"#c9a87c":"var(--border)"}`,transition:"background .3s"}}/>
-          ))}
-        </div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} session{pomoCount!==1?"s":""} today</div>
-      </div>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
     </div>
 
   </div>
