@@ -2258,7 +2258,7 @@ export default function App() {
   <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"grid",gridTemplateColumns:"240px 1fr",overflow:"hidden"}}>
 
     {/* Profile section */}
-    <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",borderRight:"1px solid var(--border)"}}>
+    <div style={{padding:"22px 20px 20px",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center"}}>
       <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)",letterSpacing:".12em",marginBottom:6,textTransform:"uppercase"}}>Your personal space</div>
       <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:400,color:"var(--ink)",marginBottom:16}}>Bonjour, <em style={{fontStyle:"italic",color:"var(--gold-deep)"}}>Sabina</em> ✦</div>
       <div style={{position:"relative",marginBottom:14}}>
