@@ -2263,7 +2263,7 @@ export default function App() {
     {/* Profile section */}
     <div style={{padding:"14px 20px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
       <div style={{alignSelf:"flex-start",marginBottom:10}}>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>Today's Progress</div>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Progress</div>
       </div>
       <div style={{position:"relative"}}>
         {(()=>{const R=46,C=2*Math.PI*R;const rc=dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink-light)";return(
@@ -2287,8 +2287,8 @@ export default function App() {
         {/* Left: % + count + bar */}
         <div style={{display:"flex",flexDirection:"column",gap:7,minWidth:150}}>
           <div style={{display:"flex",alignItems:"baseline",gap:3}}>
-            <span style={{fontFamily:"'Playfair Display',serif",fontSize:48,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
-            <span style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--ink-light)",fontWeight:400}}>%</span>
+            <span style={{fontFamily:"'Playfair Display',serif",fontSize:58,fontWeight:600,lineHeight:1,color:dayPct===100?"var(--sage)":dayPct>=60?"#c9a87c":"var(--ink)"}}>{dayPct}</span>
+            <span style={{fontFamily:"'Playfair Display',serif",fontSize:26,color:"var(--ink-light)",fontWeight:400}}>%</span>
           </div>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:13,color:"var(--ink-light)"}}>{dayDone} of {dayTotal} tasks completed</div>
           <div style={{height:8,background:"var(--parchment)",borderRadius:8,overflow:"hidden"}}>
@@ -2315,57 +2315,66 @@ export default function App() {
 
   </div>
 
-  {/* Right column: Daily Quote */}
-  <div style={{display:"flex",flexDirection:"column",gap:16}}>
+  {/* Right column: Focus Timer + Upcoming stacked */}
+  <div style={{display:"flex",flexDirection:"column",gap:16,height:"100%"}}>
 
-    {/* Daily Quote card */}
-    {(()=>{
-      const DAILY_QUOTES=[
-        "Small steps each day compound into extraordinary results.",
-        "Clarity of purpose turns ordinary hours into momentum.",
-        "The quality of your focus determines the quality of your output.",
-        "Rest is not idleness — it is part of the process.",
-        "Do less, but do it completely.",
-        "Every expert was once a beginner who chose not to quit.",
-        "Systems beat motivation. Build the habit, not the feeling.",
-        "Progress, not perfection, is the daily goal.",
-        "Your attention is your most valuable asset. Spend it wisely.",
-        "One deep work session can change the trajectory of the day.",
-        "Start before you feel ready. Refine as you go.",
-        "The work you avoid is usually the work that matters most.",
-        "Discipline is choosing what you want most over what you want now.",
-        "Simplify. Focus. Repeat.",
-        "Energy flows where attention goes.",
-        "A clear space creates a clear mind and a clear path forward.",
-        "Do the most important thing first, before the world wakes up.",
-        "Slow down to speed up. Deep thinking precedes great work.",
-        "Small wins today are the foundation of big wins tomorrow.",
-        "You do not need more time — you need fewer distractions.",
-        "Show up consistently and trust the process.",
-        "Protect your focus time like an appointment you cannot cancel.",
-        "The goal is not to be busy — the goal is to be effective.",
-        "Every completed task builds momentum for the next.",
-        "Excellence is built one focused hour at a time.",
-        "Routine is the scaffold that creativity climbs.",
-        "Plan the work. Then work the plan.",
-        "A productive day begins the evening before.",
-        "Your environment shapes your habits. Design it with intention.",
-        "Less scrolling, more doing.",
-        "The best time to start was yesterday. The next best time is now.",
-        "Make space for thinking — it is not wasted time, it is investment.",
-        "Every task done with full attention is a small act of mastery.",
-        "Measure outcomes, not hours.",
-        "Depth of work matters more than volume of tasks.",
-      ];
-      const doy=Math.floor((NOW-new Date(NOW.getFullYear(),0,0))/86400000);
-      const q=DAILY_QUOTES[doy%DAILY_QUOTES.length];
-      return(
-        <div style={{background:"#731111",borderRadius:14,padding:"22px 20px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",gap:12,height:"100%",boxSizing:"border-box",justifyContent:"center"}}>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"rgba(255,255,255,.65)",letterSpacing:".14em",textTransform:"uppercase"}}>Today's Motivation</div>
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:16,color:"#fff",lineHeight:1.7}}>"{q}"</div>
-        </div>
-      );
-    })()}
+    {/* Focus Timer — compact */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"12px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+      <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
+      <div style={{display:"flex",gap:4,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
+        {POMO_PRESETS.map(p=>(
+          <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
+        ))}
+      </div>
+      <svg width="80" height="80" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
+        <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
+        <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
+        <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
+      </svg>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        {!pomoActive
+          ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
+          :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
+        }
+        <button onClick={pomoStop} style={{width:30,height:30,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12,color:"var(--ink-light)"}}>↺</button>
+      </div>
+    </div>
+
+    {/* Upcoming — redesigned */}
+    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",flex:1}}>
+      <div style={{padding:"14px 18px 10px",flexShrink:0}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Upcoming</div>
+      </div>
+      <div style={{flex:1,overflowY:"auto",minHeight:0}}>
+        {upcoming.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)",padding:"0 18px 14px"}}>No upcoming events ✦</div>}
+        {upcoming.slice(0,4).map((e,i)=>{
+          const d=new Date(e.date+"T00:00:00");
+          const dayNum=d.getDate();
+          const mon=d.toLocaleDateString("en-GB",{month:"short"}).toUpperCase();
+          const dow=d.toLocaleDateString("en-GB",{weekday:"long"});
+          const timeStr=!e.allDay&&e.time?(e.endTime?`${e.time} – ${e.endTime}`:e.time):"All day";
+          return(
+            <div key={e.id} onClick={ev=>openEditEv(e,ev)} style={{display:"flex",alignItems:"center",gap:14,padding:"10px 18px",borderTop:i===0?"none":"1px solid var(--border)",cursor:"pointer"}}>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",minWidth:32,flexShrink:0}}>
+                <span style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:700,lineHeight:1,color:"#741313"}}>{dayNum}</span>
+                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:600,color:"#741313",letterSpacing:".06em",marginTop:1}}>{mon}</span>
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontFamily:"'DM Sans',sans-serif",fontWeight:600,color:"var(--ink)",marginBottom:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.title}</div>
+                <div style={{fontSize:11,fontFamily:"'DM Sans',sans-serif",color:"var(--ink-light)"}}>{dow} · {timeStr}</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" strokeWidth="1.75" style={{flexShrink:0}}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{borderTop:"1px solid var(--border)",padding:"10px 18px",flexShrink:0}}>
+        <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",display:"flex",alignItems:"center",gap:6,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer",padding:0}}>
+          View calendar <span style={{fontSize:14}}>→</span>
+        </button>
+      </div>
+    </div>
 
   </div>
 
@@ -2384,7 +2393,7 @@ export default function App() {
           <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Today's Tasks</div>
           <span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{todos.filter(t=>t.date===TODAY&&!t.done).length}</span>
         </div>
-        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+        <button onClick={()=>setPage("todos")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
         {byPri(todos.filter(t=>t.date===TODAY&&!t.done)).map(todo=>(
@@ -2412,7 +2421,7 @@ export default function App() {
           <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Habits</div>
           <span style={{background:"var(--parchment)",borderRadius:10,padding:"2px 8px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>This week</span>
         </div>
-        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+        <button onClick={()=>setPage("habits")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"0 20px",minHeight:0}}>
         {habits.slice(0,12).map(hab=>(
@@ -2476,30 +2485,6 @@ export default function App() {
         );
       })()}
 
-      {/* Focus Timer */}
-      <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",boxShadow:"var(--shadow)",display:"flex",flexDirection:"column",alignItems:"center",gap:10,flex:1}}>
-        <div style={{alignSelf:"flex-start",fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:600,color:"var(--ink)"}}>Focus Timer</div>
-        <div style={{display:"flex",gap:4,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
-          {POMO_PRESETS.map(p=>(
-            <button key={p.s} onClick={()=>pomoSelect(p.s)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${pomoDur===p.s?"var(--ink)":"var(--border)"}`,background:pomoDur===p.s?"var(--ink)":"#fff",color:pomoDur===p.s?"#f4ede3":"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:500,cursor:"pointer",transition:"all .15s"}}>{p.label}</button>
-          ))}
-        </div>
-        <svg width="90" height="90" viewBox="0 0 110 110">
-          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke="var(--parchment)" strokeWidth="7"/>
-          <circle cx="55" cy="55" r={POMO_R} fill="none" stroke={pomoColor} strokeWidth="7" strokeDasharray={POMO_CIRC} strokeDashoffset={POMO_CIRC-pomoDash} strokeLinecap="round" transform="rotate(-90 55 55)"/>
-          <text x="55" y="51" textAnchor="middle" fontFamily="DM Sans" fontSize="17" fontWeight="600" fill="var(--ink)">{fmtPomo(pomoLeft)}</text>
-          <text x="55" y="66" textAnchor="middle" fontFamily="Cormorant Garamond" fontSize="10" fill="var(--ink-light)" fontStyle="italic">{pomoActive?"Focus":"Ready"}</text>
-        </svg>
-        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          {!pomoActive
-            ?<button onClick={pomoStart} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>▶ Start Focus</button>
-            :<button onClick={pomoPause} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 16px",background:"var(--brand)",color:"#f4ede3",border:"none",borderRadius:24,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:500,cursor:"pointer"}}>⏸ Pause</button>
-          }
-          <button onClick={pomoStop} style={{width:30,height:30,borderRadius:"50%",border:"1px solid var(--border)",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12,color:"var(--ink-light)"}}>↺</button>
-        </div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:10,color:"var(--ink-light)"}}>{pomoCount} sessions completed today</div>
-      </div>
-
     </div>
 
   </div>
@@ -2530,42 +2515,14 @@ export default function App() {
 
   </div>
 
-  {/* ROW 4: Upcoming | Home Reset */}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-
-    {/* Upcoming */}
-    <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" style={{color:"var(--ink-light)"}}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Upcoming</div>
-          {upcoming.length>0&&<span style={{background:"var(--parchment)",borderRadius:10,padding:"1px 7px",fontSize:10,color:"var(--ink-light)",fontFamily:"'DM Sans',sans-serif"}}>{upcoming.length}</span>}
-        </div>
-        <button onClick={()=>setPage("calendar")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
-      </div>
-      {upcoming.length===0&&<div style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:"var(--ink-light)"}}>No upcoming events ✦</div>}
-      <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        {upcoming.slice(0,3).map(e=>{
-          const d=new Date(e.date+"T00:00:00");
-          const dotColors={Health:"#c9a87c",Work:"#7090a8",Personal:"#b0889a",Planning:"#7a9070"};
-          return(
-            <div key={e.id} onClick={ev=>openEditEv(e,ev)} style={{display:"flex",alignItems:"flex-start",gap:10,cursor:"pointer"}}>
-              <div style={{width:8,height:8,borderRadius:"50%",background:dotColors[e.tag]||"var(--sage)",flexShrink:0,marginTop:5}}/>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:12,color:"var(--ink)",fontFamily:"'DM Sans',sans-serif",fontWeight:500,marginBottom:2,lineHeight:1.3}}>{e.title}</div>
-                <div style={{fontSize:11,color:"var(--ink-light)",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic"}}>{d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}{!e.allDay&&e.time?`, ${e.time}`:""}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+  {/* ROW 4: Home Reset — full width */}
+  <div>
 
     {/* Home Reset */}
     <div style={{background:"#fff",border:"1px solid var(--border)",borderRadius:14,padding:"18px 20px",boxShadow:"var(--shadow)"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
         <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:600,color:"var(--ink)"}}>Home Reset</div>
-        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:11,color:"var(--gold-deep)",cursor:"pointer"}}>View all</button>
+        <button onClick={()=>setPage("cleaning")} style={{background:"none",border:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,color:"#741313",cursor:"pointer"}}>View all</button>
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
         {cleaningTodayArr.slice(0,4).map((task,i)=>(
